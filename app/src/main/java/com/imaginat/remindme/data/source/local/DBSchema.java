@@ -1,0 +1,24 @@
+package com.imaginat.remindme.data.source.local;
+
+/**
+ * Created by nat on 8/8/16.
+ */
+public class DBSchema {
+    //=========================================================================
+    public static final class lists_table{
+        public static final String NAME = "listOfLists";
+        public static final String[] ALL_COLUMNS = new String[]{cols.LIST_ID,cols.LIST_TITLE,cols.LIST_ICON};//
+        public static final String createCommand =
+                "CREATE TABLE "+NAME+"("+
+                        cols.LIST_ID+" INTEGER PRIMARY KEY, "+
+                        cols.LIST_TITLE+" TEXT, "+
+                        cols.LIST_ICON+" INTEGER DEFAULT 0 "+
+                        ")";
+        public static final class cols{
+            public static final String LIST_ID="list_id";
+            public static final String LIST_TITLE="list_title";
+            public static final String LIST_ICON="list_icon";
+        }
+    }
+
+}
