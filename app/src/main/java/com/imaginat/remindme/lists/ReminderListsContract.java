@@ -2,6 +2,7 @@ package com.imaginat.remindme.lists;
 
 import com.imaginat.remindme.BasePresenter;
 import com.imaginat.remindme.BaseView;
+import com.imaginat.remindme.data.ReminderList;
 
 import java.util.ArrayList;
 
@@ -17,12 +18,14 @@ public class ReminderListsContract {
 
         void showSelectedList(String listID);
 
-        void showAll();
+        boolean isActive();
+
+        void showAll(ArrayList<ReminderList>listsToShow);
 
     }
 
     interface ViewsAdapter extends BaseView<Presenter> {
-        void setData(ArrayList theData);
+        void setData(ArrayList<ReminderList> theData);
 
 
     }

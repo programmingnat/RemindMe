@@ -20,5 +20,24 @@ public class DBSchema {
             public static final String LIST_ICON="list_icon";
         }
     }
+    //=========================================================================
+    public static final class reminders_table{
+        public static final String NAME = "reminders";
+        public static final String[] ALL_COLUMNS = new String[]{cols.REMINDER_ID,cols.LIST_ID,cols.REMINDER_TEXT,cols.IS_COMPLETED};
+        public static final String createCommand=
+                "CREATE TABLE "+NAME+"("+
+                        cols.REMINDER_ID+" INTEGER PRIMARY KEY, "+
+                        cols.LIST_ID+" INTEGER NOT NULL, "+
+                        cols.REMINDER_TEXT+" TEXT NOT NULL, "+
+                        cols.IS_COMPLETED+" INTEGER DEFAULT 0, "+
+                        "FOREIGN KEY("+cols.LIST_ID+") REFERENCES "+lists_table.NAME+"("+lists_table.cols.LIST_ID+")"+
+                        ")";
 
+        public static final class cols{
+            public static final String REMINDER_ID="reminder_id";
+            public static final String LIST_ID="list_id";
+            public static final String REMINDER_TEXT="reminderText";
+            public static final String IS_COMPLETED="isCompleted";
+        }
+    }
 }

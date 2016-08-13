@@ -1,12 +1,14 @@
 package com.imaginat.remindme.lists;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.imaginat.remindme.IChangeToolbar;
 import com.imaginat.remindme.R;
+import com.imaginat.remindme.addeditlist.AddEditList;
 import com.imaginat.remindme.data.ReminderList;
 import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
 
@@ -37,7 +40,7 @@ public class ReminderListsFragment extends Fragment
     private static final String TAG = ReminderListsFragment.class.getSimpleName();
     ReminderListsContract.Presenter mPresenter=null;
     ReminderListRecycleAdapter mAdapter;
-    List<ReminderList> mReminders;
+    //List<ReminderList> mReminders;
     private  View mView;
     private IChangeToolbar mIChangeToolbar;
     private boolean isLongClickOn=false;
@@ -75,7 +78,21 @@ public class ReminderListsFragment extends Fragment
                     }
 
                 });
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toAddListIntent = new Intent(v.getContext(),AddEditList.class);
+                v.getContext().startActivity(toAddListIntent);
+            }
+        });
         return view;
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
     }
 
     @Override
@@ -87,6 +104,12 @@ public class ReminderListsFragment extends Fragment
         }
 
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
     }
 
     @Override
@@ -114,9 +137,13 @@ public class ReminderListsFragment extends Fragment
     }
 
     @Override
-    public void showAll() {
-
+    public void showAll(ArrayList<ReminderList>lists) {
+       // mReminders=lists;
+        mAdapter.setData(lists);
+        mAdapter.notifyDataSetChanged();
     }
+
+
 
     @Override
     public void setPresenter(ReminderListsContract.Presenter presenter) {

@@ -7,4 +7,11 @@ public interface ITaskItem {
       String mReminderID=null;
       String mListID=null;
 
+      boolean isCompleted();
+
+      String getText();
+      void setText(String brief);
+      String getListID();
+      String getReminderID();
+
 }

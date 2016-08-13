@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.IChangeToolbar;
 import com.imaginat.remindme.R;
-import com.imaginat.remindme.addeditlist.AddEditList;
+import com.imaginat.remindme.addedittask.TasksActivity;
 import com.imaginat.remindme.data.ReminderList;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
 
 
     @Override
-    public void setData(ArrayList theData) {
+    public void setData(ArrayList<ReminderList> theData) {
         mReminderLists=theData;
     }
 
@@ -87,8 +87,8 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
                         onLongClick=false;
                     }else{
                         mPresenter.loadSelectedList(mList_id);
-                        Intent toAddListIntent = new Intent(v.getContext(),AddEditList.class);
-                        v.getContext().startActivity(toAddListIntent);
+                        Intent addEditTaskIntent = new Intent(v.getContext(),TasksActivity.class);
+                        v.getContext().startActivity(addEditTaskIntent);
 
                     }
 

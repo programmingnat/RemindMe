@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.imaginat.remindme.data.ITaskItem;
 import com.imaginat.remindme.data.ReminderList;
 
 import java.util.List;
@@ -36,6 +37,8 @@ public class RemindMeSQLHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //list of lists
         db.execSQL(DBSchema.lists_table.createCommand);
+        //create the lists of tasks
+        db.execSQL(DBSchema.reminders_table.createCommand);
     }
 
     @Override
@@ -49,7 +52,10 @@ public class RemindMeSQLHelper extends SQLiteOpenHelper {
     Observable<List<ReminderList>>getAllLists(Callable<List<ReminderList>> func){
         return makeObservable(func);
     }
-
+    ///////////////TASKS FROM TABLES//////////////
+    Observable<List<ITaskItem>>getAllTasks(ListsLocalDataSource.GetTasks_Callable func){
+        return makeObservable((Callable)func);
+    }
 
 
     ///HELPER METHOD////////////////////////////////////////////////////////
