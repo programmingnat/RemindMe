@@ -28,7 +28,8 @@ import java.util.ArrayList;
 /**
  * Created by nat on 8/12/16.
  */
-public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskReminderRecyclerAdapter.TaskListItemHolder>{
+public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskReminderRecyclerAdapter.TaskListItemHolder>
+implements TasksContract.ViewAdapter{
 
     private static final String TAG = TaskReminderRecyclerAdapter.class.getSimpleName();
     private Context mContext;
@@ -87,6 +88,19 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
     @Override
     public int getItemCount() {
         return mITaskItems.size();
+    }
+
+    @Override
+    public void setData(ArrayList<ITaskItem> arrayList) {
+        mITaskItems.clear();
+        mITaskItems.addAll(arrayList);
+        notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void setPresenter(TasksContract.Presenter presenter) {
+
     }
 
 

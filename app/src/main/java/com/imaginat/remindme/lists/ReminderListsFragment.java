@@ -1,5 +1,6 @@
 package com.imaginat.remindme.lists;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -84,7 +85,7 @@ public class ReminderListsFragment extends Fragment
             @Override
             public void onClick(View v) {
                 Intent toAddListIntent = new Intent(v.getContext(),AddEditList.class);
-                v.getContext().startActivity(toAddListIntent);
+                ((Activity)v.getContext()).startActivity(toAddListIntent);
             }
         });
         return view;
@@ -139,6 +140,7 @@ public class ReminderListsFragment extends Fragment
     @Override
     public void showAll(ArrayList<ReminderList>lists) {
        // mReminders=lists;
+        Log.d(TAG,"showAll in ReminderListsFragment");
         mAdapter.setData(lists);
         mAdapter.notifyDataSetChanged();
     }

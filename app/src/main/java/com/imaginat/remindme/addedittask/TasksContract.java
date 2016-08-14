@@ -13,7 +13,8 @@ public class TasksContract {
 
 
     interface View extends BaseView<Presenter>{
-
+        boolean isActive();
+        void showAll(ArrayList<ITaskItem>tasks);
     }
     interface ViewAdapter extends BaseView<Presenter>{
         public void setData(ArrayList<ITaskItem> arrayList);

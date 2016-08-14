@@ -34,25 +34,28 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
 
 
     ReminderListsContract.Presenter mPresenter;
-    ArrayList<ReminderList> mReminderLists;
+
 
 
     private boolean onLongClick=false;
 
     private final static String TAG = ReminderListRecycleAdapter.class.getName();
     private Context mContext;
-    private ArrayList<ReminderList> mReminders;
+    private ArrayList<ReminderList> mReminderLists = new ArrayList<>();
     private int mColorPrimary;
 
 
     @Override
     public void setData(ArrayList<ReminderList> theData) {
-        mReminderLists=theData;
+        mReminderLists.clear();
+        mReminderLists.addAll(theData);
+        notifyDataSetChanged();
     }
 
     @Override
     public void setPresenter(ReminderListsContract.Presenter presenter) {
         mPresenter=presenter;
+
     }
 
     public class ReminderHolder extends RecyclerView.ViewHolder {
@@ -88,6 +91,7 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
                     }else{
                         mPresenter.loadSelectedList(mList_id);
                         Intent addEditTaskIntent = new Intent(v.getContext(),TasksActivity.class);
+                        addEditTaskIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,mList_id);
                         v.getContext().startActivity(addEditTaskIntent);
 
                     }
@@ -133,12 +137,12 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
 
 
     public ReminderList getItem(int position) {
-        return mReminders.get(position);
+        return mReminderLists.get(position);
     }
 
     public ReminderListRecycleAdapter(Context context, ArrayList<ReminderList> reminders) {
         mContext = context;
-        mReminders = reminders;
+        mReminderLists = reminders;
 
 
         int[] attrs = {android.R.attr.colorPrimary,android.R.attr.colorPrimaryDark,android.R.attr.colorAccent};
@@ -147,9 +151,7 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
 
     }
 
-    public void setToRemindersArray(ArrayList<ReminderList>list){
-        mReminders=list;
-    }
+
     @Override
     public ReminderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
@@ -161,7 +163,7 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
 
     @Override
     public void onBindViewHolder(ReminderHolder holder, int position) {
-        ReminderList reminder =  mReminders.get(position);
+        ReminderList reminder =  mReminderLists.get(position);
         if (reminder == null) {
 
 
@@ -214,6 +216,6 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
 
     @Override
     public int getItemCount() {
-        return mReminders.size();
+        return mReminderLists.size();
     }
 }

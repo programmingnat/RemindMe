@@ -42,6 +42,7 @@ public class ReminderListsPresenter implements ReminderListsContract.Presenter {
     @Override
     public void start() {
         //get the lists
+        Log.d(TAG,"ReminderListsPresenter start called");
         loadLists();
 
 
