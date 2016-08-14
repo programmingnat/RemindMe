@@ -17,7 +17,9 @@
         </activity>
         <activity android:name=".addeditlist.AddEditList">
         </activity>
-        <activity android:name=".addedittask.TasksActivity">
+        <activity android:name=".viewtasks.TasksActivity">
+        </activity>
+        <activity android:name=".addeditTask.AddEditTask">
         </activity>
     </application>
 

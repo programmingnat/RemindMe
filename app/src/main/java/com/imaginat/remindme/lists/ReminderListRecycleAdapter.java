@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.IChangeToolbar;
 import com.imaginat.remindme.R;
-import com.imaginat.remindme.addedittask.TasksActivity;
+import com.imaginat.remindme.viewtasks.TasksActivity;
 import com.imaginat.remindme.data.ReminderList;
 
 import java.util.ArrayList;

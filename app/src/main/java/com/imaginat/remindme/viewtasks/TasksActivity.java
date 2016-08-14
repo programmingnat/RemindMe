@@ -1,4 +1,4 @@
-package com.imaginat.remindme.addedittask;
+package com.imaginat.remindme.viewtasks;
 
 import android.os.Bundle;
 

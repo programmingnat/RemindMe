@@ -141,5 +141,16 @@ public class ListsLocalDataSource {
             return listItems;
         }
     }
+
+    public void createNewTask(String listID,String text){
+        ContentValues values = new ContentValues();
+        values.put(DBSchema.reminders_table.cols.LIST_ID,listID);
+        values.put(DBSchema.reminders_table.cols.REMINDER_TEXT,text);
+        SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+
+        db.insert(DBSchema.reminders_table.NAME,
+                null,
+                values);
+    }
 }
 

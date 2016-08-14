@@ -1,4 +1,4 @@
-package com.imaginat.remindme.addedittask;
+package com.imaginat.remindme.viewtasks;
 
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -27,8 +27,8 @@ public class TasksPresenter implements TasksContract.Presenter {
         mView = view;
     }
     @Override
-    public void createNewReminder(String data) {
-
+    public void createNewReminder() {
+        mView.showAddNewTask(mListID);
     }
 
     @Override
@@ -48,7 +48,9 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     private void loadTasks(){
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
-        if(mListID==null || mListID.isEmpty()){
+        if(mListID==null || mListID.isEmpty()) {
+                return;
+        }
             llds.getAllTasks(mListID)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Action1<List<ITaskItem>>() {
@@ -70,6 +72,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     });
         }
 
-    }
+
+
 
 }

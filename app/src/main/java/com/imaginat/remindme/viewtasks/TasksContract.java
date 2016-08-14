@@ -1,4 +1,4 @@
-package com.imaginat.remindme.addedittask;
+package com.imaginat.remindme.viewtasks;
 
 import com.imaginat.remindme.BasePresenter;
 import com.imaginat.remindme.BaseView;
@@ -15,12 +15,13 @@ public class TasksContract {
     interface View extends BaseView<Presenter>{
         boolean isActive();
         void showAll(ArrayList<ITaskItem>tasks);
+        void showAddNewTask(String listID);
     }
     interface ViewAdapter extends BaseView<Presenter>{
         public void setData(ArrayList<ITaskItem> arrayList);
     }
     interface Presenter extends BasePresenter {
-        public void createNewReminder(String data);
+        public void createNewReminder();
         public void updateReminder(String id,String data);
         public void updateCheckStatus(String listID,String id,boolean isChecked);
     }

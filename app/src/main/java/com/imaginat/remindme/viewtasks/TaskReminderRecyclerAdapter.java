@@ -1,4 +1,4 @@
-package com.imaginat.remindme.addedittask;
+package com.imaginat.remindme.viewtasks;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -139,6 +139,7 @@ implements TasksContract.ViewAdapter{
             //mEditText.setOnLongClickListener(this);
             mEditText.setOnEditorActionListener(this);
 
+            mEditText.setSingleLine(false);
             /*Button hideOptionsButton = (Button)itemView.findViewById(R.id.hideOptions);
             hideOptionsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -177,8 +178,7 @@ implements TasksContract.ViewAdapter{
                         // Toast.makeText(mContext, "ADDING TO DATABASE", Toast.LENGTH_SHORT).show();
                         if(mRadioButton.getVisibility()==View.GONE) {
                             Log.d(TAG,"mItemView onKey bisiblity of radio button is GONE");
-                            mTasksPresenter.createNewReminder(((EditText) v).getText().toString());
-                            //mClickInterface.handleClickToCreateNewReminder(((EditText) v).getText().toString());
+
                         }else{
                             Log.d(TAG,"mItemView onKey visiblity of radio button is NOT gone");
                         }
@@ -267,7 +267,7 @@ implements TasksContract.ViewAdapter{
 
                 //((ViewSwitcher)v.getParent()).showPrevious();
                 if(mDidIEdit && mRadioButton.getVisibility()==View.VISIBLE){
-                    mTasksPresenter.updateReminder(mReminderId,((EditText)v).getText().toString());
+                    //mTasksPresenter.updateReminder(mReminderId,((EditText)v).getText().toString());
                     mDidIEdit=false;
                     Log.d(TAG,"CALL UPDATE STUFF HERE");
                 }
@@ -286,7 +286,7 @@ implements TasksContract.ViewAdapter{
             {
                 if(mRadioButton.getVisibility()==View.GONE) {
                     Toast.makeText(mContext, "ADDING TO DATABASE", Toast.LENGTH_SHORT).show();
-                    mTasksPresenter.createNewReminder(((EditText) v).getText().toString());
+
                     //((ViewSwitcher) v.getParent()).showPrevious();
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);

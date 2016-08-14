@@ -17,7 +17,7 @@ public class GlobalConstants {
 
     //LIST ID KEY
     public static final String CURRENT_LIST_ID="currentListID";
-    public static final String CURRENT_ITEM_ID="currentItemID";
+    public static final String CURRENT_TASK_ID="currentItemID";
 
 
 }

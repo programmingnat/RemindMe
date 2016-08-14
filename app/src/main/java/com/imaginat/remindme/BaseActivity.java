@@ -52,7 +52,9 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
     @Override
     public void onUpdateTitle(String title) {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(title);
+        if(actionBar!=null) {
+            actionBar.setTitle(title);
+        }
     }
 
     @Override
