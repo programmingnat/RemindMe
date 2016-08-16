@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/theToDoList_Actions"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/theToDoList_Actions"
     tools:context="com.imaginat.remindme.addeditlist.AddEditList">
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/theRecyclerView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresherRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <!--android:layout_below="@id/testFragment">-->
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/theRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!--android:layout_below="@id/testFragment">-->
+
+        </android.support.v7.widget.RecyclerView>
 
 
+    </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/noTasks_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" YOU HAVE NO TASKS FOR THIS LIST"
+        android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -26,7 +38,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="16dp"
-        app:backgroundTint="#00B8D4"
+        android:src="@android:drawable/ic_input_add"
         android:tint="#FFFFFF"
-        android:src="@android:drawable/ic_input_add" />
+        app:backgroundTint="#00B8D4"/>
 </RelativeLayout>

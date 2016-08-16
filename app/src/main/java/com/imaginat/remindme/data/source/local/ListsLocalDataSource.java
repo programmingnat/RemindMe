@@ -132,7 +132,9 @@ public class ListsLocalDataSource {
                 int colIndex = c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_TEXT);
                 String text = c.getString(colIndex);
                 Log.d(TAG, "Adding " + text);
-                SimpleTaskItem sti = new SimpleTaskItem();
+                SimpleTaskItem sti = new SimpleTaskItem(c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.LIST_ID)),
+                        c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID)));
+                sti.setCompleted(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.IS_COMPLETED))==1?true:false);
                 sti.setText(text);
                 listItems.add(sti);
                 c.moveToNext();
@@ -142,15 +144,25 @@ public class ListsLocalDataSource {
         }
     }
 
-    public void createNewTask(String listID,String text){
+    public long createNewTask(String listID,String text){
         ContentValues values = new ContentValues();
         values.put(DBSchema.reminders_table.cols.LIST_ID,listID);
         values.put(DBSchema.reminders_table.cols.REMINDER_TEXT,text);
         SQLiteDatabase db= mSQLHelper.getWritableDatabase();
 
-        db.insert(DBSchema.reminders_table.NAME,
+        return db.insert(DBSchema.reminders_table.NAME,
                 null,
                 values);
+    }
+
+    public int updateTaskComplete(String listID,String reminderID,int checkValue){
+        ContentValues values = new ContentValues();
+        values.put(DBSchema.reminders_table.cols.IS_COMPLETED,checkValue);
+        SQLiteDatabase db = mSQLHelper.getWritableDatabase();
+        return db.update(DBSchema.reminders_table.NAME,
+                values,
+                DBSchema.reminders_table.cols.LIST_ID + "=? AND " + DBSchema.reminders_table.cols.REMINDER_ID + "=?",
+                new String[]{listID, reminderID});
     }
 }
 

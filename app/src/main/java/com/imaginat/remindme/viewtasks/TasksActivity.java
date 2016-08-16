@@ -25,6 +25,7 @@ public class TasksActivity extends BaseActivity<TasksFragment> {
     @Override
     public TasksFragment getFragment() {
         return new TasksFragment();
+
     }
 
     @Override

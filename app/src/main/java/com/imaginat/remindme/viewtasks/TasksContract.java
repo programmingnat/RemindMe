@@ -16,14 +16,19 @@ public class TasksContract {
         boolean isActive();
         void showAll(ArrayList<ITaskItem>tasks);
         void showAddNewTask(String listID);
+        void showNoTasks();
+        void showSuccessfullySaved();
+        void showTaskMarkedComplete();
+        void showTaskMarkError();
     }
     interface ViewAdapter extends BaseView<Presenter>{
         public void setData(ArrayList<ITaskItem> arrayList);
     }
     interface Presenter extends BasePresenter {
         public void createNewReminder();
+        public void result(int requestCode,int resultCode);
         public void updateReminder(String id,String data);
-        public void updateCheckStatus(String listID,String id,boolean isChecked);
+        public void updateCompletionStatus(String listID,String id,boolean isChecked);
     }
 
 }

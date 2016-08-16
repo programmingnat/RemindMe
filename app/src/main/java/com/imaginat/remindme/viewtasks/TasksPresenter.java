@@ -1,5 +1,6 @@
 package com.imaginat.remindme.viewtasks;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
@@ -37,8 +38,15 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void updateCheckStatus(String listID, String id, boolean isChecked) {
-
+    public void updateCompletionStatus(String listID, String id, boolean isChecked) {
+        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
+        int result = llds.updateTaskComplete(listID,id,isChecked?1:0);
+        if(result==1){
+            mView.showTaskMarkedComplete();
+        }else{
+            mView.showTaskMarkError();
+        }
+        loadTasks();
     }
 
     @Override
@@ -65,14 +73,28 @@ public class TasksPresenter implements TasksContract.Presenter {
                             if(!mView.isActive()){
                                 return;
                             }
-                            mView.showAll(taskListFiltered);
+                            processTasks(taskListFiltered);
 
                         }
 
                     });
         }
+    private void processTasks(ArrayList<ITaskItem>tasks){
+        if(tasks.isEmpty()){
+            processEmptyTasks();
+        }else{
+            mView.showAll(tasks);
+        }
+    }
 
+    private void processEmptyTasks(){
+        mView.showNoTasks();
+    }
 
-
-
+    @Override
+    public void result(int requestCode, int resultCode) {
+        if (TasksFragment.REQUEST_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
+            mView.showSuccessfullySaved();
+        }
+    }
 }

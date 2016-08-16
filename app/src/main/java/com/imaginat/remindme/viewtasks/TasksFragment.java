@@ -5,13 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.imaginat.remindme.GlobalConstants;
@@ -29,18 +30,23 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     TasksContract.Presenter mPresenter;
     TaskReminderRecyclerAdapter mAdapter;
     RecyclerView mRecyclerView;
+    TextView mNoTasksTextView;
+
+    public static final int REQUEST_ADD_TASK=100;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View  view= inflater.inflate(R.layout.tasks_fragment, container, false);
-
+        mNoTasksTextView = (TextView)view.findViewById(R.id.noTasks_TextView);
 
        /* SimpleTaskItem simpleTaskItem1 = new SimpleTaskItem();
         simpleTaskItem1.setText("THIS IS A TEMP TEST");
         ArrayList<ITaskItem>taskItemArrayList = new ArrayList<>();
         taskItemArrayList.add(simpleTaskItem1);*/
         mAdapter = new TaskReminderRecyclerAdapter(getContext(),new ArrayList<ITaskItem>());
-
+        mAdapter.setPresenter(mPresenter);
 
 
 
@@ -68,7 +74,13 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void showAddNewTask(String listID) {
         Intent addEditTaskIntent = new Intent(TasksFragment.this.getActivity(),AddEditTask.class);
         addEditTaskIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,listID);
-        TasksFragment.this.getActivity().startActivity(addEditTaskIntent);
+        startActivityForResult(addEditTaskIntent, TasksFragment.REQUEST_ADD_TASK);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.result(requestCode,resultCode);
     }
 
     @Override
@@ -79,6 +91,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void setPresenter(TasksContract.Presenter presenter) {
         mPresenter=presenter;
+
     }
 
     @Override
@@ -96,9 +109,34 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void showAll(ArrayList<ITaskItem> tasks) {
         mAdapter.setData(tasks);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mNoTasksTextView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void showNoTasks() {
+        mRecyclerView.setVisibility(View.GONE);
+        mNoTasksTextView.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void showSuccessfullySaved() {
+        showMessage("Successfully Added New Task");
+    }
+
+    @Override
+    public void showTaskMarkedComplete() {
+        showMessage("Task Marked");
+    }
+
+    @Override
+    public void showTaskMarkError() {
+        showMessage("Error marking task");
+    }
+
+    private void showMessage(String message){
+        Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
+    }
     //========================================================================
     //prevent error animating when updating list
     private class MyLinearLayoutManager extends LinearLayoutManager {

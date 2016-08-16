@@ -6,13 +6,25 @@ package com.imaginat.remindme.data;
 public class SimpleTaskItem implements ITaskItem {
 
     private String mBriefDescription;
+    String mReminderID=null;
+    String mListID=null;
+    boolean mIsCompleted=false;
 
+    public SimpleTaskItem(String list,String reminderID){
+        mListID=list;
+        mReminderID=reminderID;
+
+    }
 
     @Override
     public boolean isCompleted() {
-        return false;
+        return mIsCompleted;
     }
 
+    @Override
+    public void setCompleted(boolean b) {
+        mIsCompleted=b;
+    }
 
     public String getText() {
         return mBriefDescription;
@@ -25,11 +37,11 @@ public class SimpleTaskItem implements ITaskItem {
 
     @Override
     public String getListID() {
-        return null;
+        return mListID;
     }
 
     @Override
     public String getReminderID() {
-        return null;
+        return mReminderID;
     }
 }

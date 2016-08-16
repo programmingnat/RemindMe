@@ -1,7 +1,9 @@
 package com.imaginat.remindme.addeditTask;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,4 +54,17 @@ public class AddEditTaskFragment extends Fragment
         super.onResume();
         mPresenter.start();
     }
+
+    @Override
+    public void showTaskList() {
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().finish();
+    }
+
+    @Override
+    public void showError() {
+        Snackbar.make(getView(), "unable to update list",Snackbar.LENGTH_LONG).show();
+    }
+
+
 }

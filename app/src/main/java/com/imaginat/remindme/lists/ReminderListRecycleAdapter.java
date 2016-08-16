@@ -185,7 +185,7 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
 
             holder.mTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
             holder.mTextView.setText(reminder.getTitle());
-
+            holder.itemView.setTag(reminder.getTitle());
             //randomly assign image (temp)
             int imageIndex = reminder.getIcon();
             switch (imageIndex) {

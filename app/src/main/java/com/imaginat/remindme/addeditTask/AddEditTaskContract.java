@@ -9,7 +9,8 @@ import com.imaginat.remindme.BaseView;
 public class AddEditTaskContract {
 
     interface View extends BaseView<Presenter> {
-
+        public void showTaskList();
+        public void showError();
     }
 
     interface Presenter extends BasePresenter{

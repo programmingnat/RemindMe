@@ -33,7 +33,7 @@ implements TasksContract.ViewAdapter{
 
     private static final String TAG = TaskReminderRecyclerAdapter.class.getSimpleName();
     private Context mContext;
-    TasksPresenter mTasksPresenter;
+    TasksContract.Presenter mTasksPresenter;
     private ArrayList<ITaskItem> mITaskItems;
 
 
@@ -72,6 +72,7 @@ implements TasksContract.ViewAdapter{
             return;
         }
         holder.mRadioButton.setVisibility(View.VISIBLE);
+
         holder.mRadioButton.setChecked(toDoListItem.isCompleted());
         holder.mEditText.setText(toDoListItem.getText());
         holder.mListID=toDoListItem.getListID();
@@ -79,6 +80,11 @@ implements TasksContract.ViewAdapter{
         //((LinearLayout)holder.itemView.findViewById(R.id.lineItemOptionsButton)).setVisibility(View.GONE);
         holder.mMoreOpts.setVisibility(View.INVISIBLE);
         holder.mDidIEdit=false;
+        if(toDoListItem.isCompleted()){
+            holder.mRadioButton.setChecked(true);
+        }else{
+            holder.mRadioButton.setChecked(false);
+        }
 
 
 
@@ -100,7 +106,7 @@ implements TasksContract.ViewAdapter{
 
     @Override
     public void setPresenter(TasksContract.Presenter presenter) {
-
+        mTasksPresenter=presenter;
     }
 
 
@@ -151,6 +157,7 @@ implements TasksContract.ViewAdapter{
                 }
             });*/
 
+
             mRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -162,7 +169,9 @@ implements TasksContract.ViewAdapter{
             mRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    int temp = mITaskItems.size();
                     //mClickInterface.handleClickToUpdateCheckStatus(mListID,mReminderId,((CheckBox)v).isChecked());
+                    mTasksPresenter.updateCompletionStatus(mListID,mReminderId,((CheckBox)v).isChecked());
                 }
             });
 

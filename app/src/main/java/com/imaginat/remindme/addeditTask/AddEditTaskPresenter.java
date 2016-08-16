@@ -28,12 +28,22 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
         if(mListID==null|| mListID.isEmpty()){
             return;
         }
+        long resultID=-1;
         ListsLocalDataSource localDataSource = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
         if(mTaskID==null) {
-            localDataSource.createNewTask(mListID, s);
+            //update
+            resultID=localDataSource.createNewTask(mListID, s);
         }else{
-
+            //update
         }
+
+        if(resultID<=0){
+            //error
+            mView.showError();
+        }else{
+            mView.showTaskList();
+        }
+
     }
 
     @Override
