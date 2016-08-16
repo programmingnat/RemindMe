@@ -33,8 +33,15 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void updateReminder(String id, String data) {
-
+    public void updateReminder(String listID, String taskID,String data) {
+        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
+        int result = llds.updateTaskText(listID,taskID,data);
+        if(result==1){
+            mView.showTaskMarkedComplete();
+        }else{
+            mView.showTaskMarkError();
+        }
+        loadTasks();
     }
 
     @Override

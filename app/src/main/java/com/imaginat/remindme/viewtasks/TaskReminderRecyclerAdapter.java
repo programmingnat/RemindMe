@@ -276,7 +276,7 @@ implements TasksContract.ViewAdapter{
 
                 //((ViewSwitcher)v.getParent()).showPrevious();
                 if(mDidIEdit && mRadioButton.getVisibility()==View.VISIBLE){
-                    //mTasksPresenter.updateReminder(mReminderId,((EditText)v).getText().toString());
+                    mTasksPresenter.updateReminder(mListID,mReminderId,((EditText)v).getText().toString());
                     mDidIEdit=false;
                     Log.d(TAG,"CALL UPDATE STUFF HERE");
                 }

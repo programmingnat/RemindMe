@@ -20,6 +20,8 @@ public class TasksContract {
         void showSuccessfullySaved();
         void showTaskMarkedComplete();
         void showTaskMarkError();
+        void showTaskUpdate();
+        void showNoTaskUpdated();
     }
     interface ViewAdapter extends BaseView<Presenter>{
         public void setData(ArrayList<ITaskItem> arrayList);
@@ -27,7 +29,7 @@ public class TasksContract {
     interface Presenter extends BasePresenter {
         public void createNewReminder();
         public void result(int requestCode,int resultCode);
-        public void updateReminder(String id,String data);
+        public void updateReminder(String listID,String id,String data);
         public void updateCompletionStatus(String listID,String id,boolean isChecked);
     }
 

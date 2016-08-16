@@ -164,5 +164,16 @@ public class ListsLocalDataSource {
                 DBSchema.reminders_table.cols.LIST_ID + "=? AND " + DBSchema.reminders_table.cols.REMINDER_ID + "=?",
                 new String[]{listID, reminderID});
     }
+
+    public int updateTaskText(String listID,String reminderID,String text){
+        ContentValues values = new ContentValues();
+        values.put(DBSchema.reminders_table.cols.REMINDER_TEXT,text);
+        SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+
+       return db.update(DBSchema.reminders_table.NAME,
+                values,
+                DBSchema.reminders_table.cols.LIST_ID + "=? AND " + DBSchema.reminders_table.cols.REMINDER_ID + "=?",
+                new String[]{listID, reminderID});
+    }
 }
 

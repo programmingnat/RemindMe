@@ -134,6 +134,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         showMessage("Error marking task");
     }
 
+    @Override
+    public void showTaskUpdate() {
+        showMessage("Task updated");
+    }
+
+    @Override
+    public void showNoTaskUpdated() {
+        showMessage("No task updated");
+    }
+
     private void showMessage(String message){
         Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
     }
