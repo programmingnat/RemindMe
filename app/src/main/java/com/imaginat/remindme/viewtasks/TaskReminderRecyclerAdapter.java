@@ -2,7 +2,6 @@ package com.imaginat.remindme.viewtasks;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -14,9 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,9 +53,10 @@ implements TasksContract.ViewAdapter{
         View view = layoutInflater.inflate(R.layout.task_line_item, parent, false);
 
 
-
         return new TaskListItemHolder(view);
     }
+
+
 
     @Override
     public void onBindViewHolder(TaskListItemHolder holder, int position) {
@@ -78,13 +76,16 @@ implements TasksContract.ViewAdapter{
         holder.mListID=toDoListItem.getListID();
         holder.mReminderId = toDoListItem.getReminderID();
         //((LinearLayout)holder.itemView.findViewById(R.id.lineItemOptionsButton)).setVisibility(View.GONE);
-        holder.mMoreOpts.setVisibility(View.INVISIBLE);
+       // holder.mMoreOpts.setVisibility(View.INVISIBLE);
         holder.mDidIEdit=false;
         if(toDoListItem.isCompleted()){
             holder.mRadioButton.setChecked(true);
         }else{
             holder.mRadioButton.setChecked(false);
         }
+
+
+
 
 
 
@@ -110,6 +111,39 @@ implements TasksContract.ViewAdapter{
     }
 
 
+    class GetLayoutChangeListener implements View.OnLayoutChangeListener{
+        TaskListItemHolder mHolder =null;
+        GetLayoutChangeListener(final TaskListItemHolder holder){
+            mHolder=holder;
+        }
+        @Override
+        public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+            Log.d(TAG,"number of lines is now "+((EditText)view).getLineCount());
+            int totalHeight = mHolder.mEditText.getMeasuredHeight();
+            Log.d(TAG,"height3 "+mHolder.mEditText.getLayoutParams().height+" get measured height "+totalHeight);
+            ViewGroup.LayoutParams params = mHolder.mOptionsButton.getLayoutParams();
+            Log.d(TAG,"height "+mHolder.mEditText.getLayoutParams().height+" no of lines "+mHolder.mEditText.getLineCount());
+            params.height=totalHeight;
+
+           // mHolder.mEditText.removeOnLayoutChangeListener(this);
+        }
+    }
+    @Override
+    public void onViewAttachedToWindow(TaskListItemHolder holder) {
+        super.onViewAttachedToWindow(holder);
+
+        holder.mEditText.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+
+        GetLayoutChangeListener layoutChangeListener = new GetLayoutChangeListener(holder);
+        holder.mEditText.addOnLayoutChangeListener(layoutChangeListener);
+
+
+
+    }
+
     //====================================================================================
     public class TaskListItemHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnKeyListener,
@@ -122,7 +156,7 @@ implements TasksContract.ViewAdapter{
         public EditText mEditText;
         public String mReminderId;
         public View mItemView;
-        public ImageButton mMoreOpts;
+        //public ImageButton mMoreOpts;
         public String mListID;
         public boolean mDidIEdit=false;
 
@@ -139,32 +173,28 @@ implements TasksContract.ViewAdapter{
             // mDeleteButton = (Button)itemView.findViewById(R.id.deleteLineItemButton);
             // mOptionsButton=(Button)itemView.findViewById(R.id.editLineItemButton);
             mItemView.setOnClickListener(this);
-            mMoreOpts = (ImageButton)itemView.findViewById(R.id.moreOptionsButton);
+            mOptionsButton = (Button)itemView.findViewById(R.id.openMenu_button);
             mEditText.setOnKeyListener(this);
             mEditText.setOnFocusChangeListener(this);
             //mEditText.setOnLongClickListener(this);
             mEditText.setOnEditorActionListener(this);
 
             mEditText.setSingleLine(false);
-            /*Button hideOptionsButton = (Button)itemView.findViewById(R.id.hideOptions);
-            hideOptionsButton.setOnClickListener(new View.OnClickListener() {
+
+            //mOptionsButton.setHeight(mEditText.getHeight()*mEditText.getLineCount()*200);
+
+
+
+            mOptionsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    mMoreOpts.setVisibility(View.GONE);
-                    LinearLayout ll = (LinearLayout)mItemView.findViewById(R.id.lineItemOptionsButton);
-                    ll.setVisibility(View.GONE);
-                    mEditText.setTextColor(Color.BLACK);
-                }
-            });*/
-
-
-            mRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //Log.d(TAG,"onCheckedChanged "+mListID+" "+mReminderId);
-
+                public void onClick(View view) {
+                    Toast.makeText(view.getContext(),"Options clicked",Toast.LENGTH_SHORT).show();
                 }
             });
+
+
+
+
 
             mRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -202,28 +232,15 @@ implements TasksContract.ViewAdapter{
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     //ImageButton imageButton = (ImageButton)v.findViewById(R.id.moreOptionsButton);
-                    mMoreOpts.setVisibility(View.VISIBLE);
+                    //mMoreOpts.setVisibility(View.VISIBLE);
 
                     return false;
                 }
             });
-            /*mDeleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mClickInterface.handleDeleteButton(mReminderId);
-                }
-            });*/
-
-            /*mOptionsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //mClickInterface.handleClick("MORE_OPTIONS");
-                    mClickInterface.handleMoreOptions(mListID,mReminderId);
-                }
-            });*/
 
 
-            mMoreOpts.setOnClickListener(new View.OnClickListener() {
+
+            /*mMoreOpts.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -238,7 +255,7 @@ implements TasksContract.ViewAdapter{
 
 
                 }
-            });
+            });*/
 
         }
 
@@ -248,12 +265,14 @@ implements TasksContract.ViewAdapter{
         public void onClick(View v) {
 
 
+
+
             //Log.d(TAG,"onClick called");
-            mEditText.requestFocus();
-            if(mMoreOpts.getVisibility()!=View.VISIBLE && mRadioButton.getVisibility()==View.VISIBLE){
+            //mEditText.requestFocus();
+            /*if(mMoreOpts.getVisibility()!=View.VISIBLE && mRadioButton.getVisibility()==View.VISIBLE){
                 mMoreOpts.setVisibility(View.VISIBLE);
 
-            }
+            }*/
 
 
         }
@@ -271,7 +290,7 @@ implements TasksContract.ViewAdapter{
             Log.d(TAG, "onFocusChange called");
             if(!hasFocus){
 
-                mMoreOpts.setVisibility(View.INVISIBLE);
+                //mMoreOpts.setVisibility(View.INVISIBLE);
                 mEditText.setTextColor(Color.BLACK);
 
                 //((ViewSwitcher)v.getParent()).showPrevious();
