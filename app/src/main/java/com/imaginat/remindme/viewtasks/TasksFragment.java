@@ -31,6 +31,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     TaskReminderRecyclerAdapter mAdapter;
     RecyclerView mRecyclerView;
     TextView mNoTasksTextView;
+    FloatingActionButton mFloatingActionButton;
 
     public static final int REQUEST_ADD_TASK=100;
 
@@ -55,8 +56,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton = (FloatingActionButton)view.findViewById(R.id.fab);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(TasksFragment.this.getActivity(),"CLICKED ",Toast.LENGTH_SHORT).show();
@@ -68,6 +69,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
 
         return view;
+    }
+
+    @Override
+    public void showFAB() {
+        mFloatingActionButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideFAB() {
+        mFloatingActionButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -147,6 +158,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     private void showMessage(String message){
         Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
     }
+
+    @Override
+    public void showOptionsOverlay() {
+
+    }
+
     //========================================================================
     //prevent error animating when updating list
     private class MyLinearLayoutManager extends LinearLayoutManager {

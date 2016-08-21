@@ -20,17 +20,28 @@ public class TasksContract {
         void showSuccessfullySaved();
         void showTaskMarkedComplete();
         void showTaskMarkError();
+        void showOptionsOverlay();
+        void showFAB();
+        void hideFAB();
+
         void showTaskUpdate();
         void showNoTaskUpdated();
     }
     interface ViewAdapter extends BaseView<Presenter>{
-        public void setData(ArrayList<ITaskItem> arrayList);
+        void setData(ArrayList<ITaskItem> arrayList);
+
+
+
     }
     interface Presenter extends BasePresenter {
-        public void createNewReminder();
-        public void result(int requestCode,int resultCode);
-        public void updateReminder(String listID,String id,String data);
-        public void updateCompletionStatus(String listID,String id,boolean isChecked);
+        void createNewReminder();
+        void result(int requestCode,int resultCode);
+        void updateReminder(String listID,String id,String data);
+        void updateCompletionStatus(String listID,String id,boolean isChecked);
+        void deleteReminder(String listID,String id);
+        void disableAddingNewTask();
+        void enableAddingNewTask();
+        void loadTaskOptions(String listID,String taskID);
     }
 
 }

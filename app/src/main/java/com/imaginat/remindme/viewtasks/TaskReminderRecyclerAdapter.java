@@ -1,19 +1,16 @@
 package com.imaginat.remindme.viewtasks;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +33,17 @@ implements TasksContract.ViewAdapter{
 
 
 
+
+
+
     public TaskReminderRecyclerAdapter(Context context, ArrayList<ITaskItem> arrayList) {
         mContext = context;
         mITaskItems = arrayList;
 
 
     }
+
+
 
     public void setToDoListArray(ArrayList<ITaskItem> list) {
         mITaskItems = list;
@@ -77,7 +79,7 @@ implements TasksContract.ViewAdapter{
         holder.mReminderId = toDoListItem.getReminderID();
         //((LinearLayout)holder.itemView.findViewById(R.id.lineItemOptionsButton)).setVisibility(View.GONE);
        // holder.mMoreOpts.setVisibility(View.INVISIBLE);
-        holder.mDidIEdit=false;
+        //holder.mDidIEdit=false;
         if(toDoListItem.isCompleted()){
             holder.mRadioButton.setChecked(true);
         }else{
@@ -85,11 +87,14 @@ implements TasksContract.ViewAdapter{
         }
 
 
+        //setSideButton(holder);
+
 
 
 
 
     }
+
 
 
     @Override
@@ -111,77 +116,48 @@ implements TasksContract.ViewAdapter{
     }
 
 
-    class GetLayoutChangeListener implements View.OnLayoutChangeListener{
-        TaskListItemHolder mHolder =null;
-        GetLayoutChangeListener(final TaskListItemHolder holder){
-            mHolder=holder;
-        }
-        @Override
-        public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-            Log.d(TAG,"number of lines is now "+((EditText)view).getLineCount());
-            int totalHeight = mHolder.mEditText.getMeasuredHeight();
-            Log.d(TAG,"height3 "+mHolder.mEditText.getLayoutParams().height+" get measured height "+totalHeight);
-            ViewGroup.LayoutParams params = mHolder.mOptionsButton.getLayoutParams();
-            Log.d(TAG,"height "+mHolder.mEditText.getLayoutParams().height+" no of lines "+mHolder.mEditText.getLineCount());
-            params.height=totalHeight;
 
-           // mHolder.mEditText.removeOnLayoutChangeListener(this);
-        }
-    }
-    @Override
-    public void onViewAttachedToWindow(TaskListItemHolder holder) {
-        super.onViewAttachedToWindow(holder);
-
-        holder.mEditText.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        );
-
-        GetLayoutChangeListener layoutChangeListener = new GetLayoutChangeListener(holder);
-        holder.mEditText.addOnLayoutChangeListener(layoutChangeListener);
-
-
-
-    }
 
     //====================================================================================
     public class TaskListItemHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnKeyListener,
             TextView.OnEditorActionListener,View.OnFocusChangeListener{
 
+
         public CheckBox mRadioButton;
-        public Button mDeleteButton;
-        public Button mOptionsButton;
+        public ImageButton mOptionsButton;
         public TextView mTextView;
         public EditText mEditText;
         public String mReminderId;
         public View mItemView;
-        //public ImageButton mMoreOpts;
         public String mListID;
-        public boolean mDidIEdit=false;
+        public boolean mIsShowingOverlay =false;
+        public ViewGroup mOverlayMenu;
+        public ImageButton mDeleteButton;
 
 
 
 
-        public TaskListItemHolder(View itemView) {
+
+
+        public TaskListItemHolder(final View itemView) {
             super(itemView);
             mItemView =itemView;
             //mViewSwitcher = (ViewSwitcher) itemView.findViewById(R.id.my_switcher);
             mEditText = (EditText)itemView.findViewById(R.id.listItemEdit);
             mRadioButton = (CheckBox) itemView.findViewById(R.id.completedRadioButton);
             mTextView = (TextView) itemView.findViewById(R.id.listItemTextView);
-            // mDeleteButton = (Button)itemView.findViewById(R.id.deleteLineItemButton);
+            mDeleteButton = (ImageButton)itemView.findViewById(R.id.delete_imageButton);
             // mOptionsButton=(Button)itemView.findViewById(R.id.editLineItemButton);
             mItemView.setOnClickListener(this);
-            mOptionsButton = (Button)itemView.findViewById(R.id.openMenu_button);
+
+            mOptionsButton = (ImageButton)itemView.findViewById(R.id.openMenu_button);
             mEditText.setOnKeyListener(this);
             mEditText.setOnFocusChangeListener(this);
             //mEditText.setOnLongClickListener(this);
             mEditText.setOnEditorActionListener(this);
-
+            mOverlayMenu = (ViewGroup)itemView.findViewById(R.id.overlay_menu);
             mEditText.setSingleLine(false);
-
-            //mOptionsButton.setHeight(mEditText.getHeight()*mEditText.getLineCount()*200);
 
 
 
@@ -189,119 +165,72 @@ implements TasksContract.ViewAdapter{
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(view.getContext(),"Options clicked",Toast.LENGTH_SHORT).show();
+                    if(mIsShowingOverlay){
+                        mIsShowingOverlay=false;
+                        LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.overlay_menu);
+                        ll.setVisibility(View.INVISIBLE);
+                    }else{
+                        mIsShowingOverlay=true;
+                        LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.overlay_menu);
+                        ll.setVisibility(View.VISIBLE);
+                    }
+
                 }
             });
 
+            mOverlayMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIsShowingOverlay=false;
+                    LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.overlay_menu);
+                    ll.setVisibility(View.INVISIBLE);
+                }
+            });
 
-
+            mDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mTasksPresenter.deleteReminder(mListID,mReminderId);
+                }
+            });
 
 
             mRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int temp = mITaskItems.size();
-                    //mClickInterface.handleClickToUpdateCheckStatus(mListID,mReminderId,((CheckBox)v).isChecked());
                     mTasksPresenter.updateCompletionStatus(mListID,mReminderId,((CheckBox)v).isChecked());
                 }
             });
 
 
-            mItemView.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    Log.d(TAG,"mItemView onKey ");
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                            (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        Log.d(TAG,"mItemView onKey entered pressed");
-                        // Perform action on key press
-                        // Toast.makeText(mContext, "ADDING TO DATABASE", Toast.LENGTH_SHORT).show();
-                        if(mRadioButton.getVisibility()==View.GONE) {
-                            Log.d(TAG,"mItemView onKey bisiblity of radio button is GONE");
-
-                        }else{
-                            Log.d(TAG,"mItemView onKey visiblity of radio button is NOT gone");
-                        }
-                        //((ViewSwitcher) v.getParent()).showPrevious();
-
-                    }
-                    return false;
-                }
-            });
-
-            mEditText.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    //ImageButton imageButton = (ImageButton)v.findViewById(R.id.moreOptionsButton);
-                    //mMoreOpts.setVisibility(View.VISIBLE);
-
-                    return false;
-                }
-            });
-
-
-
-            /*mMoreOpts.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    MoreOptionsDialogFragment newFragment = new MoreOptionsDialogFragment();
-                    newFragment.setListID(mListID);
-                    newFragment.setReminderID(mReminderId);
-                    AppCompatActivity a = ((AppCompatActivity) v.getContext());
-
-                    newFragment.show(a.getSupportFragmentManager(), "options");
-
-
-
-
-                }
-            });*/
-
         }
+
 
 
 
         @Override
         public void onClick(View v) {
-
-
-
-
-            //Log.d(TAG,"onClick called");
-            //mEditText.requestFocus();
-            /*if(mMoreOpts.getVisibility()!=View.VISIBLE && mRadioButton.getVisibility()==View.VISIBLE){
-                mMoreOpts.setVisibility(View.VISIBLE);
-
-            }*/
-
-
+            if(!mIsShowingOverlay){
+                mEditText.requestFocus();
+                mEditText.setSelection(mEditText.getText().length());
+            }
+           // mTasksPresenter.disableAddingNewTask();
         }
 
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             //Log.d(TAG,"onKey");
-            mDidIEdit=true;
+            //mDidIEdit=true;
 
             return false;
         }
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            Log.d(TAG, "onFocusChange called");
+
             if(!hasFocus){
 
-                //mMoreOpts.setVisibility(View.INVISIBLE);
-                mEditText.setTextColor(Color.BLACK);
-
-                //((ViewSwitcher)v.getParent()).showPrevious();
-                if(mDidIEdit && mRadioButton.getVisibility()==View.VISIBLE){
-                    mTasksPresenter.updateReminder(mListID,mReminderId,((EditText)v).getText().toString());
-                    mDidIEdit=false;
-                    Log.d(TAG,"CALL UPDATE STUFF HERE");
-                }
-
-            }else{
-                //mMoreOpts.setVisibility(View.VISIBLE);
+                mTasksPresenter.updateReminder(mListID,mReminderId,((EditText)v).getText().toString());
             }
         }
 
@@ -309,16 +238,19 @@ implements TasksContract.ViewAdapter{
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            Log.d(TAG,"Inside onEditorAction");
-            if (actionId == EditorInfo.IME_ACTION_DONE || actionId==KeyEvent.KEYCODE_ENTER)
-            {
-                if(mRadioButton.getVisibility()==View.GONE) {
-                    Toast.makeText(mContext, "ADDING TO DATABASE", Toast.LENGTH_SHORT).show();
 
-                    //((ViewSwitcher) v.getParent()).showPrevious();
+            /*if (actionId == EditorInfo.IME_ACTION_DONE || actionId==KeyEvent.KEYCODE_ENTER)
+            {
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
+
+                return true;
+            }*/
+
+            if(event!=null && (event.getKeyCode()==KeyEvent.KEYCODE_ENTER)){
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                //mTasksPresenter.enableAddingNewTask();
                 return true;
             }
             return false;

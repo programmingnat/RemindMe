@@ -188,6 +188,8 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
             holder.itemView.setTag(reminder.getTitle());
             //randomly assign image (temp)
             int imageIndex = reminder.getIcon();
+            Log.d(TAG,"ImageINdex is "+imageIndex+" text "+reminder.getTitle());
+
             switch (imageIndex) {
 
                 case GlobalConstants.WORKOUT_ICON:

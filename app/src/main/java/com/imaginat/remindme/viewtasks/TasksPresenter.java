@@ -33,14 +33,26 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
+    public void disableAddingNewTask() {
+        mView.hideFAB();
+    }
+
+    @Override
+    public void enableAddingNewTask() {
+        mView.showFAB();
+    }
+
+    @Override
+    public void deleteReminder(String listID, String id) {
+        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
+        llds.deleteReminder(listID,id);
+        loadTasks();
+    }
+
+    @Override
     public void updateReminder(String listID, String taskID,String data) {
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
-        int result = llds.updateTaskText(listID,taskID,data);
-        if(result==1){
-            mView.showTaskMarkedComplete();
-        }else{
-            mView.showTaskMarkError();
-        }
+        llds.updateTaskText(listID,taskID,data);
         loadTasks();
     }
 
@@ -59,6 +71,11 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void start() {
         loadTasks();
+    }
+
+    @Override
+    public void loadTaskOptions(String listID, String taskID) {
+        mView.showOptionsOverlay();
     }
 
     private void loadTasks(){

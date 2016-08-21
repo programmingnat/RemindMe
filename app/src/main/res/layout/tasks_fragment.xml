@@ -9,10 +9,10 @@
     tools:context="com.imaginat.remindme.addeditlist.AddEditList">
 
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresherRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+        <!--android:id="@+id/swipeRefresherRecycler"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/theRecyclerView"
@@ -23,7 +23,7 @@
         </android.support.v7.widget.RecyclerView>
 
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
     <TextView
         android:id="@+id/noTasks_TextView"
         android:layout_width="match_parent"

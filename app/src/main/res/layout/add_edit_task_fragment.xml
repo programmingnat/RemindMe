@@ -15,12 +15,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minLines="5"
-        android:hint="ENTER TEXT HERE"/>
+        android:hint="ENTER TEXT HERE"
+        android:inputType="textAutoComplete|textImeMultiLine"
+        android:imeOptions="actionDone"/>
 
     <Button
         android:id="@+id/enter_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/task_editText"
-        android:text="submit"/>
+        android:text="CREATE"/>
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CANCEL"
+        android:layout_toRightOf="@id/enter_button"
+        android:layout_below="@id/task_editText"/>
 </RelativeLayout>

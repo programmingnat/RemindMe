@@ -24,6 +24,7 @@ public class ListsLocalDataSource {
 
     private static final String TAG = ListsLocalDataSource.class.getSimpleName();
 
+
     private RemindMeSQLHelper mSQLHelper;
     private static ListsLocalDataSource mInstance;
 
@@ -62,7 +63,9 @@ public class ListsLocalDataSource {
                     ReminderList rl = new ReminderList(c.getString(c.getColumnIndex(DBSchema.lists_table.cols.LIST_TITLE)),
                             c.getInt(c.getColumnIndex(DBSchema.lists_table.cols.LIST_TITLE)),
                             c.getString(c.getColumnIndex(DBSchema.lists_table.cols.LIST_ID)));
+                    rl.setIcon(c.getInt(c.getColumnIndex(DBSchema.lists_table.cols.LIST_ICON)));
                     titles.add(rl);
+
                     c.moveToNext();
 
                 }
@@ -131,7 +134,7 @@ public class ListsLocalDataSource {
             while (!c.isAfterLast()) {
                 int colIndex = c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_TEXT);
                 String text = c.getString(colIndex);
-                Log.d(TAG, "Adding " + text);
+                //Log.d(TAG, "Adding " + text);
                 SimpleTaskItem sti = new SimpleTaskItem(c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.LIST_ID)),
                         c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID)));
                 sti.setCompleted(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.IS_COMPLETED))==1?true:false);
@@ -175,5 +178,15 @@ public class ListsLocalDataSource {
                 DBSchema.reminders_table.cols.LIST_ID + "=? AND " + DBSchema.reminders_table.cols.REMINDER_ID + "=?",
                 new String[]{listID, reminderID});
     }
+
+
+    public void deleteReminder(String listID,String reminderID){
+        SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+        db.delete(DBSchema.reminders_table.NAME,
+                DBSchema.reminders_table.cols.LIST_ID + "=? AND " + DBSchema.reminders_table.cols.REMINDER_ID + "=?",
+                new String[]{listID, reminderID});
+    }
+
+
 }
 
