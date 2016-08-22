@@ -19,6 +19,7 @@ public class CalendarContract {
         void showUpdateConfirmation();
         void showCreateError();
         void showUpdateError();
+        void showTasks();
     }
 
     interface Presenter extends BasePresenter {

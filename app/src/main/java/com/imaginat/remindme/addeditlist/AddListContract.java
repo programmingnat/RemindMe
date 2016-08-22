@@ -10,7 +10,7 @@ public class AddListContract {
 
 
     public interface View extends BaseView<Presenter>{
-
+        void showTasks();
     }
 
 

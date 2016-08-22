@@ -1,12 +1,16 @@
 package com.imaginat.remindme.calendar;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -195,8 +199,12 @@ public class CalendarProvider {
         Uri deleteURI = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,idToDelete);
         context.getContentResolver().delete(deleteURI,null,null);
     }
-/*
+    private void loadPermissions(String perm, int requestCode,Context c,Activity a) {
 
-
-       */
+        if (ContextCompat.checkSelfPermission(c, perm) != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(a, perm)) {
+                ActivityCompat.requestPermissions(a, new String[]{perm}, requestCode);
+            }
+        }
+    }
 }

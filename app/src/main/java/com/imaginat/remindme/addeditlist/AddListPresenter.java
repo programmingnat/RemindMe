@@ -20,6 +20,7 @@ public class AddListPresenter implements AddListContract.Presenter {
 
         ListsLocalDataSource llds  =  ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
         llds.createNewList(listName,iconID);
+        mView.showTasks();
         //llds.createNewList("LIST TWO",2);
     }
 

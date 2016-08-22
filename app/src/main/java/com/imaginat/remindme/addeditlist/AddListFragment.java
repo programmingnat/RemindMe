@@ -1,5 +1,6 @@
 package com.imaginat.remindme.addeditlist;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -56,6 +57,7 @@ public class AddListFragment extends Fragment implements AddListContract.View{
                     mPresenter.addNewList(newListName,iconListAdapter.getSelectedIcon());
                 }
 
+
                 getFragmentManager().popBackStackImmediate();
             }
         });
@@ -94,5 +96,11 @@ public class AddListFragment extends Fragment implements AddListContract.View{
 
     public void setPresenter(AddListContract.Presenter presenter) {
         mPresenter=presenter;
+    }
+
+    @Override
+    public void showTasks() {
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().finish();
     }
 }

@@ -45,7 +45,7 @@ public class ReminderListsFragment extends Fragment
     private  View mView;
     private IChangeToolbar mIChangeToolbar;
     private boolean isLongClickOn=false;
-
+    public static final int ADDING_NEW_LIST=100;
 
     @Nullable
     @Override
@@ -85,7 +85,7 @@ public class ReminderListsFragment extends Fragment
             @Override
             public void onClick(View v) {
                 Intent toAddListIntent = new Intent(v.getContext(),AddEditList.class);
-                ((Activity)v.getContext()).startActivity(toAddListIntent);
+                ((Activity)v.getContext()).startActivityForResult(toAddListIntent,ADDING_NEW_LIST);
             }
         });
         return view;

@@ -203,4 +203,10 @@ public class CalendarFragment extends Fragment
     public void showUpdateError() {
 
     }
+
+    @Override
+    public void showTasks() {
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().finish();
+    }
 }
