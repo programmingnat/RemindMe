@@ -139,6 +139,7 @@ public class ListsLocalDataSource {
                         c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID)));
                 sti.setCompleted(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.IS_COMPLETED))==1?true:false);
                 sti.setText(text);
+                sti.setCalendarEventID(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.CALENDAR_EVENT_ID)));
                 listItems.add(sti);
                 c.moveToNext();
             }
@@ -179,6 +180,16 @@ public class ListsLocalDataSource {
                 new String[]{listID, reminderID});
     }
 
+    public int updateTaskCalendarEvent(String listID,String reminderID,long eventID){
+        ContentValues values = new ContentValues();
+        values.put(DBSchema.reminders_table.cols.CALENDAR_EVENT_ID,eventID);
+        SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+
+        return db.update(DBSchema.reminders_table.NAME,
+                values,
+                DBSchema.reminders_table.cols.LIST_ID + "=? AND " + DBSchema.reminders_table.cols.REMINDER_ID + "=?",
+                new String[]{listID, reminderID});
+    }
 
     public void deleteReminder(String listID,String reminderID){
         SQLiteDatabase db= mSQLHelper.getWritableDatabase();

@@ -49,7 +49,7 @@ public class CalendarProvider {
     }
 
 
-    public void insertEventInCalendar(String title, String description, String location,Calendar startTime,Calendar endTime,Context context)
+    public long insertEventInCalendar(String title, String description, String location,Calendar startTime,Calendar endTime,Context context)
     throws SecurityException{
         long mLastEnteredID;
         long calID=3;
@@ -91,6 +91,7 @@ public class CalendarProvider {
 //  3. after inserting the row in the provider, retrieve the id of the event using the method below.
 // Just uncomment the line below. You will need this id to update and delete this event later.
         // long eventId = Long.parseLong(uri.getLastPathSegment());
+        return mLastEnteredID;
     }
 
     public void fetchEventByID(Context context,long eventID) throws SecurityException{
@@ -195,11 +196,7 @@ public class CalendarProvider {
         context.getContentResolver().delete(deleteURI,null,null);
     }
 /*
-    private void loadPermissions(String perm, int requestCode) {
-        if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
-                ActivityCompat.requestPermissions(this, new String[]{perm}, requestCode);
-            }
+
 
        */
 }

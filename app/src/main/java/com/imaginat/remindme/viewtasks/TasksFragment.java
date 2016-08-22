@@ -84,8 +84,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showCalendar() {
+    public void showCalendar(String listID,String reminderID) {
         Intent calendarActivityIntent = new Intent(TasksFragment.this.getActivity(), CalendarActivity.class);
+        calendarActivityIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,listID);
+        calendarActivityIntent.putExtra(GlobalConstants.CURRENT_TASK_ID,reminderID);
         startActivityForResult(calendarActivityIntent,TasksFragment.OPEN_CALENDAR);
     }
 

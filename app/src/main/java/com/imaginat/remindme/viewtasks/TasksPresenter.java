@@ -124,6 +124,6 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void openCalendar(String listID, String reminderID) {
-        mView.showCalendar();
+        mView.showCalendar(listID,reminderID);
     }
 }

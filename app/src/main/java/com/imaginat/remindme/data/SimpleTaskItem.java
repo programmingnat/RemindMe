@@ -9,8 +9,17 @@ public class SimpleTaskItem implements ITaskItem {
     String mReminderID=null;
     String mListID=null;
     boolean mIsCompleted=false;
+    int mCalendarEventID=-1;
 
-    public SimpleTaskItem(String list,String reminderID){
+    public int getCalendarEventID() {
+        return mCalendarEventID;
+    }
+
+    public void setCalendarEventID(int calendarEventID) {
+        mCalendarEventID = calendarEventID;
+    }
+
+    public SimpleTaskItem(String list, String reminderID){
         mListID=list;
         mReminderID=reminderID;
 

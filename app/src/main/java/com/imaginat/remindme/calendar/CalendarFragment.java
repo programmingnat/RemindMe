@@ -32,6 +32,7 @@ public class CalendarFragment extends Fragment
     Button mCreateUpdate_button;
     Calendar mStartCalendar,mEndCalendar;
 
+
     private static final String TAG  = CalendarFragment.class.getSimpleName();
     private static final String DIALOG_DATE = "DialogDate";
     private static final String DIALOG_TIME = "DialogTime";
@@ -39,6 +40,8 @@ public class CalendarFragment extends Fragment
     private static final int REQUEST_START_TIME = 1;
     private static final int REQUEST_END_DATE = 2;
     private static final int REQUEST_END_TIME = 3;
+
+
 
     @Nullable
     @Override
