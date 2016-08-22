@@ -49,18 +49,18 @@ public class CalendarProvider {
     }
 
 
-    public void insertEventInCalendar(String title, String description, String location,Context context)
+    public void insertEventInCalendar(String title, String description, String location,Calendar startTime,Calendar endTime,Context context)
     throws SecurityException{
         long mLastEnteredID;
         long calID=3;
         long startMillis=0;
         long endMillis=0;
-        Calendar startInst = Calendar.getInstance();
-        startInst.set(2016,2,1);
-        startMillis = startInst.getTimeInMillis();
-        Calendar endInst = Calendar.getInstance();
-        endInst.set(2016,2,4);
-        endMillis = endInst.getTimeInMillis();
+        //Calendar startInst = Calendar.getInstance();
+        //startInst.set(2016,2,1);
+        startMillis = startTime.getTimeInMillis();
+        //Calendar endInst = Calendar.getInstance();
+        //endInst.set(2016,2,4);
+        endMillis = endTime.getTimeInMillis();
         // 1. get 2 calendar instances: startTime and endTime in milliseconds and set March 1 as the
         // date of the event. The event can last as long as you want, so you can set any time.
 
