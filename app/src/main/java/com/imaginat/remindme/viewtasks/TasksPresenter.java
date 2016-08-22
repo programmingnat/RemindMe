@@ -121,4 +121,9 @@ public class TasksPresenter implements TasksContract.Presenter {
             mView.showSuccessfullySaved();
         }
     }
+
+    @Override
+    public void openCalendar(String listID, String reminderID) {
+        mView.showCalendar();
+    }
 }

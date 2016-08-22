@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FF4400"
+        android:textStyle="bold"
+        android:text=" CALENDAR EVENT"
+        android:textSize="23dp"/>
+
+    <EditText
+        android:id="@+id/eventTitle_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ENTER EVENT TITLE HERE"/>
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/startDate_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="START DATE:"
+        android:inputType="date"/>
+
+    <EditText
+        android:id="@+id/startTime_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="START TIME:"
+        android:inputType="time"/>
+
+
+    <EditText
+        android:id="@+id/endDate_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="END DATE:"/>
+
+    <EditText
+        android:id="@+id/endTime_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="END TIME:"/>
+
+    <EditText
+        android:id="@+id/location_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOCATION:"/>
+    <EditText
+        android:id="@+id/description_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ENTER DESCRIPTION HERE"
+        android:inputType="textMultiLine"
+        android:lines="5"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF0000"
+        android:text="ADD EVENT TO CALENDAR"
+        android:textColor="#FFFFFF"/>
+</LinearLayout>

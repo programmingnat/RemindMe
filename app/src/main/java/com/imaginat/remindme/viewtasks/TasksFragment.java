@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
 import com.imaginat.remindme.addeditTask.AddEditTask;
+import com.imaginat.remindme.calendar.CalendarActivity;
 import com.imaginat.remindme.data.ITaskItem;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     FloatingActionButton mFloatingActionButton;
 
     public static final int REQUEST_ADD_TASK=100;
+    public static final int OPEN_CALENDAR=200;
 
 
     @Nullable
@@ -79,6 +81,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void hideFAB() {
         mFloatingActionButton.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showCalendar() {
+        Intent calendarActivityIntent = new Intent(TasksFragment.this.getActivity(), CalendarActivity.class);
+        startActivityForResult(calendarActivityIntent,TasksFragment.OPEN_CALENDAR);
     }
 
     @Override

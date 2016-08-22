@@ -23,7 +23,7 @@ public class TasksContract {
         void showOptionsOverlay();
         void showFAB();
         void hideFAB();
-
+        void showCalendar();
         void showTaskUpdate();
         void showNoTaskUpdated();
     }
@@ -39,6 +39,7 @@ public class TasksContract {
         void updateReminder(String listID,String id,String data);
         void updateCompletionStatus(String listID,String id,boolean isChecked);
         void deleteReminder(String listID,String id);
+        void openCalendar(String listID,String reminderID);
         void disableAddingNewTask();
         void enableAddingNewTask();
         void loadTaskOptions(String listID,String taskID);

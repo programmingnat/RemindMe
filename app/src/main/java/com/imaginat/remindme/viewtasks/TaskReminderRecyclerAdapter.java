@@ -134,6 +134,7 @@ implements TasksContract.ViewAdapter{
         public boolean mIsShowingOverlay =false;
         public ViewGroup mOverlayMenu;
         public ImageButton mDeleteButton;
+        public ImageButton mCalendarButton;
 
 
 
@@ -158,6 +159,7 @@ implements TasksContract.ViewAdapter{
             mEditText.setOnEditorActionListener(this);
             mOverlayMenu = (ViewGroup)itemView.findViewById(R.id.overlay_menu);
             mEditText.setSingleLine(false);
+            mCalendarButton = (ImageButton)itemView.findViewById(R.id.calendar_imageButton);
 
 
 
@@ -191,6 +193,14 @@ implements TasksContract.ViewAdapter{
                 @Override
                 public void onClick(View view) {
                     mTasksPresenter.deleteReminder(mListID,mReminderId);
+                }
+            });
+
+            mCalendarButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   mTasksPresenter.openCalendar(mListID,mReminderId);
+
                 }
             });
 
