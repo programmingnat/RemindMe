@@ -17,9 +17,24 @@ android {
         abortOnError false
     }
     buildTypes {
+        debug{
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            def apiKey = properties.getProperty('geo.google.api.key')
+            resValue "string", "google_api_key", apiKey
+            def appID = properties.getProperty('app.id')
+            resValue "string", "app_id", appID
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('release.properties').newDataInputStream())
+            def apiKey = properties.getProperty('geo.google.api.key')
+            resValue "string", "google_api_key", apiKey
+            def appID = properties.getProperty('app.id')
+            resValue "string", "app_id", appID
         }
 
     }
@@ -48,4 +63,5 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.1.1'
     compile 'com.android.support:design:24.1.1'
     compile 'com.android.support:support-v4:24.1.1'
+    compile 'com.google.android.gms:play-services:9.4.0'
 }

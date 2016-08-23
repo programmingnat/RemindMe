@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RemindMe</string>
+    <string name="google_app_id">@string/google_api_key</string>
+    <string name="appID">@string/app_id</string>
 </resources>
