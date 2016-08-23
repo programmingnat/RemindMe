@@ -22,32 +22,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/startDate_editText"
+    <Button
+        android:id="@+id/startDate_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="START DATE:"
         android:inputType="date"/>
 
-    <EditText
-        android:id="@+id/startTime_editText"
+    <Button
+        android:id="@+id/startTime_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="START TIME:"
-        android:inputType="time"/>
+        android:inputType="time"
+        android:background="#FFFFFF"/>
 
 
-    <EditText
-        android:id="@+id/endDate_editText"
+    <Button
+        android:id="@+id/endDate_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="END DATE:"/>
+        android:text="END DATE:"
+        android:background="#FFFFFF"/>
 
-    <EditText
-        android:id="@+id/endTime_editText"
+    <Button
+        android:id="@+id/endTime_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="END TIME:"/>
+        android:text="END TIME:"
+        android:background="#FFFFFF"/>
 
     <EditText
         android:id="@+id/location_editText"

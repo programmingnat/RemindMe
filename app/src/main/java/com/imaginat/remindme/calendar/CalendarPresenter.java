@@ -32,7 +32,7 @@ public class CalendarPresenter implements CalendarContract.Presenter {
     @Override
     public void createEvent(String title, String description, Calendar startTime, Calendar endTime, String location, Context context) {
         CalendarProvider cp = new CalendarProvider();
-
+        cp.fetchCalendars(context);
         long eventID = cp.insertEventInCalendar(title, description, location, startTime, endTime, context);
 
 
