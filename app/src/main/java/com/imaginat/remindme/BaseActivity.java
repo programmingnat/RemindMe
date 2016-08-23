@@ -33,7 +33,7 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutID());
-
+        Log.d(TAG,"onCreate");
         //set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);

@@ -28,7 +28,15 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
 
         @Override
         public Object createPresenter(ReminderListsFragment fragment) {
+            Log.d(TAG,"inside createPresenter,about to create  presenter");
             mReminderListsPresenter = new ReminderListsPresenter(fragment);
+            if(fragment==null){
+                Log.d(TAG,"fragment is null");
+            }
+
+            if(mReminderListsPresenter==null){
+                Log.d(TAG,"mReminderListsPresenter is null");
+            }
             fragment.setPresenter(mReminderListsPresenter);
             return fragment;
         }

@@ -51,7 +51,7 @@ public class ReminderListsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
          View  view= inflater.inflate(R.layout.list_of_lists_fragment, container, false);
-
+        Log.d(TAG,"ReminderListsFragment onCreateView");
 
         mView = view;
         ListsLocalDataSource llds  =  ListsLocalDataSource.getInstance(this.getContext());
@@ -110,7 +110,14 @@ public class ReminderListsFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.start();
+       Log.d(TAG,"ReminderListsFragment onResume() called");
+        if(mPresenter==null){
+            Log.d(TAG,"mPresenter is null");
+        }
+        if(mPresenter!=null) {
+            mPresenter.start();
+        }
+
     }
 
     @Override
@@ -149,7 +156,12 @@ public class ReminderListsFragment extends Fragment
 
     @Override
     public void setPresenter(ReminderListsContract.Presenter presenter) {
+        Log.d(TAG,"setPresenter");
         mPresenter=presenter;
+        if(mPresenter==null){
+            Log.d(TAG,"Inside setPresener, and presenter is null");
+        }
+
         if(mAdapter!=null) {
             mAdapter.setPresenter(mPresenter);
         }
@@ -174,5 +186,17 @@ public class ReminderListsFragment extends Fragment
             super.getItemOffsets(outRect, view, parent, state);
             outRect.set(mItemOffset, mItemOffset, mItemOffset, mItemOffset);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG,"onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy");
     }
 }
