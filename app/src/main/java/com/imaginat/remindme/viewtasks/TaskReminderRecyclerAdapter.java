@@ -135,6 +135,7 @@ implements TasksContract.ViewAdapter{
         public ViewGroup mOverlayMenu;
         public ImageButton mDeleteButton;
         public ImageButton mCalendarButton;
+        public ImageButton mGeoFenceButton;
 
 
 
@@ -149,6 +150,7 @@ implements TasksContract.ViewAdapter{
             mRadioButton = (CheckBox) itemView.findViewById(R.id.completedRadioButton);
             mTextView = (TextView) itemView.findViewById(R.id.listItemTextView);
             mDeleteButton = (ImageButton)itemView.findViewById(R.id.delete_imageButton);
+            mGeoFenceButton = (ImageButton)itemView.findViewById(R.id.geofence_imageButton);
             // mOptionsButton=(Button)itemView.findViewById(R.id.editLineItemButton);
             mItemView.setOnClickListener(this);
 
@@ -204,7 +206,12 @@ implements TasksContract.ViewAdapter{
                 }
             });
 
-
+            mGeoFenceButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mTasksPresenter.openGeoFenceOptions(mListID,mReminderId);
+                }
+            });
             mRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

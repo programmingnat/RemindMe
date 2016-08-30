@@ -18,7 +18,7 @@ public class AddEditList extends BaseActivity<AddListFragment> {
     @Override
     public Object createPresenter(AddListFragment fragment) {
         if(mAddListPresenter==null){
-           mAddListPresenter = new AddListPresenter((AddListContract.View)fragment);
+           mAddListPresenter = new AddListPresenter(fragment);
         }
         fragment.setPresenter(mAddListPresenter);
         return mAddListPresenter;

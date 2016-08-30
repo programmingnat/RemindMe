@@ -20,6 +20,8 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
 
     public static final int REQUEST_READ_CALENDAR=200;
     public static final int REQUEST_WRITE_CALENDAR=201;
+    public static final int POSITION_FINE=202;
+    public static final int POSITION_COARSE=203;
 
         @Override
         public int getLayoutID() {
@@ -57,7 +59,8 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
         Log.d(TAG,"onCreate");
             loadPermissions(Manifest.permission.READ_CALENDAR,REQUEST_READ_CALENDAR);
             loadPermissions(Manifest.permission.READ_CALENDAR,REQUEST_WRITE_CALENDAR);
-
+            loadPermissions(Manifest.permission.ACCESS_FINE_LOCATION,POSITION_FINE);
+            loadPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,POSITION_COARSE);
 
 
 

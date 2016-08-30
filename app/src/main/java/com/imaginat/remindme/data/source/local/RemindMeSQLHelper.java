@@ -39,6 +39,9 @@ public class RemindMeSQLHelper extends SQLiteOpenHelper {
         db.execSQL(DBSchema.lists_table.createCommand);
         //create the lists of tasks
         db.execSQL(DBSchema.reminders_table.createCommand);
+
+        //geo fence table
+        //db.execSQL(DBSchema.geoFenceAlarm_table.createCommand);
     }
 
     @Override

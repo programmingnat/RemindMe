@@ -126,4 +126,9 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void openCalendar(String listID, String reminderID) {
         mView.showCalendar(listID,reminderID);
     }
+
+    @Override
+    public void openGeoFenceOptions(String listID, String reminderID) {
+        mView.showGeoFenceAlarm(listID,reminderID);
+    }
 }

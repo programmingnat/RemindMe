@@ -91,6 +91,10 @@ public class ListsLocalDataSource {
         ContentValues values = new ContentValues();
         values.put(DBSchema.lists_table.cols.LIST_TITLE, listName);
         values.put(DBSchema.lists_table.cols.LIST_ICON, selectedIcon);
+        return createNewList(values);
+    }
+
+    public String createNewList(ContentValues values){
         SQLiteDatabase db = mSQLHelper.getWritableDatabase();
 
         long id = db.insert(DBSchema.lists_table.NAME,
@@ -98,7 +102,6 @@ public class ListsLocalDataSource {
                 values);
         return Long.toString(id);
     }
-
     ////////////////// TASK RELATED /////////////////////
     public Observable<List<ITaskItem>>getAllTasks(String listID){
         return mSQLHelper.getAllTasks(getAllTasks_Callable(listID));
