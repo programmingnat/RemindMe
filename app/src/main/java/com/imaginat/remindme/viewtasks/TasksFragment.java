@@ -19,6 +19,7 @@ import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
 import com.imaginat.remindme.addeditTask.AddEditTask;
 import com.imaginat.remindme.calendar.CalendarActivity;
+import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 import com.imaginat.remindme.geofencing.GeoFencingActivity;
 
@@ -94,10 +95,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showGeoFenceAlarm(String listID, String reminderID) {
+    public void showGeoFenceAlarm(String listID, String reminderID, GeoFenceAlarmData geoFenceAlarmData) {
         Intent geoFenceAlarmIntent = new Intent(TasksFragment.this.getActivity(), GeoFencingActivity.class);
         geoFenceAlarmIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,listID);
         geoFenceAlarmIntent.putExtra(GlobalConstants.CURRENT_TASK_ID,reminderID);
+        geoFenceAlarmIntent.putExtra(GlobalConstants.GEO_ALARM_DATA_EXTRA,geoFenceAlarmData);
         startActivityForResult(geoFenceAlarmIntent, TasksFragment.OPEN_GEOFENCE);
     }
 

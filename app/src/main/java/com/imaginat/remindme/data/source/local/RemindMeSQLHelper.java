@@ -41,7 +41,7 @@ public class RemindMeSQLHelper extends SQLiteOpenHelper {
         db.execSQL(DBSchema.reminders_table.createCommand);
 
         //geo fence table
-        //db.execSQL(DBSchema.geoFenceAlarm_table.createCommand);
+        db.execSQL(DBSchema.geoFenceAlarm_table.createCommand);
     }
 
     @Override
@@ -59,6 +59,7 @@ public class RemindMeSQLHelper extends SQLiteOpenHelper {
     Observable<List<ITaskItem>>getAllTasks(ListsLocalDataSource.GetTasks_Callable func){
         return makeObservable((Callable)func);
     }
+
 
 
     ///HELPER METHOD////////////////////////////////////////////////////////

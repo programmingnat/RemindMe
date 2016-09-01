@@ -13,5 +13,7 @@ public interface ITaskItem {
       void setText(String brief);
       String getListID();
       String getReminderID();
+      boolean hasGeoAlarm();
+      GeoFenceAlarmData getGeoFenceAlarmData();
 
 }

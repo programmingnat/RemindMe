@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
 
@@ -128,7 +129,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void openGeoFenceOptions(String listID, String reminderID) {
-        mView.showGeoFenceAlarm(listID,reminderID);
+    public void openGeoFenceOptions(String listID, String reminderID, GeoFenceAlarmData alarmData) {
+        mView.showGeoFenceAlarm(listID,reminderID,alarmData);
     }
 }

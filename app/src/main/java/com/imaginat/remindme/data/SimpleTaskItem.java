@@ -10,6 +10,25 @@ public class SimpleTaskItem implements ITaskItem {
     String mListID=null;
     boolean mIsCompleted=false;
     int mCalendarEventID=-1;
+    GeoFenceAlarmData mGeoFenceAlarmData=null;
+
+
+    @Override
+    public boolean hasGeoAlarm() {
+        if(mGeoFenceAlarmData==null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public GeoFenceAlarmData getGeoFenceAlarmData() {
+        return mGeoFenceAlarmData;
+    }
+
+    public void setGeoFenceAlarmData(GeoFenceAlarmData geoFenceAlarmData) {
+        mGeoFenceAlarmData = geoFenceAlarmData;
+    }
 
     public int getCalendarEventID() {
         return mCalendarEventID;

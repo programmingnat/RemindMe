@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.imaginat.remindme.R;
+import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ implements TasksContract.ViewAdapter{
         holder.mEditText.setText(toDoListItem.getText());
         holder.mListID=toDoListItem.getListID();
         holder.mReminderId = toDoListItem.getReminderID();
+        holder.mGeoFenceAlarmData=toDoListItem.getGeoFenceAlarmData();
         //((LinearLayout)holder.itemView.findViewById(R.id.lineItemOptionsButton)).setVisibility(View.GONE);
        // holder.mMoreOpts.setVisibility(View.INVISIBLE);
         //holder.mDidIEdit=false;
@@ -131,6 +133,7 @@ implements TasksContract.ViewAdapter{
         public String mReminderId;
         public View mItemView;
         public String mListID;
+        public GeoFenceAlarmData mGeoFenceAlarmData;
         public boolean mIsShowingOverlay =false;
         public ViewGroup mOverlayMenu;
         public ImageButton mDeleteButton;
@@ -209,7 +212,7 @@ implements TasksContract.ViewAdapter{
             mGeoFenceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTasksPresenter.openGeoFenceOptions(mListID,mReminderId);
+                    mTasksPresenter.openGeoFenceOptions(mListID,mReminderId,mGeoFenceAlarmData);
                 }
             });
             mRadioButton.setOnClickListener(new View.OnClickListener() {

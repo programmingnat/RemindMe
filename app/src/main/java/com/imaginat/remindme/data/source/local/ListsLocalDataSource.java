@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 import com.imaginat.remindme.data.ReminderList;
 import com.imaginat.remindme.data.SimpleTaskItem;
@@ -123,14 +124,19 @@ public class ListsLocalDataSource {
             ArrayList<ITaskItem> listItems = new ArrayList<>();
 
             SQLiteDatabase db = mSQLHelper.getReadableDatabase();
-            Cursor c = db.query(DBSchema.reminders_table.NAME, //table
-                    DBSchema.reminders_table.ALL_COLUMNS, //columns
-                    DBSchema.reminders_table.cols.LIST_ID + "=? ",
-                    new String[]{mListID},
-                    null,//group
-                    null,//having
-                    null,//order
-                    null);//limit
+//            Cursor c = db.query(DBSchema.reminders_table.NAME, //table
+//                    DBSchema.reminders_table.ALL_COLUMNS, //columns
+//                    DBSchema.reminders_table.cols.LIST_ID + "=? ",
+//                    new String[]{mListID},
+//                    null,//group
+//                    null,//having
+//                    null,//order
+//                    null);//limit
+            Cursor c = db.rawQuery("SELECT * FROM "+DBSchema.reminders_table.NAME+" r "+
+                    "LEFT OUTER JOIN "+DBSchema.geoFenceAlarm_table.NAME+" gfa "+
+                    "ON gfa."+DBSchema.geoFenceAlarm_table.cols.REMINDER_ID+"=r."+DBSchema.reminders_table.cols.REMINDER_ID+
+                    " WHERE r."+DBSchema.reminders_table.cols.LIST_ID+"=?",new String[]{mListID});
+
 
 
             c.moveToFirst();
@@ -144,6 +150,23 @@ public class ListsLocalDataSource {
                 sti.setText(text);
                 sti.setCalendarEventID(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.CALENDAR_EVENT_ID)));
                 listItems.add(sti);
+
+                //GEO FENCE DATA (if applicable)
+                if(c.getString(c.getColumnIndex("alarmTag"))!=null){
+                    GeoFenceAlarmData geoFenceAlarmData = new GeoFenceAlarmData();
+                    geoFenceAlarmData.setAlarmID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID)));
+                    geoFenceAlarmData.setReminderID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.REMINDER_ID)));
+                    geoFenceAlarmData.setStreet(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.STREET)));
+                    geoFenceAlarmData.setCity(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.CITY)));
+                    geoFenceAlarmData.setState(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.STATE)));
+                    geoFenceAlarmData.setZipcode(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.ZIPCODE)));
+                    geoFenceAlarmData.setLongitude(c.getDouble(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.LONGITUDE)));
+                    geoFenceAlarmData.setLatitude(c.getDouble(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.LATITUDE)));
+                    geoFenceAlarmData.setAlarmTag(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.ALARM_TAG)));
+                    geoFenceAlarmData.setMeterRadius(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.RADIUS)));
+                    geoFenceAlarmData.setActive(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID))==0?true:false);
+                    sti.setGeoFenceAlarmData(geoFenceAlarmData);
+                }
                 c.moveToNext();
             }
 

@@ -2,6 +2,7 @@ package com.imaginat.remindme.viewtasks;
 
 import com.imaginat.remindme.BasePresenter;
 import com.imaginat.remindme.BaseView;
+import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class TasksContract {
         void showFAB();
         void hideFAB();
         void showCalendar(String listID,String reminderID);
-        void showGeoFenceAlarm(String listID,String reminderID);
+        void showGeoFenceAlarm(String listID,String reminderID,GeoFenceAlarmData geoFenceAlarmData);
         void showTaskUpdate();
         void showNoTaskUpdated();
     }
@@ -41,7 +42,7 @@ public class TasksContract {
         void updateCompletionStatus(String listID,String id,boolean isChecked);
         void deleteReminder(String listID,String id);
         void openCalendar(String listID,String reminderID);
-        void openGeoFenceOptions(String listID,String reminderID);
+        void openGeoFenceOptions(String listID, String reminderID, GeoFenceAlarmData geoFenceAlarmData);
         void disableAddingNewTask();
         void enableAddingNewTask();
         void loadTaskOptions(String listID,String taskID);

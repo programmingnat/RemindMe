@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.os.ResultReceiver;
+import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.imaginat.remindme.GlobalConstants;

@@ -30,6 +30,7 @@ public class GlobalConstants {
     public static final String CURRENT_TASK_ID="currentItemID";
 
     //GEO ALARM
+    public static final String GEO_ALARM_DATA_EXTRA=PACKAGE_NAME+"GeoFenceAlarm_data";
     public static final String ALARM_TAG=PACKAGE_NAME+"ALARM_TAG";
     public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
     public static final String RESULT_DATA_KEY = PACKAGE_NAME + ".RESULT_DATA_KEY";
@@ -42,6 +43,7 @@ public class GlobalConstants {
     public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS =
             GEOFENCE_EXPIRATION_IN_HOURS * 60 * 60 * 1000;
     public static final float GEOFENCE_RADIUS_IN_METERS = 200; // 1 mile, 1.6 km
+
 
 
 
