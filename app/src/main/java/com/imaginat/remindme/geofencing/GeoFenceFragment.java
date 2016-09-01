@@ -17,7 +17,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.imaginat.remindme.R;
@@ -113,10 +112,21 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_media_play)).anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                 .position(new LatLng(40.961761 , -73.815249 )));
         map.setMyLocationEnabled(true);
+
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                setAddressMarker(latLng);
+            }
+        });
     }
 
     @Override
-    public void setAddressMarker(double latitude, double longitude) throws SecurityException{
+    public void setAddressMarker(double latitude, double longitude) throws SecurityException {
+        LatLng ll = new LatLng(latitude, longitude);
+        setAddressMarker(ll);
+    }
+    public void setAddressMarker(LatLng ll){
         /*mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(latitude, longitude), 16));
         mGoogleMap.addMarker(new MarkerOptions()
@@ -125,13 +135,13 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
         mGoogleMap.setMyLocationEnabled(true);*/
 
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-       LatLng ll = new LatLng(latitude, longitude);
+
         Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(ll).title("MARK"));
         marker.setTag(0);
 
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(marker.getPosition());
-        LatLngBounds bounds = builder.build();
+        //LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        //builder.include(marker.getPosition());
+        //LatLngBounds bounds = builder.build();
 
 
         //int padding=0;
@@ -140,7 +150,7 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
         //mGoogleMap.moveCamera(cu);*/
 
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(latitude, longitude), 16));
+                ll, 16));
 
     }
 }
