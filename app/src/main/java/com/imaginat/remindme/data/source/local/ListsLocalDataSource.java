@@ -13,7 +13,10 @@ import com.imaginat.remindme.data.ReminderList;
 import com.imaginat.remindme.data.SimpleTaskItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
@@ -224,6 +227,34 @@ public class ListsLocalDataSource {
                 new String[]{listID, reminderID});
     }
 
+    public void saveGeoFenceAlarm(String alarmID, String reminderID, HashMap<String,String> data){
+        Log.d(TAG,"saveGeoFenceAlarm Called");
+
+        ContentValues values = new ContentValues();
+        Iterator it = data.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry pair = (Map.Entry)it.next();
+            values.put((String)pair.getKey(),(String)pair.getValue());
+        }
+
+        Log.d(TAG,"attempting to update first WHERE ALARM_TAG is "+alarmID+" and reminderID is "+reminderID);
+        SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+        int noOfRowsAffected=db.update(DBSchema.geoFenceAlarm_table.NAME,
+                values,
+                DBSchema.geoFenceAlarm_table.cols.ALARM_TAG + "=? AND " + DBSchema.geoFenceAlarm_table.cols.REMINDER_ID + "=?",
+                new String[]{alarmID, reminderID});
+
+        if(noOfRowsAffected>0){
+            Log.d(TAG,"saveGeoFenceAlarm, noOfRowsAffected "+noOfRowsAffected+" exiting");
+            return;
+        }
+        Log.d(TAG,"attempting to insert");
+        values.put("meterRadius","100");
+        db.insert(DBSchema.geoFenceAlarm_table.NAME,
+                null,
+                values);
+
+    }
 
 }
 

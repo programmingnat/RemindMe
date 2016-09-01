@@ -25,7 +25,15 @@ public class GeoFenceFragment_Controls extends Fragment implements GeoFenceContr
         createAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.processStreetAddress("301 E. 21st Street, New York, NY 10010");
+                mPresenter.saveGeoFenceCoordinates();
+            }
+        });
+
+        Button enterAddressButton = (Button)view.findViewById(R.id.enterGeoFenceAddress_Button);
+        enterAddressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.requestAddressForGeoFence();
             }
         });
         return view;
@@ -34,5 +42,27 @@ public class GeoFenceFragment_Controls extends Fragment implements GeoFenceContr
     @Override
     public void setPresenter(GeoFenceContract.Presenter presenter) {
         mPresenter=presenter;
+    }
+
+    @Override
+    public void showAddressDialog() {
+        GeoFenceAddressDialogFragment newFragment = new GeoFenceAddressDialogFragment();
+        newFragment.setPresenter(mPresenter);
+        newFragment.show(getActivity().getSupportFragmentManager(), "options");
+    }
+
+    @Override
+    public void showSaveFenceConfirmationDialog() {
+
+    }
+
+    @Override
+    public void showSaveFenceConfirmation() {
+
+    }
+
+    @Override
+    public void showUpdateFenceConfirmation() {
+
     }
 }

@@ -14,10 +14,17 @@ public class GeoFenceContract {
     }
 
     interface ViewWControls extends BaseView<Presenter>{
-
+        void showAddressDialog();
+        void showSaveFenceConfirmationDialog();
+        void showSaveFenceConfirmation();
+        void showUpdateFenceConfirmation();
     }
     interface Presenter extends BasePresenter, CoordinatesResultReceiver.ICoordinateReceiver{
 
-        void processStreetAddress(String address);
+        void processStreetAddress(String address,String city,String state, String zip);
+        void requestAddressForGeoFence();
+        void saveGeoFenceCoordinates();
+        void writeGeoFence();
+
     }
 }

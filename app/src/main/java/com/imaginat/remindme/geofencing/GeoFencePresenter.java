@@ -23,7 +23,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
     private GeoFenceContract.View mView;
     private GeoFenceContract.ViewWControls mViewWControls;
-    private GeoFenceAlarmData mGeoFenceAlarmData;
+    private GeoFenceAlarmData mGeoFenceAlarmData,mNewGeoFence;
     private String mListID,mTaskID;
     private CoordinatesResultReceiver mReceiver;
 
@@ -58,6 +58,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
             mView.setAddressMarker(lastLocation.getLatitude(),lastLocation.getLongitude());
 
+
             /*
             ToDoListItemManager listItemManager = ToDoListItemManager.getInstance(getContext());
             listItemManager.saveGeoFenceAlarm(requestID, reminderID, data);
@@ -78,11 +79,20 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
     }
 
     @Override
-    public void processStreetAddress(String address) {
+    public void processStreetAddress(String streetAddress,String cityAddress,String stateAddress, String zipAddress) {
         if(mReceiver==null){
             mReceiver= new CoordinatesResultReceiver(new Handler());
         }
+
+        //save the info
+        mNewGeoFence.setStreet(streetAddress);
+        mNewGeoFence.setCity(cityAddress);
+        mNewGeoFence.setState(stateAddress);
+        mNewGeoFence.setZipcode(zipAddress);
+
+
         mReceiver.setResult(this);
+        String address=streetAddress+" "+cityAddress+","+stateAddress+" "+zipAddress;
         Context c=  ((Fragment)mView).getContext();
         Intent intent = new Intent(c,FetchCoordinatesIntentService.class);
         intent.putExtra(GlobalConstants.RECEIVER,mReceiver);
@@ -92,6 +102,28 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         intent.putExtra(GlobalConstants.CURRENT_LIST_ID,mListID);
 
         c.startService(intent);
+    }
+
+    @Override
+    public void requestAddressForGeoFence() {
+        mViewWControls.showAddressDialog();
+    }
+
+    @Override
+    public void saveGeoFenceCoordinates() {
+
+        //check if previouly exist, if so confirm
+        if(mGeoFenceAlarmData!=null){
+            mViewWControls.showSaveFenceConfirmationDialog();
+        }else{
+            writeGeoFence();
+        }
+    }
+
+    @Override
+    public void writeGeoFence() {
+        //save to database
+
     }
 
     private String getAlarmID() {
