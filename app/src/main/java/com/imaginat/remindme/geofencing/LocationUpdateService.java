@@ -25,8 +25,10 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.imaginat.remindme.GlobalConstants;
+import com.imaginat.remindme.data.GeoFenceAlarmData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nat on 5/27/16.
@@ -350,19 +352,19 @@ public class LocationUpdateService extends Service
 
     }
 
-    public void populateGeofenceList(ArrayList<FenceData>fenceData) {
+    public void populateGeofenceList(List<GeoFenceAlarmData> fenceData) {
 
-        for ( FenceData f:fenceData) {
+        for ( GeoFenceAlarmData f:fenceData) {
 
             mGeofenceList.add(new Geofence.Builder()
                     // Set the request ID of the geofence. This is a string to identify this
                     // geofence.
-                    .setRequestId(f.tag)
+                    .setRequestId(f.getAlarmTag())
 
                     // Set the circular region of this geofence.
                     .setCircularRegion(
-                            f.latitude,
-                            f.longitude,
+                            f.getLatitude(),
+                            f.getLongitude(),
                             GlobalConstants.GEOFENCE_RADIUS_IN_METERS
                     )
 
@@ -400,6 +402,7 @@ public class LocationUpdateService extends Service
     }
 
     public void onResult(Status status) {
+        Log.d(TAG,"inside onResult");
         if (status.isSuccess()) {
             Log.d(TAG,"Something was successful with Geofence");
             // Update state and save in shared preferences.

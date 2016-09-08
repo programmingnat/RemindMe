@@ -13,10 +13,7 @@ import com.imaginat.remindme.data.ReminderList;
 import com.imaginat.remindme.data.SimpleTaskItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
@@ -135,7 +132,9 @@ public class ListsLocalDataSource {
 //                    null,//having
 //                    null,//order
 //                    null);//limit
-            Cursor c = db.rawQuery("SELECT * FROM "+DBSchema.reminders_table.NAME+" r "+
+            Cursor c = db.rawQuery("SELECT r.reminder_id,r.list_id,r.reminderText,r.isCompleted,r.calendarEventID,"+
+                    " gfa.street,gfa.city,gfa.state,gfa.zipcode,gfa.latitude,gfa.meterRadius,gfa.isAlarmActive,gfa.longitude,gfa.geoFenceAlarm_id,gfa.alarmTag "+
+                    "FROM "+DBSchema.reminders_table.NAME+" r "+
                     "LEFT OUTER JOIN "+DBSchema.geoFenceAlarm_table.NAME+" gfa "+
                     "ON gfa."+DBSchema.geoFenceAlarm_table.cols.REMINDER_ID+"=r."+DBSchema.reminders_table.cols.REMINDER_ID+
                     " WHERE r."+DBSchema.reminders_table.cols.LIST_ID+"=?",new String[]{mListID});
@@ -147,8 +146,12 @@ public class ListsLocalDataSource {
                 int colIndex = c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_TEXT);
                 String text = c.getString(colIndex);
                 //Log.d(TAG, "Adding " + text);
-                SimpleTaskItem sti = new SimpleTaskItem(c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.LIST_ID)),
-                        c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID)));
+                //int listColIndex = c.getColumnIndex(DBSchema.reminders_table.cols.LIST_ID);
+                String listID=c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.LIST_ID));
+                int reminderColIndex = c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID);//"r."+DBSchema.reminders_table.cols.REMINDER_ID);
+                String reminderID=c.getString(reminderColIndex);//c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID));
+                SimpleTaskItem sti = new SimpleTaskItem(listID,reminderID);
+
                 sti.setCompleted(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.IS_COMPLETED))==1?true:false);
                 sti.setText(text);
                 sti.setCalendarEventID(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.CALENDAR_EVENT_ID)));
@@ -177,6 +180,51 @@ public class ListsLocalDataSource {
         }
     }
 
+    //---------------------ALARM--------------
+    public Observable<List<GeoFenceAlarmData>>getAllActiveAlarms(){
+        return mSQLHelper.getAllActiveGeoFenceAlarms(getAllActiveAlarms_Callable());
+    }
+    private GetAlarms_Callable getAllActiveAlarms_Callable() {
+        return new GetAlarms_Callable();
+    }
+    class GetAlarms_Callable implements Callable<List<GeoFenceAlarmData>>{
+
+        @Override
+        public List<GeoFenceAlarmData> call() throws Exception {
+
+            SQLiteDatabase db = mSQLHelper.getReadableDatabase();
+            Cursor c = db.query(DBSchema.geoFenceAlarm_table.NAME, //table
+                    DBSchema.geoFenceAlarm_table.ALL_COLUMNS, //columns
+                    null,//select
+                    null,//selection args
+                    null,//group
+                    null,//having
+                    null,//order
+                    null);//limit
+
+            c.moveToFirst();
+
+            ArrayList<GeoFenceAlarmData> alarms = new ArrayList<>();
+            while (!c.isAfterLast()) {
+                GeoFenceAlarmData alarmData = new GeoFenceAlarmData();
+                alarmData.setAlarmID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID)));
+                alarmData.setReminderID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.REMINDER_ID)));
+                alarmData.setStreet(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.STREET)));
+                alarmData.setCity(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.CITY)));
+                alarmData.setState(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.STATE)));
+                alarmData.setZipcode(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.ZIPCODE)));
+                alarmData.setLatitude(c.getDouble(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.LATITUDE)));
+                alarmData.setLongitude(c.getDouble(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.LONGITUDE)));
+                alarmData.setAlarmTag(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.ALARM_TAG)));
+                alarmData.setMeterRadius(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.RADIUS)));
+                alarmData.setActive(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID))==0?false:true);
+                alarms.add(alarmData);
+                c.moveToNext();
+            }
+            return alarms;
+        }
+    }
+    //=================================================================
     public long createNewTask(String listID,String text){
         ContentValues values = new ContentValues();
         values.put(DBSchema.reminders_table.cols.LIST_ID,listID);
@@ -227,32 +275,31 @@ public class ListsLocalDataSource {
                 new String[]{listID, reminderID});
     }
 
-    public void saveGeoFenceAlarm(String alarmID, String reminderID, HashMap<String,String> data){
+    public void saveGeoFenceAlarm(String alarmID,String reminderID,ContentValues values){
         Log.d(TAG,"saveGeoFenceAlarm Called");
 
-        ContentValues values = new ContentValues();
-        Iterator it = data.entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry pair = (Map.Entry)it.next();
-            values.put((String)pair.getKey(),(String)pair.getValue());
-        }
+
 
         Log.d(TAG,"attempting to update first WHERE ALARM_TAG is "+alarmID+" and reminderID is "+reminderID);
         SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+
+        if(alarmID==null){
+            db.insert(DBSchema.geoFenceAlarm_table.NAME,
+                    null,
+                    values);
+            return;
+        }
+
         int noOfRowsAffected=db.update(DBSchema.geoFenceAlarm_table.NAME,
                 values,
-                DBSchema.geoFenceAlarm_table.cols.ALARM_TAG + "=? AND " + DBSchema.geoFenceAlarm_table.cols.REMINDER_ID + "=?",
+                DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID + "=? AND " + DBSchema.geoFenceAlarm_table.cols.REMINDER_ID + "=?",
                 new String[]{alarmID, reminderID});
 
         if(noOfRowsAffected>0){
             Log.d(TAG,"saveGeoFenceAlarm, noOfRowsAffected "+noOfRowsAffected+" exiting");
             return;
         }
-        Log.d(TAG,"attempting to insert");
-        values.put("meterRadius","100");
-        db.insert(DBSchema.geoFenceAlarm_table.NAME,
-                null,
-                values);
+
 
     }
 

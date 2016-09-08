@@ -9,10 +9,16 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.imaginat.remindme.GlobalConstants;
+import com.imaginat.remindme.RemindMeApplication;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.source.local.DBSchema;
+import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
 
 import java.util.HashMap;
+import java.util.List;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * Created by nat on 8/30/16.
@@ -21,9 +27,11 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
     private static final String TAG= GeoFencePresenter.class.getSimpleName();
 
+    public static final String GEOFENCE = "GEO";
+
     private GeoFenceContract.View mView;
     private GeoFenceContract.ViewWControls mViewWControls;
-    private GeoFenceAlarmData mGeoFenceAlarmData,mNewGeoFence;
+    private GeoFenceAlarmData mGeoFenceAlarmData,mNewGeoFenceData;
     private String mListID,mTaskID;
     private CoordinatesResultReceiver mReceiver;
 
@@ -33,6 +41,21 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         mView=view;
         mViewWControls = controls;
         mGeoFenceAlarmData=alarmData;
+
+
+    }
+
+
+    @Override
+    public void passInitialInfo() {
+       // mViewWControls.setButtonTexts(false,true);
+        if(mGeoFenceAlarmData!=null) {
+            mView.setAddressMarker(mGeoFenceAlarmData.getLatitude(), mGeoFenceAlarmData.getLongitude());
+            mViewWControls.setButtonTexts(mGeoFenceAlarmData==null,mGeoFenceAlarmData.isActive());
+        }else{
+            mViewWControls.setButtonTexts(false,false);
+        }
+
     }
 
     @Override
@@ -58,6 +81,11 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
             mView.setAddressMarker(lastLocation.getLatitude(),lastLocation.getLongitude());
 
+            if(mNewGeoFenceData==null){
+                mNewGeoFenceData = new GeoFenceAlarmData();
+            }
+            mNewGeoFenceData.setLatitude(lastLocation.getLatitude());
+            mNewGeoFenceData.setLongitude(lastLocation.getLongitude());
 
             /*
             ToDoListItemManager listItemManager = ToDoListItemManager.getInstance(getContext());
@@ -84,11 +112,18 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             mReceiver= new CoordinatesResultReceiver(new Handler());
         }
 
+        if(mNewGeoFenceData==null){
+            mNewGeoFenceData = new GeoFenceAlarmData();
+        }
+
         //save the info
-        mNewGeoFence.setStreet(streetAddress);
-        mNewGeoFence.setCity(cityAddress);
-        mNewGeoFence.setState(stateAddress);
-        mNewGeoFence.setZipcode(zipAddress);
+        mNewGeoFenceData.setReminderID(mTaskID);
+        mNewGeoFenceData.setAlarmTag(getAlarmTag());
+        mNewGeoFenceData.setStreet(streetAddress);
+        mNewGeoFenceData.setCity(cityAddress);
+        mNewGeoFenceData.setState(stateAddress);
+        mNewGeoFenceData.setZipcode(zipAddress);
+
 
 
         mReceiver.setResult(this);
@@ -97,7 +132,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         Intent intent = new Intent(c,FetchCoordinatesIntentService.class);
         intent.putExtra(GlobalConstants.RECEIVER,mReceiver);
         intent.putExtra(GlobalConstants.LOCATION_DATA_EXTRA,address);
-        intent.putExtra(GlobalConstants.ALARM_TAG,getAlarmID());
+        intent.putExtra(GlobalConstants.ALARM_TAG,getAlarmTag());
         intent.putExtra(GlobalConstants.CURRENT_TASK_ID,mTaskID);
         intent.putExtra(GlobalConstants.CURRENT_LIST_ID,mListID);
 
@@ -123,12 +158,63 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
     @Override
     public void writeGeoFence() {
         //save to database
+        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment) mViewWControls).getContext());
+        String alarmID = null;
+
+        if(mNewGeoFenceData.getAlarmID()!=null){
+            alarmID=mNewGeoFenceData.getAlarmID();
+        }else if(mGeoFenceAlarmData!=null){
+            alarmID=mGeoFenceAlarmData.getAlarmID();
+        }
+        llds.saveGeoFenceAlarm(alarmID,mNewGeoFenceData.getReminderID(),mNewGeoFenceData.getAsContentValues());
+
+        //Get reference to the item (in order to get the text & any other info)
+        //ToDoListItem toDoItem = listItemManager.getSingleListItem(listID, reminderID);
+
+        //now get refence
+        RemindMeApplication remindMeApplication = (RemindMeApplication)((Fragment)mView).getActivity().getApplicationContext();
+        remindMeApplication.requestStartOfLocationUpdateService();
+        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+        locationUpdateService.addToGeoFenceList("TEXT TO BE REPLACED",mNewGeoFenceData.getLatitude(),mNewGeoFenceData.getLongitude());
+
+        llds.getAllActiveAlarms()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<GeoFenceAlarmData>>() {
+                    @Override
+                    public void call(List<GeoFenceAlarmData> geoFenceAlarmDataList) {
+
+
+                        if(geoFenceAlarmDataList==null){
+                            Log.d(TAG,"Inside call() geoFenceAlarmDataList is null");
+                        }else{
+                            Log.d(TAG,"Inside call() found "+geoFenceAlarmDataList.size()+" results");
+                        }
+
+                        RemindMeApplication remindMeApplication = (RemindMeApplication)((Fragment)mView).getActivity().getApplicationContext();
+                        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+                        locationUpdateService.populateGeofenceList(geoFenceAlarmDataList);
+                        locationUpdateService.addGeofences(createAlarmTag());
+
+                    }
+
+                });
+
+
 
     }
 
-    private String getAlarmID() {
+    private String getAlarmTag() {
 
         return "_L" + mListID + "I" + mTaskID + "GEOFENCE";
+    }
+    private int createAlarmTag() {
+        String result = getAlarmTag();
+        int strlen = result.length();
+        int hash = 7;
+        for (int i = 0; i < strlen; i++) {
+            hash = hash * 31 + result.charAt(i);
+        }
+        return hash;
     }
     @Override
     public void start() {

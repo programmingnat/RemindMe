@@ -1,7 +1,10 @@
 package com.imaginat.remindme.data;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.imaginat.remindme.data.source.local.DBSchema;
 
 /**
  * Created by nat on 8/31/16.
@@ -26,6 +29,23 @@ public class GeoFenceAlarmData implements Parcelable {
         mIsActive = in.readByte() != 0;
     }
 
+    public ContentValues getAsContentValues(){
+
+        ContentValues contentValues = new ContentValues();
+        //hashMapValues.put(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID,mAlarmID);
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.REMINDER_ID,mReminderID);
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.STREET,mStreet);
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.CITY,mCity);
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.STATE,mState);
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.ZIPCODE,mZipcode);
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.LATITUDE,Double.toString(mLatitude));
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.LONGITUDE,Double.toString(mLongitude));
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.RADIUS,Integer.toString(mMeterRadius));
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.ALARM_TAG,mAlarmTag);
+        //contentValues.put(DBSchema.geoFenceAlarm_table.cols.IS_ACTIVE,Integer.toString(mIsActive?0:1));
+        return contentValues;
+
+    }
     public static final Creator<GeoFenceAlarmData> CREATOR = new Creator<GeoFenceAlarmData>() {
         @Override
         public GeoFenceAlarmData createFromParcel(Parcel in) {
@@ -49,7 +69,7 @@ public class GeoFenceAlarmData implements Parcelable {
     private String mReminderID;
     private String mStreet,mCity,mState,mZipcode;
     private double mLongitude, mLatitude;
-    private int mMeterRadius;
+    private int mMeterRadius=100;
     private String mAlarmTag;
     private boolean mIsActive;
 

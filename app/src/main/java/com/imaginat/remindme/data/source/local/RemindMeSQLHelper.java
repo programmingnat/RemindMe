@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 import com.imaginat.remindme.data.ReminderList;
 
@@ -60,6 +61,9 @@ public class RemindMeSQLHelper extends SQLiteOpenHelper {
         return makeObservable((Callable)func);
     }
 
+    Observable<List<GeoFenceAlarmData>>getAllActiveGeoFenceAlarms(ListsLocalDataSource.GetAlarms_Callable func){
+        return makeObservable((Callable)func);
+    }
 
 
     ///HELPER METHOD////////////////////////////////////////////////////////

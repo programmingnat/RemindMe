@@ -9,11 +9,10 @@ import android.util.Log;
 
 import com.imaginat.remindme.BaseActivity;
 import com.imaginat.remindme.R;
-import com.imaginat.remindme.data.ReminderList;
 
 public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
 
-    private static final String TAG = ReminderList.class.getSimpleName();
+    private static final String TAG = ReminderListMain.class.getSimpleName();
 
     ReminderListsContract.Presenter mReminderListsPresenter=null;
     ReminderListsFragment mReminderListsFragment=null;
@@ -61,7 +60,6 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
             loadPermissions(Manifest.permission.READ_CALENDAR,REQUEST_WRITE_CALENDAR);
             loadPermissions(Manifest.permission.ACCESS_FINE_LOCATION,POSITION_FINE);
             loadPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,POSITION_COARSE);
-
 
 
     }

@@ -2,4 +2,7 @@
     <string name="app_name">RemindMe</string>
     <string name="google_app_id">@string/google_api_key</string>
     <string name="appID">@string/app_id</string>
+    <string name="confirmGeoFence">Please confirm you want to create this new geofence (overwrite any previous)</string>
+    <string name="create_geo_button">Yes, create it</string>
+    <string name="cancel_geo_button">No, cancel it</string>
 </resources>

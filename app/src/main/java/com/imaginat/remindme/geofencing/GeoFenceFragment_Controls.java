@@ -7,13 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.imaginat.remindme.R;
 
 /**
  * Created by nat on 8/31/16.
  */
-public class GeoFenceFragment_Controls extends Fragment implements GeoFenceContract.ViewWControls {
+public class GeoFenceFragment_Controls extends Fragment
+        implements GeoFenceContract.ViewWControls,GeoFenceConfirmDialog.GeoFenceConfirmDialogListener {
 
     GeoFenceContract.Presenter mPresenter;
     @Nullable
@@ -40,6 +42,12 @@ public class GeoFenceFragment_Controls extends Fragment implements GeoFenceContr
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mPresenter.passInitialInfo();
+    }
+
+    @Override
     public void setPresenter(GeoFenceContract.Presenter presenter) {
         mPresenter=presenter;
     }
@@ -53,7 +61,9 @@ public class GeoFenceFragment_Controls extends Fragment implements GeoFenceContr
 
     @Override
     public void showSaveFenceConfirmationDialog() {
-
+        GeoFenceConfirmDialog newFragment = new GeoFenceConfirmDialog();
+        newFragment.setListener(this);
+        newFragment.show(getActivity().getSupportFragmentManager(), "CONFIRM");
     }
 
     @Override
@@ -64,5 +74,33 @@ public class GeoFenceFragment_Controls extends Fragment implements GeoFenceContr
     @Override
     public void showUpdateFenceConfirmation() {
 
+    }
+
+    @Override
+    public void geoFenceCreationConfirmed() {
+        mPresenter.writeGeoFence();
+    }
+
+    @Override
+    public void geoFenceCreationCancelled() {
+        Toast.makeText(getContext(),"creation cancelled",Toast.LENGTH_LONG).show();
+    }
+
+
+    public void setButtonTexts(boolean update,boolean isOn){
+        Button createGeoFenceButton = (Button)getView().findViewById(R.id.createGeoFence_Button);
+        Button toggleGeoFenceButton = (Button)getView().findViewById(R.id.toggleGeoFence_Button);
+        if(update){
+            createGeoFenceButton.setText("update fence");
+        }else{
+            createGeoFenceButton.setText("create fence");
+        }
+
+
+        if(isOn){
+            toggleGeoFenceButton.setText("OFF");
+        }else{
+            toggleGeoFenceButton.setText("ON");
+        }
     }
 }

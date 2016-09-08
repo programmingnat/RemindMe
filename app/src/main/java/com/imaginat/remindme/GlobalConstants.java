@@ -9,6 +9,7 @@ public class GlobalConstants {
     //GENERAL
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
+    public static final String PREFERENCES="ToDoListPreferences";
 
 
     public static final String PACKAGE_NAME = "com.imaginat.remindme";
@@ -43,6 +44,7 @@ public class GlobalConstants {
     public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS =
             GEOFENCE_EXPIRATION_IN_HOURS * 60 * 60 * 1000;
     public static final float GEOFENCE_RADIUS_IN_METERS = 200; // 1 mile, 1.6 km
+    public static final String GEO_ALARM_COUNT="numberOfGeoAlarmsActivated";
 
 
 
