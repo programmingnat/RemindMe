@@ -2,6 +2,7 @@ package com.imaginat.remindme.geofencing;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,13 +39,21 @@ public class GeoFenceFragment_Controls extends Fragment
                 mPresenter.requestAddressForGeoFence();
             }
         });
+
+        Button toggleGeoFence = (Button)view.findViewById(R.id.toggleGeoFence_Button);
+        toggleGeoFence.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.deactivateGeoFence();
+            }
+        });
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenter.passInitialInfo();
+        mPresenter.setUpForCurrentGeoAddressData(null);
     }
 
     @Override
@@ -87,20 +96,35 @@ public class GeoFenceFragment_Controls extends Fragment
     }
 
 
+
+    /*
+        Set the text (create vs update & cancel) of the controls based on whether or not a previous Fence exists
+     */
     public void setButtonTexts(boolean update,boolean isOn){
         Button createGeoFenceButton = (Button)getView().findViewById(R.id.createGeoFence_Button);
         Button toggleGeoFenceButton = (Button)getView().findViewById(R.id.toggleGeoFence_Button);
         if(update){
-            createGeoFenceButton.setText("update fence");
+            createGeoFenceButton.setText("UPDATE");
         }else{
-            createGeoFenceButton.setText("create fence");
+            createGeoFenceButton.setText("CREATE");
         }
 
 
         if(isOn){
-            toggleGeoFenceButton.setText("OFF");
+            toggleGeoFenceButton.setText("TURN OFF FENCE");
+            toggleGeoFenceButton.setEnabled(true);
+            toggleGeoFenceButton.setVisibility(View.VISIBLE);
         }else{
-            toggleGeoFenceButton.setText("ON");
+            toggleGeoFenceButton.setEnabled(false);
+            toggleGeoFenceButton.setVisibility(View.GONE);
+            //toggleGeoFenceButton.setText("TURN FENCE ON");
         }
+    }
+
+    @Override
+    public void showActiveStateChange(boolean newState) {
+        String message = newState?getResources().getString(R.string.geo_state_active_msg):getResources().getString(R.string.geo_state_deactive_msg);
+        Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
+
     }
 }

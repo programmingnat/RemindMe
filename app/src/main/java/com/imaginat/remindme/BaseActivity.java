@@ -1,6 +1,5 @@
 package com.imaginat.remindme;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,8 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-import com.imaginat.remindme.geofencing.LocationUpdateService;
 
 /**
  * Created by nat on 8/12/16.
@@ -118,11 +115,17 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
                 return true;
             case R.id.testStopService:
                 Log.d(TAG, "stopService selected");
-                Intent stopServiceIntent = new Intent(BaseActivity.this, LocationUpdateService.class);
-                stopService(stopServiceIntent);
+
+                remindMeApp.requestStopOfLocationUpdateService();
+                //LocationUpdateService lus=remindMeApp.getServiceReference();
+
+                //lus.stopIt();
+                //Intent stopServiceIntent = new Intent(BaseActivity.this, LocationUpdateService.class);
+                //stopService(stopServiceIntent);
                 return true;
             case R.id.testIsServiceRunning:
                 //RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
+
                 remindMeApp.isServiceRunning();
                 return true;
 

@@ -13,9 +13,7 @@ import android.widget.Toast;
 
 import com.imaginat.remindme.geofencing.LocationUpdateService;
 
-/**
- * Created by nat on 9/4/16.
- */
+
 public class RemindMeApplication extends Application {
 
     private static final String TAG = RemindMeApplication.class.getSimpleName();
@@ -33,6 +31,7 @@ public class RemindMeApplication extends Application {
 
         //shared preferences
         mSharedPreferences = getSharedPreferences(GlobalConstants.PREFERENCES, Context.MODE_PRIVATE);
+
 
     }
 
@@ -58,16 +57,16 @@ public class RemindMeApplication extends Application {
                 //start up the service
                 Intent startUpServiceIntent = new Intent(this, LocationUpdateService.class);
                 startService(startUpServiceIntent);
-                mServiceConnection=new MyServiceConnection();
-                bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+                //mServiceConnection=new MyServiceConnection();
+                //bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
             }
         } else {
             //service is already up and running, now bind if not already bound
             if (mLocationUpdateServiceBound == false) {
                 Intent boundIntent = new Intent(this, LocationUpdateService.class);
-                mServiceConnection=new MyServiceConnection();
-                bindService(boundIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+                //mServiceConnection=new MyServiceConnection();
+                //bindService(boundIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
             }
         }
 
@@ -131,6 +130,9 @@ public class RemindMeApplication extends Application {
         currentTotal--;
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt(GlobalConstants.GEO_ALARM_COUNT, currentTotal);
+        stopService(new Intent(RemindMeApplication.this,LocationUpdateService.class));
+        //mLocationUpdateService.stopSelf();
+        //mLocationUpdateService.unbindService(mServiceConnection);
     }
     //==========================================================================
     private class MyServiceConnection implements ServiceConnection {

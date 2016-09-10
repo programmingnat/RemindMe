@@ -62,11 +62,19 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
             loadPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,POSITION_COARSE);
 
 
+            //get permission to turn on location services (if it is not turned on)
+
+            //start up location service if it didnt occur yet (and is necessary)
+            //RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
+            //remindMeApp.startServiceAsNeeded();
+
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         Log.d(TAG,"onDestroy called");
     }
 

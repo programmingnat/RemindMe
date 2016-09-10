@@ -15,6 +15,20 @@ public class GeoFenceAlarmData implements Parcelable {
     public GeoFenceAlarmData(){
 
     }
+
+    public GeoFenceAlarmData(final GeoFenceAlarmData geoData){
+        mAlarmID = geoData.getAlarmID();
+        mReminderID = geoData.getReminderID();
+        mStreet = geoData.getStreet();
+        mCity = geoData.getCity();
+        mState = geoData.getState();
+        mZipcode = geoData.getZipcode();
+        mLongitude = geoData.getLongitude();
+        mLatitude = geoData.getLatitude();
+        mMeterRadius = geoData.getMeterRadius();
+        mAlarmTag = geoData.getAlarmTag();
+        mIsActive = geoData.isActive();
+    }
     protected GeoFenceAlarmData(Parcel in) {
         mAlarmID = in.readString();
         mReminderID = in.readString();
@@ -42,7 +56,7 @@ public class GeoFenceAlarmData implements Parcelable {
         contentValues.put(DBSchema.geoFenceAlarm_table.cols.LONGITUDE,Double.toString(mLongitude));
         contentValues.put(DBSchema.geoFenceAlarm_table.cols.RADIUS,Integer.toString(mMeterRadius));
         contentValues.put(DBSchema.geoFenceAlarm_table.cols.ALARM_TAG,mAlarmTag);
-        //contentValues.put(DBSchema.geoFenceAlarm_table.cols.IS_ACTIVE,Integer.toString(mIsActive?0:1));
+        contentValues.put(DBSchema.geoFenceAlarm_table.cols.IS_ACTIVE,Integer.toString(mIsActive?1:0));
         return contentValues;
 
     }

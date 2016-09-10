@@ -89,6 +89,7 @@ public class LocationUpdateService extends Service
 
     }
 
+
     /**
      * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the LocationServices API.
      */
@@ -122,6 +123,7 @@ public class LocationUpdateService extends Service
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG,"onDestroy called");
         stopLocationUpdates();
         mGoogleApiClient.disconnect();
         mGoogleApiClient=null;
@@ -431,6 +433,13 @@ public class LocationUpdateService extends Service
 
     @Override
     public void onLocationChanged(Location location) {
+        mCurrentLocation=location;
+    }
 
+
+    public void stopIt(){
+        Log.d(TAG,"stopIt called");
+
+        stopSelf();
     }
 }

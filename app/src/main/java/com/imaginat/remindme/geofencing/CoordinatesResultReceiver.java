@@ -9,11 +9,10 @@ import android.util.Log;
 
 import com.imaginat.remindme.GlobalConstants;
 
-/**
- * Created by nat on 8/30/16.
- */
+
 @SuppressLint("ParcelCreator")
 public class CoordinatesResultReceiver extends ResultReceiver {
+
     public interface ICoordinateReceiver {
         public void onReceiveCoordinatesResult(int resultCode, Bundle resultData);
 
@@ -37,6 +36,7 @@ public class CoordinatesResultReceiver extends ResultReceiver {
     public void setResult(ICoordinateReceiver receiver){
         mIReceiver = receiver;
     }
+
     /**
      * Receives data sent from FetchAddressIntentService and updates the UI in MainActivity.
      */

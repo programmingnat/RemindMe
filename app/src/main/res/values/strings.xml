@@ -5,4 +5,6 @@
     <string name="confirmGeoFence">Please confirm you want to create this new geofence (overwrite any previous)</string>
     <string name="create_geo_button">Yes, create it</string>
     <string name="cancel_geo_button">No, cancel it</string>
+    <string name="geo_state_active_msg">GeoFence has been activated</string>
+    <string name="geo_state_deactive_msg">GeoFence has been deactivated</string>
 </resources>

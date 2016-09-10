@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -28,7 +27,7 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
 
     private GeoFenceContract.Presenter mPresenter;
     private  final static String TAG=GeoFenceFragment.class.getSimpleName();
-    MapView mMapView;
+
     GoogleMap mGoogleMap;
     private View rootView;
     private SupportMapFragment fragment;
@@ -73,7 +72,6 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
     @Override
     public void setPresenter(GeoFenceContract.Presenter presenter) {
         mPresenter=presenter;
-        //
     }
 
 

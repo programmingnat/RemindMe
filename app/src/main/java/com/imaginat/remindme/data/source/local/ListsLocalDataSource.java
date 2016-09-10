@@ -19,21 +19,23 @@ import java.util.concurrent.Callable;
 import rx.Observable;
 
 /**
- * Created by nat on 8/8/16.
+ *  This class gets the data from the local database and sends it usually in an ArrayList to caller
+ *  The methods here return a Callable so that the data can be used with RXJava/Android
  */
 public class ListsLocalDataSource {
 
     private static final String TAG = ListsLocalDataSource.class.getSimpleName();
 
-
     private RemindMeSQLHelper mSQLHelper;
+
     private static ListsLocalDataSource mInstance;
+
 
     private ListsLocalDataSource(@NonNull Context context) {
         mSQLHelper = RemindMeSQLHelper.getInstance(context);
-
     }
 
+    /*----------get a reference to the singleton instance------*/
     public static ListsLocalDataSource getInstance(Context c) {
         if (mInstance == null) {
             mInstance = new ListsLocalDataSource(c);
@@ -41,7 +43,7 @@ public class ListsLocalDataSource {
         return mInstance;
     }
 
-    //////////////LIST OF LISTS RELATED//////////////////////////////////
+    //////////////LIST OF LISTS RELATED (calls to get information about the lists in the apps)//////////////////////////////////
     private Callable<List<ReminderList>> getAllListTitles_Callable() {
         return new Callable<List<ReminderList>>() {
             @Override
@@ -103,10 +105,11 @@ public class ListsLocalDataSource {
                 values);
         return Long.toString(id);
     }
-    ////////////////// TASK RELATED /////////////////////
+    ////////////////// TASK RELATED DATABASE CALLS (gets the individual reminders/task in a list)/////////////////////
     public Observable<List<ITaskItem>>getAllTasks(String listID){
         return mSQLHelper.getAllTasks(getAllTasks_Callable(listID));
     }
+
     private GetTasks_Callable getAllTasks_Callable(String listID) {
         return new GetTasks_Callable(listID);
     }
@@ -132,6 +135,7 @@ public class ListsLocalDataSource {
 //                    null,//having
 //                    null,//order
 //                    null);//limit
+
             Cursor c = db.rawQuery("SELECT r.reminder_id,r.list_id,r.reminderText,r.isCompleted,r.calendarEventID,"+
                     " gfa.street,gfa.city,gfa.state,gfa.zipcode,gfa.latitude,gfa.meterRadius,gfa.isAlarmActive,gfa.longitude,gfa.geoFenceAlarm_id,gfa.alarmTag "+
                     "FROM "+DBSchema.reminders_table.NAME+" r "+
@@ -160,17 +164,25 @@ public class ListsLocalDataSource {
                 //GEO FENCE DATA (if applicable)
                 if(c.getString(c.getColumnIndex("alarmTag"))!=null){
                     GeoFenceAlarmData geoFenceAlarmData = new GeoFenceAlarmData();
+                    //alarm id
                     geoFenceAlarmData.setAlarmID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID)));
+                    //reminder id
                     geoFenceAlarmData.setReminderID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.REMINDER_ID)));
+                    //address fields
                     geoFenceAlarmData.setStreet(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.STREET)));
                     geoFenceAlarmData.setCity(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.CITY)));
                     geoFenceAlarmData.setState(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.STATE)));
                     geoFenceAlarmData.setZipcode(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.ZIPCODE)));
+                    //coordinates
                     geoFenceAlarmData.setLongitude(c.getDouble(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.LONGITUDE)));
                     geoFenceAlarmData.setLatitude(c.getDouble(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.LATITUDE)));
+                    //tag to id
                     geoFenceAlarmData.setAlarmTag(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.ALARM_TAG)));
+                    //radius of geofence
                     geoFenceAlarmData.setMeterRadius(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.RADIUS)));
-                    geoFenceAlarmData.setActive(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID))==0?true:false);
+                    //alarm state (active/not)
+                    geoFenceAlarmData.setActive(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.IS_ACTIVE))==0?false:true);
+
                     sti.setGeoFenceAlarmData(geoFenceAlarmData);
                 }
                 c.moveToNext();
@@ -180,13 +192,15 @@ public class ListsLocalDataSource {
         }
     }
 
-    //---------------------ALARM--------------
+    //========================ALARM=======================================
     public Observable<List<GeoFenceAlarmData>>getAllActiveAlarms(){
         return mSQLHelper.getAllActiveGeoFenceAlarms(getAllActiveAlarms_Callable());
     }
     private GetAlarms_Callable getAllActiveAlarms_Callable() {
         return new GetAlarms_Callable();
     }
+
+
     class GetAlarms_Callable implements Callable<List<GeoFenceAlarmData>>{
 
         @Override
@@ -204,9 +218,12 @@ public class ListsLocalDataSource {
 
             c.moveToFirst();
 
+
+            //Loop through results, and pull values from each column
             ArrayList<GeoFenceAlarmData> alarms = new ArrayList<>();
             while (!c.isAfterLast()) {
                 GeoFenceAlarmData alarmData = new GeoFenceAlarmData();
+                //alarm id
                 alarmData.setAlarmID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID)));
                 alarmData.setReminderID(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.REMINDER_ID)));
                 alarmData.setStreet(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.STREET)));
@@ -217,14 +234,16 @@ public class ListsLocalDataSource {
                 alarmData.setLongitude(c.getDouble(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.LONGITUDE)));
                 alarmData.setAlarmTag(c.getString(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.ALARM_TAG)));
                 alarmData.setMeterRadius(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.RADIUS)));
-                alarmData.setActive(c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.GEOFENCE_ALARM_ID))==0?false:true);
+                int isActive=c.getInt(c.getColumnIndex(DBSchema.geoFenceAlarm_table.cols.IS_ACTIVE));
+                Log.d(TAG,"geo fence is "+isActive);
+                alarmData.setActive(isActive==0?false:true);
                 alarms.add(alarmData);
                 c.moveToNext();
             }
             return alarms;
         }
     }
-    //=================================================================
+    //===================CREATE UPDATE DELETE REMINDERS==============================================
     public long createNewTask(String listID,String text){
         ContentValues values = new ContentValues();
         values.put(DBSchema.reminders_table.cols.LIST_ID,listID);
@@ -280,7 +299,7 @@ public class ListsLocalDataSource {
 
 
 
-        Log.d(TAG,"attempting to update first WHERE ALARM_TAG is "+alarmID+" and reminderID is "+reminderID);
+        Log.d(TAG,"attempting to update first WHERE alarmID is "+alarmID+" and reminderID is "+reminderID);
         SQLiteDatabase db= mSQLHelper.getWritableDatabase();
 
         if(alarmID==null){
