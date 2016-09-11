@@ -1,5 +1,6 @@
 package com.imaginat.remindme.geofencing;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.imaginat.remindme.BasePresenter;
 import com.imaginat.remindme.BaseView;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
@@ -12,6 +13,7 @@ public class GeoFenceContract {
 
     interface View extends BaseView<Presenter>{
         void setAddressMarker(double lat,double longitude);
+        void setLocation(LatLng ll);
     }
 
     interface ViewWControls extends BaseView<Presenter>{

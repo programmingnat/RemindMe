@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.imaginat.remindme.BaseActivity;
 import com.imaginat.remindme.GlobalConstants;
@@ -18,6 +17,9 @@ public class GeoFencingActivity extends BaseActivity<GeoFenceFragment> {
 
     private static final String TAG = GeoFencingActivity.class.getSimpleName();
 
+    //TAGS to track the fragments
+    private static final String TAG_MAP_FRAGMENT = "map_fragment";
+    private static final String TAG_CONTROLS_FRAGMENT = "control_fragment";
 
     @Override
     public int getLayoutID() {
@@ -50,25 +52,41 @@ public class GeoFencingActivity extends BaseActivity<GeoFenceFragment> {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(getLayoutID());
-        Log.d(TAG,"onCreate");
+
         //set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
-        GeoFenceFragment fragment = getFragment();
+
         //Fragment (View)
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.my_frame, fragment);
-        fragmentTransaction.commit();
+
+        GeoFenceFragment fragment=null;
+        fragment = (GeoFenceFragment)fragmentManager.findFragmentByTag(TAG_MAP_FRAGMENT);
+        if(fragment==null){
+            fragment = getFragment();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.my_frame, fragment,TAG_MAP_FRAGMENT);
+            fragmentTransaction.commit();
+        }
 
 
-        GeoFenceFragment_Controls fragmentControls = new GeoFenceFragment_Controls();
-        FragmentTransaction fragmentTransaction2 = fragmentManager.beginTransaction();
-        fragmentTransaction2.add(R.id.my_frame2, fragmentControls);
-        fragmentTransaction2.commit();
+
+
+        GeoFenceFragment_Controls fragmentControls =null;
+        fragmentControls = (GeoFenceFragment_Controls)fragmentManager.findFragmentByTag(TAG_CONTROLS_FRAGMENT);
+        if(fragmentControls==null){
+            fragmentControls = new GeoFenceFragment_Controls();
+            FragmentTransaction fragmentTransaction2 = fragmentManager.beginTransaction();
+            fragmentTransaction2.add(R.id.my_frame2, fragmentControls,TAG_CONTROLS_FRAGMENT);
+            fragmentTransaction2.commit();
+        }
+
+
 
         //Set up the presenter
         createPresenter(fragment,fragmentControls);

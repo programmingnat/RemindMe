@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.RemindMeApplication;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
@@ -74,11 +75,23 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             alarmData=mGeoFenceAlarmData;
         }
 
+        RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment)mView).getActivity().getApplicationContext();
+        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+        Location location = locationUpdateService.getCurrentLocation();
+
         if (alarmData != null) {
-            mView.setAddressMarker(alarmData.getLatitude(), alarmData.getLongitude());
-            mViewWControls.setButtonTexts(alarmData == null?false:true, alarmData.isActive());
+
+            mViewWControls.setButtonTexts(true, alarmData.isActive());
+            if(alarmData.isActive()){
+                mView.setAddressMarker(alarmData.getLatitude(), alarmData.getLongitude());
+            }else{
+               // mView.setAddressMarker(location.getLatitude(), location.getLongitude());
+                mView.setLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+            }
         } else {
+            //tell the controls there is no prevous data, and the alarm is not active
             mViewWControls.setButtonTexts(false, false);
+            mView.setLocation(new LatLng(location.getLatitude(), location.getLongitude()));
         }
 
     }

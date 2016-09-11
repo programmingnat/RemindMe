@@ -1,5 +1,6 @@
 package com.imaginat.remindme.geofencing;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -56,7 +57,7 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
         super.onResume();
         Log.d(TAG,"onResume");
         if(mPresenter!=null) {
-            Log.d(TAG,"onReumse calls mPresenter.start");
+            Log.d(TAG,"onResume calls mPresenter.start");
             mPresenter.start();
         }
 
@@ -76,28 +77,34 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+    }
+
+    @Override
     public void setPresenter(GeoFenceContract.Presenter presenter) {
         mPresenter=presenter;
     }
 
 
+    /**
+     *
+     * initiated w call to getMapAsync, and called when map is ready
+     */
     @Override
     public void onMapReady(GoogleMap map) throws SecurityException{
 
-        Log.d(TAG,"onMapReady");
-
+        //store reference to the map (for later use)
         mGoogleMap = map;
 
-
-
-
+        //Get ref to location service for coordinates
         RemindMeApplication remindMeApplication = (RemindMeApplication) this.getActivity().getApplicationContext();
-        remindMeApplication.requestStartOfLocationUpdateService();
         LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
         Location location = locationUpdateService.getCurrentLocation();
-        //remindMeApplication.requestStopOfLocationUpdateService();
 
 
+        //Move camera and add marker
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(location.getLatitude() ,location.getLongitude() ), 16));
         map.addMarker(new MarkerOptions()
@@ -111,6 +118,7 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
             mPresenter.start();
         }
 
+
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -122,20 +130,39 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
     }
 
 
-    @Override
-    public void setAddressMarker(double latitude, double longitude) throws SecurityException {
-        LatLng ll = new LatLng(latitude, longitude);
-        setAddressMarker(ll);
-    }
-    public void setAddressMarker(LatLng ll){
 
-        Log.d(TAG,"inside setAddressMarker");
+    /**
+     *
+     * Set the map to center to user's current location (if no geofence is set)
+     */
+    public void setLocation(LatLng ll){
+
         if(mGoogleMap==null){
             Log.d(TAG,"inside set AdressMarker, goni to return null");
             return;
         }
 
-        Log.d(TAG,"AddressMarker continues!");
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                ll, 16));
+    }
+
+    /**
+     *
+     * set the marker of the geofence (when it is set and active)
+     */
+    @Override
+    public void setAddressMarker(double latitude, double longitude) throws SecurityException {
+        LatLng ll = new LatLng(latitude, longitude);
+        setAddressMarker(ll);
+    }
+
+    public void setAddressMarker(LatLng ll){
+
+        if(mGoogleMap==null){
+            Log.d(TAG,"inside set AdressMarker, goni to return null");
+            return;
+        }
+
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(ll).title("MARK"));

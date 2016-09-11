@@ -26,8 +26,13 @@ public class GeoFenceFragment_Controls extends Fragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
+
+        //Inflate the layout
         View view = inflater.inflate(R.layout.geofence_fragment_controls, container, false);
 
+        //get reference to buttons and set listeners
         Button createAlarmButton = (Button)view.findViewById(R.id.createGeoFence_Button);
         createAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,21 +49,34 @@ public class GeoFenceFragment_Controls extends Fragment
                 mPresenter.deactivateGeoFence();
             }
         });
+
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
         super.onActivityCreated(savedInstanceState);
+
         mPresenter.setUpForCurrentGeoAddressData(null);
     }
 
     @Override
     public void setPresenter(GeoFenceContract.Presenter presenter) {
+
         mPresenter=presenter;
     }
 
-    //==================METHODS THAT SHOW OR ALTER CURRENTLY EXISTIN GUI=========================
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    //==================METHODS THAT SHOW OR ALTER CURRENT GUI=========================
+
+    /**
+     * show the address box where user enters center of geofence
+     */
     @Override
     public void showAddressDialog() {
         GeoFenceAddressDialogFragment newFragment = new GeoFenceAddressDialogFragment();
@@ -66,6 +84,9 @@ public class GeoFenceFragment_Controls extends Fragment
         newFragment.show(getActivity().getSupportFragmentManager(), "options");
     }
 
+    /**
+     *  show the confirm dialog that would confirm that the user wanats to save the geo fence data
+     */
     @Override
     public void showSaveFenceConfirmationDialog() {
         GeoFenceConfirmDialog newFragment = new GeoFenceConfirmDialog();
@@ -85,15 +106,16 @@ public class GeoFenceFragment_Controls extends Fragment
 
     /**
      *
-    *Set the text (create vs update & cancel) of the controls based on whether or not a previous Fence exists
+    *Set the actual text  (create vs update & cancel) of the controls based on whether or not a previous Fence exists
     */
     public void setButtonTexts(boolean update,boolean isOn){
         Button createGeoFenceButton = (Button)getView().findViewById(R.id.createGeoFence_Button);
         Button toggleGeoFenceButton = (Button)getView().findViewById(R.id.toggleGeoFence_Button);
-        if(update){
-            createGeoFenceButton.setText("ACTIVATE");
+        if(update && isOn){
+            createGeoFenceButton.setText("UPDATE");
         }else{
             createGeoFenceButton.setText("CREATE");
+
         }
 
 
