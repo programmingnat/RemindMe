@@ -17,28 +17,36 @@ import com.imaginat.remindme.geofencing.LocationUpdateService;
 public class RemindMeApplication extends Application {
 
     private static final String TAG = RemindMeApplication.class.getSimpleName();
+
+    //hold a reference to the running service
     LocationUpdateService mLocationUpdateService;
+
+    //flag indicating if the service is bound
     boolean mLocationUpdateServiceBound;
+
+    //class used to bind to service
     MyServiceConnection mServiceConnection;
 
-    //Save options
+    //Save App options and preferences
     private SharedPreferences mSharedPreferences;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-
         //shared preferences
         mSharedPreferences = getSharedPreferences(GlobalConstants.PREFERENCES, Context.MODE_PRIVATE);
-
 
     }
 
     public void startServiceAsNeeded(){
 
+        //Th
+        //If service is not running start it
         //Bind to service (if service is running)
+
         if (isServiceRunning() == false) {
+
             //look in shared preference to see if anybody needs it, if it does start it up
             int totalNoOfSharedPreferences = mSharedPreferences.getInt(GlobalConstants.GEO_ALARM_COUNT, -1);
             //ToDoListItemManager listItemManager = ToDoListItemManager.getInstance(this);
@@ -57,16 +65,16 @@ public class RemindMeApplication extends Application {
                 //start up the service
                 Intent startUpServiceIntent = new Intent(this, LocationUpdateService.class);
                 startService(startUpServiceIntent);
-                //mServiceConnection=new MyServiceConnection();
-                //bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+                mServiceConnection=new MyServiceConnection();
+                bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
             }
         } else {
             //service is already up and running, now bind if not already bound
             if (mLocationUpdateServiceBound == false) {
                 Intent boundIntent = new Intent(this, LocationUpdateService.class);
-                //mServiceConnection=new MyServiceConnection();
-                //bindService(boundIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+                mServiceConnection=new MyServiceConnection();
+                bindService(boundIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
             }
         }
 
@@ -75,15 +83,15 @@ public class RemindMeApplication extends Application {
     public boolean isServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            Log.d(TAG, "CHECKING " + service.service.getClassName());
+            //Log.d(TAG, "CHECKING " + service.service.getClassName());
             if ("com.imaginat.remindme.geofencing.LocationUpdateService".equalsIgnoreCase(service.service.getClassName())) {
                 Toast.makeText(this, "LocationUpdateService is RUNNING", Toast.LENGTH_LONG).show();
-                Log.d(TAG, "LocationUpdateService is currently running");
+                //Log.d(TAG, "LocationUpdateService is currently running");
                 return true;
             }
         }
         Toast.makeText(this, "LocationUpdateService is NOT RUNNING", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "LocationUpdateService is NOT currently running");
+        //Log.d(TAG, "LocationUpdateService is NOT currently running");
         return false;
     }
 
@@ -130,9 +138,11 @@ public class RemindMeApplication extends Application {
         currentTotal--;
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt(GlobalConstants.GEO_ALARM_COUNT, currentTotal);
-        stopService(new Intent(RemindMeApplication.this,LocationUpdateService.class));
-        //mLocationUpdateService.stopSelf();
+
+        mLocationUpdateService.stopSelf();
         //mLocationUpdateService.unbindService(mServiceConnection);
+        unbindService(mServiceConnection);
+        stopService(new Intent(RemindMeApplication.this,LocationUpdateService.class));
     }
     //==========================================================================
     private class MyServiceConnection implements ServiceConnection {

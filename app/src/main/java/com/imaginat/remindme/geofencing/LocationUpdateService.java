@@ -31,16 +31,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nat on 5/27/16.
+ * Location Service class extends Android Service classa and is used to handles GeoFencing, Location Awareness
+ * The Service class will exist after the app is closed ONLY IF reminders have geofence alarms attached
  */
 public class LocationUpdateService extends Service
         implements GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks,ResultCallback<Status>,LocationListener {
+        GoogleApiClient.ConnectionCallbacks, ResultCallback<Status>, LocationListener {
 
+    //TAG used for debugging
+    private static final String TAG = LocationUpdateService.class.getSimpleName();
 
-
-    private static final int REQUEST_FINE_LOCATION =100;
-    private static final String TAG= LocationUpdateService.class.getSimpleName();
+    //Tag use for permission callback
+    private static final int REQUEST_FINE_LOCATION = 100;
 
 
     //Entry point to Google Play Services
@@ -53,68 +55,46 @@ public class LocationUpdateService extends Service
     private PendingIntent mGeofencePendingIntent;
 
     //flag, keep track if client started or not
-    private boolean isGoogleApiClientCreated=false;
+    private boolean isGoogleApiClientCreated = false;
 
-    //for binding
+    //for binding (to link the service and the rest of the app)
     private IBinder mBinder = new MyLocationUpdateServiceBinder();
 
 
-    /**
-     * Stores parameters for requests to the FusedLocationProviderApi.
-     */
+    // Stores parameters for requests to the FusedLocationProviderApi.
     protected LocationRequest mLocationRequest;
 
-    /**
-     * Represents a geographical location.
-     */
+    //Represents a geographical location.
     protected Location mCurrentLocation;
 
+    //==============SERVICE LIFE CYCLE METHOD================================
     @Override
     public void onCreate() {
         super.onCreate();
 
-        Log.d(TAG,"Service onCreate called");
-        isGoogleApiClientCreated=false;
-        mGeofencePendingIntent=null;
+        Log.d(TAG, "Service onCreate called");
+        isGoogleApiClientCreated = false;
+        mGeofencePendingIntent = null;
         mGeofenceList = new ArrayList<>();
 
 
         buildGoogleApiClient();
-
         createLocationRequest();
-        Log.d(TAG,"Service onCreate done");
-
-
-
-
-    }
-
-
-    /**
-     * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the LocationServices API.
-     */
-    protected synchronized void buildGoogleApiClient() {
-        Log.d(TAG,"Inside buildGoogleApiClient");
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-        Log.d(TAG,"Leaving buildGoogleApiClient");
+        //Log.d(TAG,"Service onCreate done");
 
     }
 
 
 
+
+
+    /* The start command is called when the service is started, return START_STICKY to tell system this service should
+    * stick around
+    */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         super.onStartCommand(intent, flags, startId);
-
-
-
-        Log.d(TAG,"onStartCommand, attempting to start client");
 
         return START_STICKY;
     }
@@ -123,45 +103,62 @@ public class LocationUpdateService extends Service
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy called");
+        //Log.d(TAG, "onDestroy called");
         stopLocationUpdates();
         mGoogleApiClient.disconnect();
-        mGoogleApiClient=null;
+        mGoogleApiClient = null;
     }
+
+
     //===========================BINDING SERVICE RELATED======================
     public class MyLocationUpdateServiceBinder extends Binder {
-        public LocationUpdateService getService(){
+        public LocationUpdateService getService() {
             return LocationUpdateService.this;
         }
     }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.v(TAG,"in on bind");
+        Log.v(TAG, "in on bind");
         return mBinder;
     }
 
     @Override
     public void onRebind(Intent intent) {
-        Log.v(TAG,"onRebind");
+        Log.v(TAG, "onRebind");
         super.onRebind(intent);
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.v(TAG,"onUnbind");
+        Log.v(TAG, "onUnbind");
         return true;
     }
 
-    //=============CONNECTING TO GOogle API CLIENT=======================================
+    //=============METHODS RELATED TO CONNECTING TO GOOGLE API CLIENT=======================================
+    /**
+     * Builds a GoogleApiClient. Used here mainly to request the LocationServices API.
+     */
+    protected synchronized void buildGoogleApiClient() {
+        //Log.d(TAG,"Inside buildGoogleApiClient");
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+        //Log.d(TAG,"Leaving buildGoogleApiClient");
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         loadPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_FINE_LOCATION);
-        Log.d(TAG,"connected to google play services");
+        Log.d(TAG, "connected to google play services");
         //addGeofences();
         //populateGeofenceList();
         //removeGeofences();
-        isGoogleApiClientCreated=true;
+        isGoogleApiClientCreated = true;
 
 
         startLocationUpdates();
@@ -169,35 +166,36 @@ public class LocationUpdateService extends Service
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(TAG,"connection to google play services suspended");
+        Log.d(TAG, "connection to google play services suspended");
 
     }
 
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG,"connection to google play services suspended");
+        Log.d(TAG, "connection to google play services suspended");
     }
 
 
     //================HELPER=======================================
     private void loadPermissions(String perm, int requestCode) {
         if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG,"Problem loading permissions");
+            Log.d(TAG, "Problem loading permissions");
         }
     }
 
-    //==========================GET LOCATION SPECIFIC CODE=============================
+    //==========================CODE TO GET LOCATION=============================
+
     /**
      * Requests location updates from the FusedLocationApi.
      */
     protected void startLocationUpdates() {
-        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // The final argument to requestLocationUpdates() is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
         try {
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
-        }catch(SecurityException se){
+        } catch (SecurityException se) {
             se.printStackTrace();
         }
     }
@@ -210,7 +208,7 @@ public class LocationUpdateService extends Service
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
 
-        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // The final argument to requestLocationUpdates() is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
@@ -230,10 +228,15 @@ public class LocationUpdateService extends Service
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+    }
+
     //=========================GEO FENCE SPECIFIC CODE ===================================
 
     /**
-
      * Builds and returns a GeofencingRequest. Specifies the list of geofences to be monitored.
      * Also specifies how the geofence notifications are initially triggered.
      */
@@ -277,12 +280,14 @@ public class LocationUpdateService extends Service
             logSecurityException(securityException);
         }
     }
-    public void removeGeofencesByTag(String tag){
+
+    public void removeGeofencesByTag(String tag) {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, "google api client not connected", Toast.LENGTH_SHORT).show();
             return;
         }
-        ArrayList<String>removalList = new ArrayList();
+
+        ArrayList<String> removalList = new ArrayList();
         removalList.add(tag);
 
         try {
@@ -296,6 +301,7 @@ public class LocationUpdateService extends Service
             logSecurityException(securityException);
         }
     }
+
     /**
      * Removes geofences, which stops further notifications when the device enters or exits
      * previously registered geofences.
@@ -324,11 +330,10 @@ public class LocationUpdateService extends Service
     }
 
 
+    public void addToGeoFenceList(String requestID, double latitude, double longitude) {
 
-    public void addToGeoFenceList(String requestID,double latitude,double longitude) {
 
-
-        mGeofenceList.clear();
+        //mGeofenceList.clear();
         mGeofenceList.add(new Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
                 // geofence.
@@ -347,7 +352,7 @@ public class LocationUpdateService extends Service
 
                 // Set the transition types of interest. Alerts are only generated for these
                 // transition. We track entry and exit transitions in this sample.
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER )// Geofence.GEOFENCE_TRANSITION_EXIT
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)// Geofence.GEOFENCE_TRANSITION_EXIT
 
                 // Create the geofence.
                 .build());
@@ -356,7 +361,7 @@ public class LocationUpdateService extends Service
 
     public void populateGeofenceList(List<GeoFenceAlarmData> fenceData) {
 
-        for ( GeoFenceAlarmData f:fenceData) {
+        for (GeoFenceAlarmData f : fenceData) {
 
             mGeofenceList.add(new Geofence.Builder()
                     // Set the request ID of the geofence. This is a string to identify this
@@ -398,15 +403,15 @@ public class LocationUpdateService extends Service
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
         // addGeofences() and removeGeofences().
-        mGeofencePendingIntent= PendingIntent.getService(this, intentID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mGeofencePendingIntent = PendingIntent.getService(this, intentID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
 
     }
 
     public void onResult(Status status) {
-        Log.d(TAG,"inside onResult");
+        Log.d(TAG, "inside onResult");
         if (status.isSuccess()) {
-            Log.d(TAG,"Something was successful with Geofence");
+            Log.d(TAG, "Something was successful with Geofence");
             // Update state and save in shared preferences.
             /*mGeofencesAdded = !mGeofencesAdded;
             SharedPreferences.Editor editor = mSharedPreferences.edit();
@@ -431,15 +436,8 @@ public class LocationUpdateService extends Service
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        mCurrentLocation=location;
-    }
 
 
-    public void stopIt(){
-        Log.d(TAG,"stopIt called");
 
-        stopSelf();
-    }
+
 }

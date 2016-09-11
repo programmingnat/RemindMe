@@ -15,6 +15,10 @@ import com.imaginat.remindme.data.source.local.DBSchema;
 import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
 
 import java.util.HashMap;
+import java.util.List;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * This class is the link between View(control panel & the map) and the Data.
@@ -218,11 +222,11 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
 
         //now add it to GeoFence proecss
-        /*
+
         RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
         remindMeApplication.requestStartOfLocationUpdateService();
-        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
-        locationUpdateService.addToGeoFenceList("TEXT TO BE REPLACED", mNewGeoFenceData.getLatitude(), mNewGeoFenceData.getLongitude());
+        //LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+        //locationUpdateService.addToGeoFenceList("TEXT TO BE REPLACED", mNewGeoFenceData.getLatitude(), mNewGeoFenceData.getLongitude());
 
         llds.getAllActiveAlarms()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -245,7 +249,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
                     }
 
                 });
-    */
+
 
         /*----Called again to setup the control texts--*/
         setUpForCurrentGeoAddressData(mNewGeoFenceData);
