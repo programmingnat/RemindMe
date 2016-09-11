@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.imaginat.remindme.BaseActivity;
 import com.imaginat.remindme.R;
+import com.imaginat.remindme.RemindMeApplication;
 
 public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
 
@@ -64,9 +65,10 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
 
             //get permission to turn on location services (if it is not turned on)
 
+            //Since this is the main startup screen of the app, call to the
             //start up location service if it didnt occur yet (and is necessary)
-            //RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
-            //remindMeApp.startServiceAsNeeded();
+            RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
+            remindMeApp.startServiceAsNeeded();
 
 
     }

@@ -31,12 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Location Service class extends Android Service classa and is used to handles GeoFencing, Location Awareness
+ * Location Service class extends Android Service class and is used to handles GeoFencing and Location Awareness
  * The Service class will exist after the app is closed ONLY IF reminders have geofence alarms attached
  */
 public class LocationUpdateService extends Service
         implements GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks, ResultCallback<Status>, LocationListener {
+
+
 
     //TAG used for debugging
     private static final String TAG = LocationUpdateService.class.getSimpleName();
@@ -72,11 +74,10 @@ public class LocationUpdateService extends Service
     public void onCreate() {
         super.onCreate();
 
-        Log.d(TAG, "Service onCreate called");
+        //Log.d(TAG, "Service onCreate called");
         isGoogleApiClientCreated = false;
         mGeofencePendingIntent = null;
         mGeofenceList = new ArrayList<>();
-
 
         buildGoogleApiClient();
         createLocationRequest();
@@ -96,6 +97,7 @@ public class LocationUpdateService extends Service
 
         super.onStartCommand(intent, flags, startId);
 
+        //use STICKY to keep the service around after app closes
         return START_STICKY;
     }
 
@@ -112,11 +114,13 @@ public class LocationUpdateService extends Service
 
     //===========================BINDING SERVICE RELATED======================
     public class MyLocationUpdateServiceBinder extends Binder {
+
         public LocationUpdateService getService() {
             return LocationUpdateService.this;
         }
     }
 
+    //================BIND RELATED METHODS====================================
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -155,12 +159,15 @@ public class LocationUpdateService extends Service
     public void onConnected(@Nullable Bundle bundle) {
         loadPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_FINE_LOCATION);
         Log.d(TAG, "connected to google play services");
-        //addGeofences();
-        //populateGeofenceList();
-        //removeGeofences();
         isGoogleApiClientCreated = true;
 
-
+        //set the intial value of mCurrentlocation to the actual current location
+        try {
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+        }catch(SecurityException sec){
+            sec.printStackTrace();
+        }
         startLocationUpdates();
     }
 
@@ -234,6 +241,9 @@ public class LocationUpdateService extends Service
         mCurrentLocation = location;
     }
 
+    public Location getCurrentLocation(){
+        return mCurrentLocation;
+    }
     //=========================GEO FENCE SPECIFIC CODE ===================================
 
     /**
@@ -281,6 +291,10 @@ public class LocationUpdateService extends Service
         }
     }
 
+    /**
+     * geofences are added with tags, to disable the geofence, use the same tag
+     *
+     * */
     public void removeGeofencesByTag(String tag) {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, "google api client not connected", Toast.LENGTH_SHORT).show();
@@ -295,7 +309,17 @@ public class LocationUpdateService extends Service
             com.google.android.gms.location.LocationServices.GeofencingApi.removeGeofences(
                     mGoogleApiClient,
                     removalList
-            ).setResultCallback(this); // Result processed in onResult().
+            ).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(@NonNull Status status) {
+                    if(status.isSuccess()){
+                        Log.d(TAG,"Remove geofence successfully");
+                    }else{
+                        Log.d(TAG,"Removed geofence unsuccessfully");
+                        Toast.makeText(LocationUpdateService.this,"An error occurred while trying to remove this geofence",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }); // Result processed in onResult().
         } catch (SecurityException securityException) {
             // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
             logSecurityException(securityException);
@@ -411,23 +435,7 @@ public class LocationUpdateService extends Service
     public void onResult(Status status) {
         Log.d(TAG, "inside onResult");
         if (status.isSuccess()) {
-            Log.d(TAG, "Something was successful with Geofence");
-            // Update state and save in shared preferences.
-            /*mGeofencesAdded = !mGeofencesAdded;
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putBoolean(Constants.GEOFENCES_ADDED_KEY, mGeofencesAdded);
-            editor.apply();*/
-
-            // Update the UI. Adding geofences enables the Remove Geofences button, and removing
-            // geofences enables the Add Geofences button.
-            //setButtonsEnabledState();
-
-            /*Toast.makeText(
-                    this,
-                    getString(mGeofencesAdded ? R.string.geofences_added :
-                            R.string.geofences_removed),
-                    Toast.LENGTH_SHORT
-            ).show();*/
+            Log.d(TAG, "Geofence successfully added");
         } else {
             // Get the status code for the error and log it using a user-friendly message.
             String errorMessage = GeofenceErrorMessages.getErrorString(this,

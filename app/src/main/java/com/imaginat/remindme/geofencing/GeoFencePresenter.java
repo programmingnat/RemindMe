@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.RemindMeApplication;
@@ -52,12 +53,15 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         if(mGeoFenceAlarmData!=null){
             mNewGeoFenceData = new GeoFenceAlarmData(mGeoFenceAlarmData);
         }
-
-
     }
 
 
+    @Override
+    public void start() {
+        setUpForCurrentGeoAddressData(mNewGeoFenceData);
+    }
 
+    //============Methods that prepare the map to be viewed========================================
     /**
      * This method is called by the Views (and passed in null) to request initial when presenter created (if it exists)
      * The method can also be called after a geofence status change,  so the controls can reflect the changes
@@ -79,37 +83,76 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
     }
 
+
     @Override
     public GeoFenceAlarmData getLatestGeoFenceData() {
         return mNewGeoFenceData;
     }
 
+
+    //===================CALLS THAT CHANGE UI=========================================
     /**
-     * TO deactivate a geo fence, remove it from location process
+    * Displays the dialog that prompts user for address to use in geo fence
      */
     @Override
-    public void deactivateGeoFence() {
-        Log.d(TAG,"deactivateGeoFence");
-        if(mNewGeoFenceData==null){
-            return;
+    public void requestAddressForGeoFence() {
+        mViewWControls.showAddressDialog();
+    }
+
+    /**
+     *  If previous fence data exists, asks user to confirm change
+     */
+    @Override
+    public void saveGeoFenceCoordinates() {
+
+        //check if previouly exist, if so confirm
+        if (mGeoFenceAlarmData != null) {
+            mViewWControls.showSaveFenceConfirmationDialog();
+        } else {
+            writeGeoFence();
         }
-        boolean newActiveState=!mNewGeoFenceData.isActive();
-        mNewGeoFenceData.setActive(newActiveState);
+    }
+    //==================METHODS THAT TURN STREET ADDRESS TO COORDINATES=========================================
+    /**
+    * When the user enters an address (as the center of the geofence) that data is sent here and is fwd to the IntentService
+    * that looks up the coordinates. The results are
+     */
+    @Override
+    public void processStreetAddress(String streetAddress, String cityAddress, String stateAddress, String zipAddress) {
+        if (mReceiver == null) {
+            mReceiver = new CoordinatesResultReceiver(new Handler());
+        }
 
-        //Update the table
-        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment) mViewWControls).getContext());
-        llds.saveGeoFenceAlarm(mNewGeoFenceData.getAlarmID(),mNewGeoFenceData.getReminderID(),mNewGeoFenceData.getAsContentValues());
-        mViewWControls.showActiveStateChange(newActiveState);
+        if (mNewGeoFenceData == null) {
+            mNewGeoFenceData = new GeoFenceAlarmData();
+        }
 
-        //This block of code removes the GeoFence from the
-        RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
-        remindMeApplication.requestStartOfLocationUpdateService();
-        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
-        locationUpdateService.removeGeofencesByTag(mNewGeoFenceData.getAlarmTag());
+        //save the info in a GeoFenceData object (so it can be readily accessed throughout this activity)
+        mNewGeoFenceData.setReminderID(mTaskID);
+        mNewGeoFenceData.setAlarmTag(getAlarmTag());
+        mNewGeoFenceData.setStreet(streetAddress);
+        mNewGeoFenceData.setCity(cityAddress);
+        mNewGeoFenceData.setState(stateAddress);
+        mNewGeoFenceData.setZipcode(zipAddress);
 
-        setUpForCurrentGeoAddressData(mGeoFenceAlarmData);
 
+        //Set the callback of the receiver
+        mReceiver.setResult(this);
 
+        //Concat the address into one string
+        String address = streetAddress + " " + cityAddress + "," + stateAddress + " " + zipAddress;
+
+        //Set the intents
+        Context c = ((Fragment) mView).getContext();
+        Intent intent = new Intent(c, FetchCoordinatesIntentService.class);
+        intent.putExtra(GlobalConstants.RECEIVER, mReceiver);
+        intent.putExtra(GlobalConstants.LOCATION_DATA_EXTRA, address);
+        intent.putExtra(GlobalConstants.ALARM_TAG, getAlarmTag());
+        intent.putExtra(GlobalConstants.CURRENT_TASK_ID, mTaskID);
+        intent.putExtra(GlobalConstants.CURRENT_LIST_ID, mListID);
+
+        //Call the service to tranlate address to coordinate
+        c.startService(intent);
     }
 
     /**
@@ -117,8 +160,6 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
      */
     @Override
     public void onReceiveCoordinatesResult(int resultCode, Bundle resultData) {
-
-        Log.d(TAG, "onReceiveCoordinatesResult");
 
         if (GlobalConstants.SUCCESS_RESULT == resultCode) {
 
@@ -134,7 +175,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             data.put(DBSchema.geoFenceAlarm_table.cols.LONGITUDE, Double.toString(lastLocation.getLongitude()));
             data.put(DBSchema.geoFenceAlarm_table.cols.IS_ACTIVE, "1");
 
-            //Update View with a pi in the map
+            //Update View with a marker in the map
             mView.setAddressMarker(lastLocation.getLatitude(), lastLocation.getLongitude());
 
             //initialize and set the newly created data
@@ -144,57 +185,16 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             mNewGeoFenceData.setLatitude(lastLocation.getLatitude());
             mNewGeoFenceData.setLongitude(lastLocation.getLongitude());
 
+            //confirm
+            saveGeoFenceCoordinates();
 
+        }else{
+            //show error message, unable to translate into coordinates
+            Toast.makeText(((Fragment)mViewWControls).getActivity(),"Unable to translate into coordinates. Please try again.",Toast.LENGTH_SHORT).show();
         }
     }
 
-    @Override
-    public void processStreetAddress(String streetAddress, String cityAddress, String stateAddress, String zipAddress) {
-        if (mReceiver == null) {
-            mReceiver = new CoordinatesResultReceiver(new Handler());
-        }
 
-        if (mNewGeoFenceData == null) {
-            mNewGeoFenceData = new GeoFenceAlarmData();
-        }
-
-        //save the info
-        mNewGeoFenceData.setReminderID(mTaskID);
-        mNewGeoFenceData.setAlarmTag(getAlarmTag());
-        mNewGeoFenceData.setStreet(streetAddress);
-        mNewGeoFenceData.setCity(cityAddress);
-        mNewGeoFenceData.setState(stateAddress);
-        mNewGeoFenceData.setZipcode(zipAddress);
-
-
-        mReceiver.setResult(this);
-        String address = streetAddress + " " + cityAddress + "," + stateAddress + " " + zipAddress;
-        Context c = ((Fragment) mView).getContext();
-        Intent intent = new Intent(c, FetchCoordinatesIntentService.class);
-        intent.putExtra(GlobalConstants.RECEIVER, mReceiver);
-        intent.putExtra(GlobalConstants.LOCATION_DATA_EXTRA, address);
-        intent.putExtra(GlobalConstants.ALARM_TAG, getAlarmTag());
-        intent.putExtra(GlobalConstants.CURRENT_TASK_ID, mTaskID);
-        intent.putExtra(GlobalConstants.CURRENT_LIST_ID, mListID);
-
-        c.startService(intent);
-    }
-
-    @Override
-    public void requestAddressForGeoFence() {
-        mViewWControls.showAddressDialog();
-    }
-
-    @Override
-    public void saveGeoFenceCoordinates() {
-
-        //check if previouly exist, if so confirm
-        if (mGeoFenceAlarmData != null) {
-            mViewWControls.showSaveFenceConfirmationDialog();
-        } else {
-            writeGeoFence();
-        }
-    }
 
     /**
      * writeGeoFence() does 2 things. Saves in geofence info in local database, and sends geoFence to Android Process
@@ -204,7 +204,9 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
         Log.d(TAG, "Inside writeGeoFence");
 
-        //anytime you create or update a geofence, it automatically turns out
+        //===A. SAVE TO DATABASE===
+
+        //anytime you create or update a geofence, it automatically turns on
         mNewGeoFenceData.setActive(true);
 
         //reference to database
@@ -221,13 +223,13 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         llds.saveGeoFenceAlarm(alarmID, mNewGeoFenceData.getReminderID(), mNewGeoFenceData.getAsContentValues());
 
 
-        //now add it to GeoFence proecss
+        //====B. ADD TO GEO FENCE====
 
+        //Request the location service to start (if not already started)
         RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
         remindMeApplication.requestStartOfLocationUpdateService();
-        //LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
-        //locationUpdateService.addToGeoFenceList("TEXT TO BE REPLACED", mNewGeoFenceData.getLatitude(), mNewGeoFenceData.getLongitude());
 
+        //In different thread, make call to local database to get all active geoFences
         llds.getAllActiveAlarms()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<List<GeoFenceAlarmData>>() {
@@ -255,11 +257,50 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         setUpForCurrentGeoAddressData(mNewGeoFenceData);
     }
 
+    /**
+     * TO deactivate a geo fence, remove it from location process
+     */
+    @Override
+    public void deactivateGeoFence() {
+        //Log.d(TAG,"deactivateGeoFence");
 
+        //if this has no data associated with it then no need to do any work
+        if(mNewGeoFenceData==null){
+            return;
+        }
+
+        //get the new state by just making it opposite of its current state
+        boolean newActiveState=!mNewGeoFenceData.isActive();
+        //set the new state in geoFenceData object
+        mNewGeoFenceData.setActive(newActiveState);
+
+        //Update the local database table
+        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment) mViewWControls).getContext());
+        llds.saveGeoFenceAlarm(mNewGeoFenceData.getAlarmID(),mNewGeoFenceData.getReminderID(),mNewGeoFenceData.getAsContentValues());
+        mViewWControls.showActiveStateChange(newActiveState);
+
+        //Remove from GeoFence
+        RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
+        remindMeApplication.requestStartOfLocationUpdateService();
+        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+        locationUpdateService.removeGeofencesByTag(mNewGeoFenceData.getAlarmTag());
+
+        setUpForCurrentGeoAddressData(mNewGeoFenceData);
+
+
+    }
+
+    //===================HELPER METHODS=================================================
+
+    /**
+     *
+     * Creates a tag to associate with every geofence based on the list and taskID.
+     */
     private String getAlarmTag() {
 
         return "_L" + mListID + "I" + mTaskID + "GEOFENCE";
     }
+
 
 
     private int createAlarmTag() {
@@ -273,8 +314,4 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
     }
 
 
-    @Override
-    public void start() {
-
-    }
 }

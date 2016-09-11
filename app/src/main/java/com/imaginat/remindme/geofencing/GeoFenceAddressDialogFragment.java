@@ -71,7 +71,7 @@ public class GeoFenceAddressDialogFragment extends DialogFragment {
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View p = (View) view.getParent().getParent();
+
 
                 String streetAddress = null, cityAddress = null, stateAddress = null, zipAddress = null;
                 if (mStreetAddress_edit.getText().toString().length() == 0) {

@@ -1,5 +1,7 @@
 package com.imaginat.remindme.geofencing;
 
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,10 +17,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.imaginat.remindme.R;
+import com.imaginat.remindme.RemindMeApplication;
 
 /**
  * Created by nat on 8/30/16.
@@ -50,7 +54,9 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume");
         if(mPresenter!=null) {
+            Log.d(TAG,"onReumse calls mPresenter.start");
             mPresenter.start();
         }
 
@@ -78,19 +84,37 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
     @Override
     public void onMapReady(GoogleMap map) throws SecurityException{
 
+        Log.d(TAG,"onMapReady");
 
         mGoogleMap = map;
+
+
+
+
+        RemindMeApplication remindMeApplication = (RemindMeApplication) this.getActivity().getApplicationContext();
+        remindMeApplication.requestStartOfLocationUpdateService();
+        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+        Location location = locationUpdateService.getCurrentLocation();
+        //remindMeApplication.requestStopOfLocationUpdateService();
+
+
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(40.961761 ,-73.815249 ), 16));
+                new LatLng(location.getLatitude() ,location.getLongitude() ), 16));
         map.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_media_play)).anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-                .position(new LatLng(40.961761 , -73.815249 )));
+                .position(new LatLng(location.getLatitude() , location.getLongitude())));
+
+
         map.setMyLocationEnabled(true);
+
+        if(mPresenter!=null){
+            mPresenter.start();
+        }
 
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                setAddressMarker(latLng);
+                //setAddressMarker(latLng);
             }
         });
 
@@ -105,10 +129,13 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
     }
     public void setAddressMarker(LatLng ll){
 
+        Log.d(TAG,"inside setAddressMarker");
         if(mGoogleMap==null){
+            Log.d(TAG,"inside set AdressMarker, goni to return null");
             return;
         }
 
+        Log.d(TAG,"AddressMarker continues!");
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(ll).title("MARK"));
@@ -117,6 +144,13 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
 
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 ll, 16));
+
+        CircleOptions circleOptions = new CircleOptions()
+                .center(marker.getPosition())
+                .strokeColor((Color.argb(50,70,70,70)))
+                .fillColor(Color.argb(100,150,150,150))
+                .radius(100);
+        mGoogleMap.addCircle(circleOptions);
 
     }
 
