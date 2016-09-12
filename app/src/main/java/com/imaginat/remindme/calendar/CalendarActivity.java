@@ -22,6 +22,11 @@ public class CalendarActivity extends BaseActivity<CalendarFragment> {
         return R.layout.activity_calendar;
     }
 
+    @Override
+    public String getAssociatedFragmentTag() {
+        return "CalendarFragment";
+    }
+
     /**
      * Creates the Presenter (MVP) an assigns a reference to the View
      */

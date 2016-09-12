@@ -20,6 +20,11 @@ public class AddEditTask extends BaseActivity<AddEditTaskFragment> {
         return R.layout.activity_add_edit_task;
     }
 
+    @Override
+    public String getAssociatedFragmentTag() {
+        return "AddTaskFragment";
+    }
+
     /**
      *Create the presenter and assign it to the view
      */

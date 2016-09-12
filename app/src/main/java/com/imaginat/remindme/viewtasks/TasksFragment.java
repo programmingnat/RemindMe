@@ -73,6 +73,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         });
 
 
+
         return view;
     }
 
@@ -126,6 +127,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mPresenter=presenter;
 
     }
+
+
 
     @Override
     public void onResume() {

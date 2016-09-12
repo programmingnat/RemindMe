@@ -27,6 +27,11 @@ public class AddEditList extends BaseActivity<AddListFragment> {
         return R.layout.activity_add_edit_list;
     }
 
+    @Override
+    public String getAssociatedFragmentTag() {
+        return "AddEditListFragment";
+    }
+
     /**
      *
      * Create the presenter and assign it to the view

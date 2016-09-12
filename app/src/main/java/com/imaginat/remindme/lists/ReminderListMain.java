@@ -16,65 +16,70 @@ import com.imaginat.remindme.RemindMeApplication;
  * The Activity encompases the MVP pattern. The activity class creates the presenter,views and ensure that each has the
  * appropriate references. This class is  specifically  used to show all the lists saved in the app
  */
-public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
+public class ReminderListMain extends BaseActivity<ReminderListsFragment> {
 
     private static final String TAG = ReminderListMain.class.getSimpleName();
 
-    ReminderListsContract.Presenter mReminderListsPresenter=null;
-    ReminderListsFragment mReminderListsFragment=null;
+    ReminderListsContract.Presenter mReminderListsPresenter = null;
+    ReminderListsFragment mReminderListsFragment = null;
 
 
-    public static final int REQUEST_READ_CALENDAR=200;
-    public static final int REQUEST_WRITE_CALENDAR=201;
-    public static final int POSITION_FINE=202;
-    public static final int POSITION_COARSE=203;
+    public static final int REQUEST_READ_CALENDAR = 200;
+    public static final int REQUEST_WRITE_CALENDAR = 201;
+    public static final int POSITION_FINE = 202;
+    public static final int POSITION_COARSE = 203;
 
-        @Override
-        public int getLayoutID() {
-            return R.layout.activity_main;
+    @Override
+    public int getLayoutID() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public String getAssociatedFragmentTag() {
+        return "ListsOfLists";
+    }
+
+    @Override
+    public Object createPresenter(ReminderListsFragment fragment) {
+        Log.d(TAG, "inside createPresenter,about to create  presenter");
+
+        mReminderListsPresenter = new ReminderListsPresenter(fragment);
+        if (fragment == null) {
+            Log.d(TAG, "fragment is null");
         }
 
-        @Override
-        public Object createPresenter(ReminderListsFragment fragment) {
-            Log.d(TAG,"inside createPresenter,about to create  presenter");
-
-            mReminderListsPresenter = new ReminderListsPresenter(fragment);
-            if(fragment==null){
-                Log.d(TAG,"fragment is null");
-            }
-
-            if(mReminderListsPresenter==null){
-                Log.d(TAG,"mReminderListsPresenter is null");
-            }
-
-            fragment.setPresenter(mReminderListsPresenter);
-            return fragment;
+        if (mReminderListsPresenter == null) {
+            Log.d(TAG, "mReminderListsPresenter is null");
         }
 
-        @Override
-        public ReminderListsFragment getFragment() {
-            if(mReminderListsFragment==null) {
-                mReminderListsFragment = new ReminderListsFragment();
-            }
-            return mReminderListsFragment;
-        }
+        fragment.setPresenter(mReminderListsPresenter);
+        return fragment;
+    }
 
-        @Override
+    @Override
+    public ReminderListsFragment getFragment() {
+        if (mReminderListsFragment == null) {
+            mReminderListsFragment = new ReminderListsFragment();
+        }
+        return mReminderListsFragment;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"onCreate");
-            loadPermissions(Manifest.permission.READ_CALENDAR,REQUEST_READ_CALENDAR);
-            loadPermissions(Manifest.permission.READ_CALENDAR,REQUEST_WRITE_CALENDAR);
-            loadPermissions(Manifest.permission.ACCESS_FINE_LOCATION,POSITION_FINE);
-            loadPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,POSITION_COARSE);
+        Log.d(TAG, "onCreate");
+        loadPermissions(Manifest.permission.READ_CALENDAR, REQUEST_READ_CALENDAR);
+        loadPermissions(Manifest.permission.READ_CALENDAR, REQUEST_WRITE_CALENDAR);
+        loadPermissions(Manifest.permission.ACCESS_FINE_LOCATION, POSITION_FINE);
+        loadPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, POSITION_COARSE);
 
 
-            //get permission to turn on location services (if it is not turned on)
+        //get permission to turn on location services (if it is not turned on)
 
-            //Since this is the main startup screen of the app, call to the
-            //start up location service if it didnt occur yet (and is necessary)
-            RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
-            remindMeApp.startServiceAsNeeded();
+        //Since this is the main startup screen of the app, call to the
+        //start up location service if it didnt occur yet (and is necessary)
+        RemindMeApplication remindMeApp = (RemindMeApplication) getApplicationContext();
+        remindMeApp.startServiceAsNeeded();
 
 
     }
@@ -83,20 +88,20 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment>{
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d(TAG,"onDestroy called");
+        Log.d(TAG, "onDestroy called");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG,"onSaveInstanceState");
+        Log.d(TAG, "onSaveInstanceState");
 
     }
 
     @Override
     public void processOptionItemSelected(int id) {
 
-        switch(id){
+        switch (id) {
             case R.id.editListInfo:
                 mReminderListsPresenter.loadAddEditList();
                 break;

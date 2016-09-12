@@ -26,6 +26,8 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
     abstract public int getLayoutID();
     abstract public Object createPresenter(T fragment);
     abstract public T getFragment();
+    abstract public String getAssociatedFragmentTag();
+
 
 
 
@@ -40,14 +42,25 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
         Toolbar toolbar = (Toolbar)findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
-        //Get the fragment
-        T fragment = getFragment();
+        //When the app is rotated, we dont want re-instantiate and readd another fragment
+        //instead, we only wna
+        T fragment=null;
+        if(savedInstanceState==null){
+            //Get the fragment
+             fragment= getFragment();
 
-        //Fragment (View)
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.my_frame, fragment);
-        fragmentTransaction.commit();
+            //Fragment (View)
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.my_frame, fragment,getAssociatedFragmentTag());
+            fragmentTransaction.commit();
+        }else{
+            fragment = (T)getSupportFragmentManager().findFragmentByTag(getAssociatedFragmentTag());
+        }
+
+
+
+
 
         //Set up the presenter
         createPresenter(fragment);

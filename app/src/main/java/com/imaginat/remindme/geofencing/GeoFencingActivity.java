@@ -35,8 +35,12 @@ public class GeoFencingActivity extends BaseActivity<GeoFenceFragment> {
         return null;
     }
 
+    @Override
+    public String getAssociatedFragmentTag() {
+        return "GeoFenceFragments";
+    }
 
-    public Object createPresenter(GeoFenceFragment fragment,GeoFenceFragment_Controls fragment_controls) {
+    public Object createPresenter(GeoFenceFragment fragment, GeoFenceFragment_Controls fragment_controls) {
         Intent callingIntent  = getIntent();
         String currentListID = callingIntent.getStringExtra(GlobalConstants.CURRENT_LIST_ID);
         String currentTaskID = callingIntent.getStringExtra(GlobalConstants.CURRENT_TASK_ID);

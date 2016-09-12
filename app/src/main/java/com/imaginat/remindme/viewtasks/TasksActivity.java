@@ -21,6 +21,11 @@ public class TasksActivity extends BaseActivity<TasksFragment> {
         return R.layout.activity_tasks;
     }
 
+    @Override
+    public String getAssociatedFragmentTag() {
+        return "TasksActivityFragment";
+    }
+
     /**
      *
      * creates the "Presenter" and assigns a reference to the View
