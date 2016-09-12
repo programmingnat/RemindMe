@@ -12,6 +12,10 @@ import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
 
+/**
+ * The Activity encompases the MVP pattern. The activity class creates the presenter,views and ensure that each has the
+ * appropriate references. This class is  specifically  used to allow the user to set geofence data
+ */
 public class GeoFencingActivity extends BaseActivity<GeoFenceFragment> {
 
 

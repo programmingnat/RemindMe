@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:hint="ADD TITLE OF NEW LIST HERE"
-        android:textColorHint="#555555"/>
+        android:textColorHint="#555555"
+        android:layout_marginTop="20dp"
+        android:singleLine="true"/>
 
     <TextView
         android:text="SELECT ICON FOR LIST:"

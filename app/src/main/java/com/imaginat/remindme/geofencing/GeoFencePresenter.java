@@ -86,12 +86,16 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
                 mView.setAddressMarker(alarmData.getLatitude(), alarmData.getLongitude());
             }else{
                // mView.setAddressMarker(location.getLatitude(), location.getLongitude());
-                mView.setLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+                if(location!=null) {
+                    mView.setLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+                }
             }
         } else {
             //tell the controls there is no prevous data, and the alarm is not active
             mViewWControls.setButtonTexts(false, false);
-            mView.setLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+            if(location!=null) {
+                mView.setLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+            }
         }
 
     }

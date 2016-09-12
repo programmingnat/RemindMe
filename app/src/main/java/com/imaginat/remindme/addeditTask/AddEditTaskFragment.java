@@ -17,32 +17,45 @@ import android.widget.TextView;
 import com.imaginat.remindme.R;
 
 /**
- * Created by nat on 8/14/16.
+ * This page allows the user to enter a new task/reminder
  */
 public class AddEditTaskFragment extends Fragment
         implements AddEditTaskContract.View {
 
+    //reference to the presenter that does the logic
     AddEditTaskContract.Presenter mPresenter;
+
+    //reference to the View that
     EditText mEditText;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.add_edit_task_fragment, container, false);
 
+        //Inflate and get reference to the view
+        View view = inflater.inflate(R.layout.add_edit_task_fragment, container, false);
+
+        //Get reference to the edit text field, and allow to indicate "done" using the keyboard
         mEditText = (EditText)view.findViewById(R.id.task_editText);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionID, KeyEvent keyEvent) {
                 boolean handled =false;
-                if(actionID== EditorInfo.IME_ACTION_DONE){
 
+                //this tells the system that when the user peforms a "done" operation
+                //to save
+                if(actionID== EditorInfo.IME_ACTION_DONE){
                     handled=true;
                     saveClicked();
                 }
+
                 return handled;
             }
         });
+
+
+        //In case the user doesnt perform a "done" operation, the user
+        //can explicitly notify the app that the task is done by hitting the enter button
         Button enterButton = (Button)view.findViewById(R.id.enter_button);
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +72,7 @@ public class AddEditTaskFragment extends Fragment
         });
 
 
+        //Cancel button returns user to the task page
         Button cancelButton = (Button)view.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,17 +80,9 @@ public class AddEditTaskFragment extends Fragment
                 showTaskList();
             }
         });
+
         return view;
 
-    }
-
-    private void saveClicked(){
-        String theText = mEditText.getText().toString();
-        mPresenter.saveTask(theText);
-    }
-    @Override
-    public void setPresenter(AddEditTaskContract.Presenter presenter) {
-        mPresenter = presenter;
     }
 
     @Override
@@ -84,6 +90,22 @@ public class AddEditTaskFragment extends Fragment
         super.onResume();
         mPresenter.start();
     }
+
+
+    /**
+     * Send the text (of the new task) to the presenter
+     */
+    private void saveClicked(){
+        String theText = mEditText.getText().toString();
+        mPresenter.saveTask(theText);
+    }
+
+    @Override
+    public void setPresenter(AddEditTaskContract.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    //======================METHODS CALLED BY THE PRESENTER TO CHANGE THE VIEW==============================
 
     @Override
     public void showTaskList() {

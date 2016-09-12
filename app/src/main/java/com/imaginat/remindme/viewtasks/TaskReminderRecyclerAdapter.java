@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.imaginat.remindme.R;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
@@ -21,67 +21,77 @@ import com.imaginat.remindme.data.ITaskItem;
 import java.util.ArrayList;
 
 /**
- * Created by nat on 8/12/16.
+ * The reminders are displayed in a recycler view. THis is the adapter class that manages the underlying data
+ * (the reminders) for the recycler view
+ * The majority of the code that deals with interaction with the tasks appear in this class
  */
 public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskReminderRecyclerAdapter.TaskListItemHolder>
-implements TasksContract.ViewAdapter{
+    implements TasksContract.ViewAdapter{
 
+    //TAG is used for debuggin
     private static final String TAG = TaskReminderRecyclerAdapter.class.getSimpleName();
-    private Context mContext;
+
+    //Reference to presenter
     TasksContract.Presenter mTasksPresenter;
+
+    //refrence to the underlying data
     private ArrayList<ITaskItem> mITaskItems;
 
 
-
-
-
-
-
+    /**
+     * Constructor
+     */
     public TaskReminderRecyclerAdapter(Context context, ArrayList<ITaskItem> arrayList) {
-        mContext = context;
         mITaskItems = arrayList;
-
-
+        //mContext = context;
     }
 
 
-
+    /**
+     * used during testing to set the underlying data
+     */
     public void setToDoListArray(ArrayList<ITaskItem> list) {
         mITaskItems = list;
     }
 
+    /**
+     * REcyclerView Adapter Method
+     * create the view from the XML and passes it to the holder
+     */
     @Override
     public TaskListItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+        //Inflate the View
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+
+        //reference to the View
         View view = layoutInflater.inflate(R.layout.task_line_item, parent, false);
 
-
+        //create the holder to hold the view
         return new TaskListItemHolder(view);
     }
 
 
-
+    /**
+     * REcyclerView Adapter Method
+     * links the holder to the underlying data
+     */
     @Override
     public void onBindViewHolder(TaskListItemHolder holder, int position) {
 
+        //Get a reference to the data
         ITaskItem toDoListItem = (ITaskItem) mITaskItems.get(position);
-        if (toDoListItem == null) {
 
-            holder.mEditText.setText("");
-            holder.mEditText.setHint("ADD A REMINDER");
-            holder.mRadioButton.setVisibility(View.GONE);
-            return;
-        }
-        holder.mRadioButton.setVisibility(View.VISIBLE);
 
+        //Set the Views based on the array item
+        //set text,listID,reminderID,alarmData
         holder.mRadioButton.setChecked(toDoListItem.isCompleted());
         holder.mEditText.setText(toDoListItem.getText());
         holder.mListID=toDoListItem.getListID();
         holder.mReminderId = toDoListItem.getReminderID();
         holder.mGeoFenceAlarmData=toDoListItem.getGeoFenceAlarmData();
-        //((LinearLayout)holder.itemView.findViewById(R.id.lineItemOptionsButton)).setVisibility(View.GONE);
-       // holder.mMoreOpts.setVisibility(View.INVISIBLE);
-        //holder.mDidIEdit=false;
+        //holder.mRadioButton.setVisibility(View.VISIBLE);
+
+        //Mark the item as completed or not
         if(toDoListItem.isCompleted()){
             holder.mRadioButton.setChecked(true);
         }else{
@@ -89,21 +99,20 @@ implements TasksContract.ViewAdapter{
         }
 
 
-        //setSideButton(holder);
-
-
-
-
-
     }
 
 
-
+    /**
+     * RecyclerViewAdapter method, returns the number of underlying data
+     */
     @Override
     public int getItemCount() {
         return mITaskItems.size();
     }
 
+    /**
+     * Allows the client to change the underlying data
+     */
     @Override
     public void setData(ArrayList<ITaskItem> arrayList) {
         mITaskItems.clear();
@@ -125,20 +134,23 @@ implements TasksContract.ViewAdapter{
             implements View.OnClickListener, View.OnKeyListener,
             TextView.OnEditorActionListener,View.OnFocusChangeListener{
 
-
+        //References to all the views that make up a line in the task list
         public CheckBox mRadioButton;
-        public ImageButton mOptionsButton;
+
         public TextView mTextView;
         public EditText mEditText;
         public String mReminderId;
         public View mItemView;
         public String mListID;
-        public GeoFenceAlarmData mGeoFenceAlarmData;
-        public boolean mIsShowingOverlay =false;
+
         public ViewGroup mOverlayMenu;
         public ImageButton mDeleteButton;
         public ImageButton mCalendarButton;
         public ImageButton mGeoFenceButton;
+        public Button mOpenOptionsButton;
+
+        public boolean mIsShowingOverlay =false;
+        public GeoFenceAlarmData mGeoFenceAlarmData;
 
 
 
@@ -147,31 +159,38 @@ implements TasksContract.ViewAdapter{
 
         public TaskListItemHolder(final View itemView) {
             super(itemView);
-            mItemView =itemView;
-            //mViewSwitcher = (ViewSwitcher) itemView.findViewById(R.id.my_switcher);
+
+            //Set all the View references
+            mItemView =itemView;//mItemView is the parent group to all the other views here
+
             mEditText = (EditText)itemView.findViewById(R.id.listItemEdit);
             mRadioButton = (CheckBox) itemView.findViewById(R.id.completedRadioButton);
             mTextView = (TextView) itemView.findViewById(R.id.listItemTextView);
             mDeleteButton = (ImageButton)itemView.findViewById(R.id.delete_imageButton);
             mGeoFenceButton = (ImageButton)itemView.findViewById(R.id.geofence_imageButton);
-            // mOptionsButton=(Button)itemView.findViewById(R.id.editLineItemButton);
+
+            //Set the listener for when a line is clicked
             mItemView.setOnClickListener(this);
 
-            mOptionsButton = (ImageButton)itemView.findViewById(R.id.openMenu_button);
+            //Set the listeners for the edit text
             mEditText.setOnKeyListener(this);
             mEditText.setOnFocusChangeListener(this);
-            //mEditText.setOnLongClickListener(this);
             mEditText.setOnEditorActionListener(this);
-            mOverlayMenu = (ViewGroup)itemView.findViewById(R.id.overlay_menu);
+            //allow multiple lines for edit text (doesnt work in xml)
             mEditText.setSingleLine(false);
+
+
+            mOverlayMenu = (ViewGroup)itemView.findViewById(R.id.overlay_menu);
+
             mCalendarButton = (ImageButton)itemView.findViewById(R.id.calendar_imageButton);
 
-
-
-            mOptionsButton.setOnClickListener(new View.OnClickListener() {
+            //set the listener to show the overlay button
+            mOpenOptionsButton = (Button)itemView.findViewById(R.id.openOptions_button);
+            mOpenOptionsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(),"Options clicked",Toast.LENGTH_SHORT).show();
+
+                    //Toggle the overlay menu
                     if(mIsShowingOverlay){
                         mIsShowingOverlay=false;
                         LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.overlay_menu);
@@ -185,6 +204,7 @@ implements TasksContract.ViewAdapter{
                 }
             });
 
+            //If you click anywhere on the overlay itself  (once it is open), it will close
             mOverlayMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -193,6 +213,9 @@ implements TasksContract.ViewAdapter{
                     ll.setVisibility(View.INVISIBLE);
                 }
             });
+
+
+            //====THE OVERLAY OPTION Listeners
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -223,33 +246,65 @@ implements TasksContract.ViewAdapter{
             });
 
 
+
+            //This is to allow the button to "grow" with the edit text
+            itemView.post(new Runnable(){
+                @Override
+                public void run(){
+                    int height = itemView.getHeight();
+                    mOpenOptionsButton.setHeight(height);
+                }
+            });
+
+
+            //Alternative way to "grow" the button with edit text
+//            ViewTreeObserver vto = itemView.getViewTreeObserver();
+//            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                @Override
+//                public void onGlobalLayout() {
+//
+//                    itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                    int width = itemView.getMeasuredWidth();
+//                    int height = itemView.getMeasuredHeight();
+//
+//                    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(new ViewGroup.MarginLayoutParams(80,height));
+//                    mOpenOptionsButton.setHeight(height);
+//                    // view.mOpenOptionsButton.setLayoutParams(lp);
+//                }
+//            });
+
         }
 
 
 
 
+        /**
+         * When the user clicks the View line(holding edit text), send the focus to the end of the edit text
+         */
         @Override
         public void onClick(View v) {
             if(!mIsShowingOverlay){
                 mEditText.requestFocus();
                 mEditText.setSelection(mEditText.getText().length());
             }
-           // mTasksPresenter.disableAddingNewTask();
+
         }
 
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            //Log.d(TAG,"onKey");
-            //mDidIEdit=true;
 
             return false;
         }
 
+        /**
+         *
+         * When the focus changes (user leaves an edit text field), save the data
+         */
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
 
             if(!hasFocus){
-
+                //update the data when a user leaves (and presumably  done editing)
                 mTasksPresenter.updateReminder(mListID,mReminderId,((EditText)v).getText().toString());
             }
         }
@@ -259,18 +314,10 @@ implements TasksContract.ViewAdapter{
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-            /*if (actionId == EditorInfo.IME_ACTION_DONE || actionId==KeyEvent.KEYCODE_ENTER)
-            {
-                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-                return true;
-            }*/
-
             if(event!=null && (event.getKeyCode()==KeyEvent.KEYCODE_ENTER)){
+                //If Enter is hit, hide the pop out keyboard
                 InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                //mTasksPresenter.enableAddingNewTask();
                 return true;
             }
             return false;

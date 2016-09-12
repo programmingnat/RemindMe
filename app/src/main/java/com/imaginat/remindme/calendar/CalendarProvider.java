@@ -98,33 +98,42 @@ public class CalendarProvider {
         return mLastEnteredID;
     }
 
-    public void fetchEventByID(Context context,long eventID) throws SecurityException{
+    public CalendarData fetchEventByID(Context context,long eventID) throws SecurityException{
         Cursor cursor;
         ContentResolver cr = context.getContentResolver();
         Uri uri = CalendarContract.Events.CONTENT_URI;
         String selection = "(("+CalendarContract.Events._ID+"=?"+"))";
         String[] selectionArgs =  new String[] {Long.toString(eventID)};
 
-        String[] columns = new String[] {CalendarContract.Events._ID, CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+        String[] columns = new String[] {CalendarContract.Events._ID, CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND,CalendarContract.Events.DESCRIPTION,CalendarContract.Events.EVENT_LOCATION};
         cursor = cr.query(uri, columns, selection, selectionArgs, CalendarContract.Events.DTSTART + " DESC LIMIT 100");
 
         Log.d("MainActivity ","cursor count "+cursor.getCount());
 
+        CalendarData cd = new CalendarData();
         while (cursor.moveToNext()) {
             long id = cursor.getLong(cursor.getColumnIndex(CalendarContract.Calendars._ID));
             String title = cursor.getString(1);
             String start = cursor.getString(2);
             String end = cursor.getString(3);
+            String description = cursor.getString(4);
+            String location = cursor.getString(5);
+            cd.setEventID(id);
+            cd.setTitle(title);
+            cd.setStartDateMilli(start);
+            cd.setEndDateMilli(end);
+            cd.setDescription(description);
+            cd.setLocation(location);
             Log.d("ContentProvider", "ID: " + id +
                     ", title: " + title +
                     ", start: " + start +
                     ", end: " + end
             );
         }
+        return cd;
     }
 
-    //This method should return all the events from your calendar from February 29th till March 4th
-    // in the year 2016.
+
     public void fetchEvents(Context context)
     throws SecurityException{
         //TODO:
@@ -165,35 +174,26 @@ public class CalendarProvider {
                     ", end: " + end
             );
         }
-/*
-        ListAdapter listAdapter = new SimpleCursorAdapter(
-                this,
-                android.R.layout.simple_expandable_list_item_2,
-                cursor,
-                new String[] {CalendarContract.Events._ID, CalendarContract.Events.TITLE},
-                new int[] {android.R.id.text1, android.R.id.text2},
-                0
-        );
 
-        lv.setAdapter(listAdapter);
-        */
     }
 
-    public void update(Context context,long eventID,String title,String description)
+    public void update(Context context,long eventID,String title,String description,long startDate,long endDate,String location)
     throws SecurityException{
-        //TODO: Using the number eventID from the method insertEventInCalendar(), update the event
-        // that was added in that method
+
 
         ContentResolver contentResolver = context.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(CalendarContract.Events.TITLE,title);
         values.put(CalendarContract.Events.DESCRIPTION,description);
+        values.put(CalendarContract.Events.DTSTART,startDate);
+        values.put(CalendarContract.Events.DTEND,endDate);
+        values.put(CalendarContract.Events.EVENT_LOCATION,location);
         Uri updateURI = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,eventID);
         int rows = context.getContentResolver().update(updateURI,values,null,null);
     }
 
     public void delete(Context context,long idToDelete) {
-        //TODO: Using the number eventID from the method insertEventInCalendar(), delete the event
+
         ContentResolver cr = context.getContentResolver();
         ContentValues values = new ContentValues();
         Uri deleteURI = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,idToDelete);

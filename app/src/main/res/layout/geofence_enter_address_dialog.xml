@@ -14,22 +14,26 @@
         android:hint="STREET ADDRESS"
         android:id="@+id/streetAddress_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
     <EditText
         android:hint="CITY"
         android:id="@+id/cityAddress_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
     <EditText
         android:hint="STATE"
         android:id="@+id/stateAddress_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
     <EditText
         android:hint="ZIP CODE"
         android:id="@+id/zipAddress_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
     <TextView
         android:text="FIND LOCATION BY SEARCH"
         android:layout_width="match_parent"

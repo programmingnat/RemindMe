@@ -19,11 +19,13 @@ public class CalendarContract {
         void showUpdateConfirmation();
         void showCreateError();
         void showUpdateError();
+        void showPreviousEventInfo(CalendarData cd);
+        void showTaskTitle(String taskString);
         void showTasks();
     }
 
     interface Presenter extends BasePresenter {
         void createEvent(String title, String description, Calendar startDate, Calendar endDate, String location, Context context);
-        void updateEvent(String title, String description,String startDate, String startTime,String endDate,String endTime,String location,Context context,long eventID);
+        void updateEvent(String title, String description,Calendar startDate, Calendar endDate,String location,Context context,long eventID);
     }
 }

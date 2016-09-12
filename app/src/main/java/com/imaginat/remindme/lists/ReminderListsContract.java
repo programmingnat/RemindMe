@@ -16,15 +16,20 @@ public class ReminderListsContract {
 
         void showListOptions(String listID);
 
+        void hideListOptions();
+
         void showSelectedList(String listID);
 
         boolean isActive();
 
         void showAll(ArrayList<ReminderList>listsToShow);
 
+        void showAddEditList(String id);
+
     }
 
     interface ViewsAdapter extends BaseView<Presenter> {
+
         void setData(ArrayList<ReminderList> theData);
 
 
@@ -34,6 +39,13 @@ public class ReminderListsContract {
     interface Presenter extends BasePresenter {
 
         void loadSelectedList(String listID);
+
+        void unloadListOptions();
+
         void loadListOptions(String listID);
+
+        void loadAddEditList();
+
+        void deleteList();
     }
 }

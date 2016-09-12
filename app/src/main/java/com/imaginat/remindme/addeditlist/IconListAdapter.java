@@ -11,13 +11,13 @@ import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
 
 /**
- * Created by nat on 8/12/16.
+ * This class is to show the list of icons the user can select. Basic RecyclerView Adapter implementation
  */
 public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.IconHolder>{
 
 
-    private static RadioButton lastSelected=null;
-    private static int lastCheckedPos=0;
+    private static RadioButton mLastSelected=null;
+
 
     @Override
     public IconHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -27,20 +27,26 @@ public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.IconHo
 
     @Override
     public void onBindViewHolder(IconHolder holder, int position) {
+
+        //determine which image to display
         int resourceID = getImageResource(position);
+
+        //set the image
         holder.mImageView.setImageResource(resourceID);
+
+        //set the tag (to be returned when client requests position)
         holder.mRadioButton.setTag(position);
 
+        //Check the currently selected icon, uncheck the previously selected icon
         holder.mRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RadioButton rb=(RadioButton)v;
                 if(rb.isChecked()){
-                    if(lastSelected!=null){
-                        lastSelected.setChecked(false);
+                    if(mLastSelected!=null){
+                        mLastSelected.setChecked(false);
                     }
-                    lastSelected=rb;
-
+                    mLastSelected=rb;
                 }
             }
         });
@@ -54,10 +60,14 @@ public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.IconHo
 
 
     public int getSelectedIcon(){
-        if(lastSelected==null)
+        if(mLastSelected==null)
             return 0;
-        return (Integer)lastSelected.getTag();
+        return (Integer)mLastSelected.getTag();
     }
+
+    /**
+     * returns the resource to be displayed
+     */
     private int getImageResource(int position){
         switch(position){
             case GlobalConstants.GENERIC_REMINDER_ICON:

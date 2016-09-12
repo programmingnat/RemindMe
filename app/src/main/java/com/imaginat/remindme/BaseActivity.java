@@ -14,13 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 /**
- * Created by nat on 8/12/16.
+ * This is extended by all activities in the app
  */
 public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
         implements IChangeToolbar {
 
     private final String TAG = BaseActivity.class.getSimpleName();
-    private int TOOLBAR_ICON_INSTRUCTIONS=-1;
+    private int mToolbarIconInstructions =-1;
 
 
     abstract public int getLayoutID();
@@ -31,14 +31,18 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(getLayoutID());
-        Log.d(TAG,"onCreate");
+
         //set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
+        //Get the fragment
         T fragment = getFragment();
+
         //Fragment (View)
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -60,7 +64,7 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
     @Override
     public void swapIcons(int instructions) {
         Log.d(TAG,"inside swapIcons");
-        TOOLBAR_ICON_INSTRUCTIONS=instructions;
+        mToolbarIconInstructions =instructions;
         invalidateOptionsMenu();
     }
 
@@ -80,28 +84,31 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
 
     public void updateIcons(Menu menu){
         Log.d(TAG,"Inside updateIcons");
-        if(TOOLBAR_ICON_INSTRUCTIONS==100) {
+        if(mToolbarIconInstructions ==GlobalConstants.SHOW_OPTIONS) {
             MenuItem menuItem = menu.findItem(R.id.search);
             menuItem.setVisible(false);
             menuItem=menu.findItem(R.id.deleteList);
             menuItem.setVisible(true);
-            menuItem=menu.findItem(R.id.shareListNFC);
-            menuItem.setVisible(true);
+            //menuItem=menu.findItem(R.id.shareListNFC);
+            //menuItem.setVisible(true);
             menuItem=menu.findItem(R.id.editListInfo);
             menuItem.setVisible(true);
 
-        }else if(TOOLBAR_ICON_INSTRUCTIONS==200){
+        }else if(mToolbarIconInstructions ==GlobalConstants.HIDE_OPTIONS){
             MenuItem menuItem = menu.findItem(R.id.search);
             menuItem.setVisible(true);
             menuItem=menu.findItem(R.id.deleteList);
             menuItem.setVisible(false);
-            menuItem=menu.findItem(R.id.shareListNFC);
-            menuItem.setVisible(false);
+            //menuItem=menu.findItem(R.id.shareListNFC);
+            //menuItem.setVisible(false);
             menuItem=menu.findItem(R.id.editListInfo);
             menuItem.setVisible(false);
         }
     }
 
+    public void processOptionItemSelected(int id){
+
+    }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
@@ -128,7 +135,15 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
 
                 remindMeApp.isServiceRunning();
                 return true;
-
+            case R.id.deleteList:
+                processOptionItemSelected(R.id.deleteList);
+                return true;
+            case R.id.editListInfo:
+                processOptionItemSelected(R.id.editListInfo);
+                return true;
+            case R.id.shareListNFC:
+                processOptionItemSelected(R.id.shareListNFC);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

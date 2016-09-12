@@ -46,8 +46,4 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
 
     }
 
-    @Override
-    public void updateTask(String s, String taskID) {
-
-    }
 }

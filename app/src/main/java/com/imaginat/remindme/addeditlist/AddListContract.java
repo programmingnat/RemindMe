@@ -4,17 +4,18 @@ import com.imaginat.remindme.BasePresenter;
 import com.imaginat.remindme.BaseView;
 
 /**
- * Created by nat on 8/9/16.
+ * Interfaces defined between Presenter and View
  */
 public class AddListContract {
 
 
     public interface View extends BaseView<Presenter>{
         void showTasks();
+        void showPreviousInfo(String title,int icon);
     }
 
 
     public interface Presenter extends BasePresenter{
-        public void addNewList(String listName,int iconID);
+        void addNewList(String listName,int iconID);
     }
 }

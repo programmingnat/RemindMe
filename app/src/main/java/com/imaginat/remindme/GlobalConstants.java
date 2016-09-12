@@ -15,6 +15,9 @@ public class GlobalConstants {
     public static final String PACKAGE_NAME = "com.imaginat.remindme";
     public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
 
+    //SWAP ICON INSTRUCTIONS
+    public static final int SHOW_OPTIONS=100;
+    public static final int HIDE_OPTIONS=200;
 
 
     //ICONS FOR THE LIST

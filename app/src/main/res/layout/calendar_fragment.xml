@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FF4400"
+        android:textColor="#000"
         android:textStyle="bold"
         android:text=" CALENDAR EVENT"
         android:textSize="23dp"/>
@@ -26,14 +26,14 @@
         android:id="@+id/startDate_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="START DATE:"
+        android:text="CLICK HERE TO ADD START DATE:"
         android:inputType="date"/>
 
     <Button
         android:id="@+id/startTime_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="START TIME:"
+        android:text="CLICK HERE TO ADD START TIME:"
         android:inputType="time"
         android:background="#FFFFFF"/>
 
@@ -42,28 +42,29 @@
         android:id="@+id/endDate_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="END DATE:"
-        android:background="#FFFFFF"/>
+        android:text="CLICK HERE TO ADD END DATE:"/>
 
     <Button
         android:id="@+id/endTime_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="END TIME:"
+        android:text="CLICK HERE TO ADD END TIME:"
         android:background="#FFFFFF"/>
 
     <EditText
         android:id="@+id/location_editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="LOCATION:"/>
+        android:hint="LOCATION:"
+        android:imeOptions="actionDone"/>
     <EditText
         android:id="@+id/description_editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="ENTER DESCRIPTION HERE"
         android:inputType="textMultiLine"
-        android:lines="5"/>
+        android:lines="5"
+        android:imeOptions="actionDone"/>
 
     <Button
         android:id="@+id/createEvent_Button"

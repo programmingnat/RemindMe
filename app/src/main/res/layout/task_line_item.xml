@@ -48,12 +48,19 @@
 
             />
 
+        <Button
+            android:id="@+id/openOptions_button"
+            android:layout_width="50px"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@color/colorPrimaryDark"/>
         <ImageButton
             android:id="@+id/openMenu_button"
             android:layout_width="20dp"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
-            android:src="@android:drawable/ic_menu_more"/>
+            android:src="@android:drawable/ic_menu_more"
+            android:visibility="gone"/>
 
 
     </RelativeLayout>
@@ -69,11 +76,11 @@
         android:visibility="invisible">
 
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:src="@android:drawable/star_big_on"/>
+        <!--<ImageButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:src="@android:drawable/star_big_on"/>-->
 
         <ImageButton
             android:id="@+id/delete_imageButton"

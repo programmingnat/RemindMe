@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -21,30 +20,48 @@ import android.widget.EditText;
 import com.imaginat.remindme.R;
 
 /**
- * Created by nat on 8/9/16.
+ * This represents the View (MVP). It is responsible for only displaying view, all logic is
+ * managed by the presenter
  */
 public class AddListFragment extends Fragment implements AddListContract.View{
+
+    //TAG for debugging purposes
     private static final String TAG=AddListFragment.class.getSimpleName();
-    private EditText mEditTextOfListName;
-    private boolean mUseInEditMode;
-    IconListAdapter iconListAdapter=null;
+
+    //Referrence to the presenter
     AddListContract.Presenter mPresenter;
 
+    //Adapter for the recycler list used to display the preset icons available to the suer
+    IconListAdapter iconListAdapter=null;
+
+    //Ref to the view that allows users to change or create new list titles
+    private EditText mEditTextOfListName;
 
 
+    /**
+     *
+     * createView handles page setup
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        //Inflate the view
         View view = inflater.inflate(R.layout.add_new_list, container, false);
+
         setHasOptionsMenu(true);
+
+        //Get reference to the editText
         mEditTextOfListName = (EditText)view.findViewById(R.id.addNameOfNewList_EditText);
+
+        //Get reference to button and set event listener to call when add is pressed
         Button doneButton = (Button)view.findViewById(R.id.doneButton);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"onClick called");
+
                 int selectedIcon = iconListAdapter.getSelectedIcon();
-                Log.d(TAG,"selectedIcon is "+selectedIcon);
+
                 if(mEditTextOfListName.getText()==null || mEditTextOfListName.getText().length()==0){
                     //indicate error
                     mEditTextOfListName.setError("FILL thIS IN");
@@ -62,10 +79,11 @@ public class AddListFragment extends Fragment implements AddListContract.View{
             }
         });
 
-        //the list
+        //set up the the list (of icons)
         RecyclerView listView = (RecyclerView) view.findViewById(R.id.listOfIcons);
         iconListAdapter = new IconListAdapter();
         listView.setAdapter(iconListAdapter);
+
         LinearLayoutManager llm=new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
         listView.setLayoutManager(llm);
@@ -75,10 +93,16 @@ public class AddListFragment extends Fragment implements AddListContract.View{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(mPresenter!=null){
+            mPresenter.start();
+        }
+    }
+
+    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        //Toast.makeText(getContext(),"Attempted to disable", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -98,9 +122,24 @@ public class AddListFragment extends Fragment implements AddListContract.View{
         mPresenter=presenter;
     }
 
+    //==========================METHODS THAT WILL CHANGE THE LOOK ON THE SCREEN===============
+
+    /**
+     * Goes back to the list
+     */
     @Override
     public void showTasks() {
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
+    }
+
+    /**
+     *
+     *Display the previously saved info
+     */
+    @Override
+    public void showPreviousInfo(String title, int icon) {
+        mEditTextOfListName.setText(title);
+
     }
 }

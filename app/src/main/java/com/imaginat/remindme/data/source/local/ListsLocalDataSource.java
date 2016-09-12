@@ -83,6 +83,48 @@ public class ListsLocalDataSource {
         return mSQLHelper.getAllLists(getAllListTitles_Callable());
     }
 
+
+
+    private Callable<List<ReminderList>> getTitleAndIconForList_Callable(final String listID) {
+        return new Callable<List<ReminderList>>() {
+            @Override
+            public List<ReminderList> call() throws Exception {
+
+
+                SQLiteDatabase db = mSQLHelper.getReadableDatabase();
+                Cursor c = db.query(DBSchema.lists_table.NAME, //table
+                        DBSchema.lists_table.ALL_COLUMNS, //columns
+                        DBSchema.lists_table.cols.LIST_ID+"=?",//select
+                        new String[]{listID},//selection args
+                        null,//group
+                        null,//having
+                        null,//order
+                        null);//limit
+
+                c.moveToFirst();
+                ArrayList<ReminderList> titles = new ArrayList<>();
+                while (c.isAfterLast() == false) {
+                    ReminderList rl = new ReminderList(c.getString(c.getColumnIndex(DBSchema.lists_table.cols.LIST_TITLE)),
+                            c.getInt(c.getColumnIndex(DBSchema.lists_table.cols.LIST_TITLE)),
+                            c.getString(c.getColumnIndex(DBSchema.lists_table.cols.LIST_ID)));
+                    rl.setIcon(c.getInt(c.getColumnIndex(DBSchema.lists_table.cols.LIST_ICON)));
+                    titles.add(rl);
+
+                    c.moveToNext();
+
+                }
+                return titles;
+            }
+
+
+        };
+    }
+
+    public Observable<List<ReminderList>> getListTitleInfo(String listID) {
+        return mSQLHelper.getAllLists(getTitleAndIconForList_Callable(listID));
+    }
+
+
     /**
      * Create New List
      *
@@ -104,6 +146,33 @@ public class ListsLocalDataSource {
                 null,
                 values);
         return Long.toString(id);
+    }
+
+    public int updateListTitle(String listID,String title,String icon){
+        ContentValues values = new ContentValues();
+        values.put(DBSchema.lists_table.cols.LIST_TITLE,title);
+        values.put(DBSchema.lists_table.cols.LIST_ICON,icon);
+        SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+
+        return db.update(DBSchema.lists_table.NAME,
+                values,
+                DBSchema.lists_table.cols.LIST_ID+"=?",
+                new String[]{listID});
+    }
+
+    public void deleteList(String listID){
+        SQLiteDatabase db= mSQLHelper.getWritableDatabase();
+        String[] argsArray = new String[]{listID};
+        db.execSQL("DELETE FROM geoFenceAlarm WHERE reminder_id IN (SELECT reminder_id FROM reminders WHERE list_id=?)",
+                argsArray);
+        db.delete(DBSchema.reminders_table.NAME,
+                DBSchema.reminders_table.cols.LIST_ID+"=?",
+                argsArray);
+        db.delete(DBSchema.lists_table.NAME,
+                DBSchema.lists_table.cols.LIST_ID+"=?",
+                argsArray);
+
+
     }
     ////////////////// TASK RELATED DATABASE CALLS (gets the individual reminders/task in a list)/////////////////////
     public Observable<List<ITaskItem>>getAllTasks(String listID){
@@ -192,6 +261,64 @@ public class ListsLocalDataSource {
         }
     }
 
+
+    public Observable<List<ITaskItem>>getSingleTask(String listID,String reminderID){
+        return mSQLHelper.getSingleTask(getSingleTask_callable(listID,reminderID));
+    }
+    private GetSingleTask_Callable getSingleTask_callable(String listID,String reminderID) {
+        return new GetSingleTask_Callable(listID,reminderID);
+    }
+    class GetSingleTask_Callable implements Callable<List<ITaskItem>> {
+
+        private String mListID = null;
+        private String mReminderID = null;
+
+        GetSingleTask_Callable(String listID,String reminderID) {
+            mListID = listID;
+            mReminderID=reminderID;
+        }
+
+        @Override
+        public List<ITaskItem> call() throws Exception {
+            ArrayList<ITaskItem> listItems = new ArrayList<>();
+
+            SQLiteDatabase db = mSQLHelper.getReadableDatabase();
+            Cursor c = db.query(DBSchema.reminders_table.NAME, //table
+                    DBSchema.reminders_table.ALL_COLUMNS, //columns
+                    DBSchema.reminders_table.cols.LIST_ID + "=? AND "+DBSchema.reminders_table.cols.REMINDER_ID+"=?",
+                    new String[]{mListID,mReminderID},
+                    null,//group
+                    null,//having
+                    null,//order
+                    null);//limit
+
+
+
+
+
+            c.moveToFirst();
+            while (!c.isAfterLast()) {
+                int colIndex = c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_TEXT);
+                String text = c.getString(colIndex);
+                //Log.d(TAG, "Adding " + text);
+                //int listColIndex = c.getColumnIndex(DBSchema.reminders_table.cols.LIST_ID);
+                String listID=c.getString(c.getColumnIndex(DBSchema.reminders_table.cols.LIST_ID));
+                int reminderColIndex = c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID);//"r."+DBSchema.reminders_table.cols.REMINDER_ID);
+                String reminderID=c.getString(reminderColIndex);//c.getColumnIndex(DBSchema.reminders_table.cols.REMINDER_ID));
+                SimpleTaskItem sti = new SimpleTaskItem(listID,reminderID);
+
+                sti.setCompleted(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.IS_COMPLETED))==1?true:false);
+                sti.setText(text);
+                sti.setCalendarEventID(c.getInt(c.getColumnIndex(DBSchema.reminders_table.cols.CALENDAR_EVENT_ID)));
+                listItems.add(sti);
+
+
+                c.moveToNext();
+            }
+
+            return listItems;
+        }
+    }
     //========================ALARM=======================================
     public Observable<List<GeoFenceAlarmData>>getAllActiveAlarms(){
         return mSQLHelper.getAllActiveGeoFenceAlarms(getAllActiveAlarms_Callable());

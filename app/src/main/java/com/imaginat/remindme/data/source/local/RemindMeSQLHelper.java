@@ -60,7 +60,9 @@ public class RemindMeSQLHelper extends SQLiteOpenHelper {
     Observable<List<ITaskItem>>getAllTasks(ListsLocalDataSource.GetTasks_Callable func){
         return makeObservable((Callable)func);
     }
-
+    Observable<List<ITaskItem>>getSingleTask(ListsLocalDataSource.GetSingleTask_Callable func){
+        return makeObservable((Callable)func);
+    }
     Observable<List<GeoFenceAlarmData>>getAllActiveGeoFenceAlarms(ListsLocalDataSource.GetAlarms_Callable func){
         return makeObservable((Callable)func);
     }

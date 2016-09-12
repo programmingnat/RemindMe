@@ -1,7 +1,6 @@
 package com.imaginat.remindme.lists;
 
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.imaginat.remindme.data.ReminderList;
 import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
@@ -17,37 +16,68 @@ import rx.functions.Action1;
  */
 public class ReminderListsPresenter implements ReminderListsContract.Presenter {
 
-    ReminderListsContract.View mView;
+    //TAG used to display class name during debugging
     private final String TAG = ReminderListsPresenter.class.getSimpleName();
+
+    //Reference to the VIEW in MVP (which is a fragment)
+    ReminderListsContract.View mView;
+
+    //Reference to the listitem selected on long click
+    String mLongClickedListID=null;
 
     public ReminderListsPresenter(ReminderListsContract.View view){
         mView=view;
     }
 
-
-
+    /**
+     *
+     * Asks the view to display the contents of the ist
+     */
     @Override
     public void loadSelectedList(String id) {
-        Log.d(TAG,"loadSelectedList called");
         mView.showSelectedList(id);
     }
 
+    /**
+     *
+     * Asks the view to display list options in the toolbar
+     */
     @Override
     public void loadListOptions(String id) {
-        Log.d(TAG,"loadListOptions called");
         mView.showListOptions(id);
-
+        mLongClickedListID=id;
     }
 
+    /**
+     * Asks the view to unload the list options in the toolbar
+     */
+    @Override
+    public void unloadListOptions() {
+        mView.hideListOptions();
+        mLongClickedListID=null;
+    }
+
+    /**
+     * Asks the view to show the add/edit title list
+     */
+    @Override
+    public void loadAddEditList() {
+        // mView.showListOptions("random");
+        mView.showAddEditList(mLongClickedListID);
+    }
+    /**
+     * Called by the resume lifecycle of the fragment
+     */
     @Override
     public void start() {
         //get the lists
-        Log.d(TAG,"ReminderListsPresenter start called");
         loadLists();
-
-
     }
 
+
+    /**
+     * Gets the data from the local database
+     */
     private void loadLists(){
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
         llds.getAllListTitles()
@@ -55,7 +85,7 @@ public class ReminderListsPresenter implements ReminderListsContract.Presenter {
                 .subscribe(new Action1<List<ReminderList>>() {
                     @Override
                     public void call(List<ReminderList> reminderLists) {
-                        Log.d(TAG,"Inside call() found "+reminderLists.size()+" results");
+                        //Log.d(TAG,"Inside call() found "+reminderLists.size()+" results");
                         //do filter or whatever here
                         ArrayList<ReminderList>reminderListFiltered = new ArrayList<ReminderList>();
                         for(ReminderList rl:reminderLists){
@@ -70,4 +100,18 @@ public class ReminderListsPresenter implements ReminderListsContract.Presenter {
 
                 });
     }
+
+    public void deleteList(){
+        if(mLongClickedListID!=null){
+            ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
+            llds.deleteList(mLongClickedListID);
+            loadLists();
+        }
+        unloadListOptions();
+
+    }
+
+
+
+
 }

@@ -103,6 +103,9 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
         LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
         Location location = locationUpdateService.getCurrentLocation();
 
+        if(location==null){
+            return;
+        }
 
         //Move camera and add marker
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(
