@@ -33,11 +33,19 @@ public class CalendarProvider {
         Cursor cursor = context.getContentResolver().query(
                 uri,
                 columns,
-                CalendarContract.Calendars.ACCOUNT_NAME + " = ?",
-                //TODO: insert your email address that will be associated with the calendar
-                new String[] {"npanchee@gmail.com"},
+                null,
+                null,
                 null
         );
+//
+//        Cursor cursor = context.getContentResolver().query(
+//                uri,
+//                columns,
+//                CalendarContract.Calendars.ACCOUNT_NAME + " = ?",
+//                //TODO: dont hard code the email
+//                new String[] {"npanchee@gmail.com"},
+//                null
+//        );
 
         while (cursor.moveToNext()) {
             long id = cursor.getLong(cursor.getColumnIndex(CalendarContract.Calendars._ID));

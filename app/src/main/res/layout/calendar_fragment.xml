@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            xmlns:padding="http://schemas.android.com/tools"
+            android:orientation="vertical">
+
+    xmlns:android="http://schemas.android.com/apk/res/android"/>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-    android:scrollbars="vertical">
+    android:paddingLeft="20dp">
 
 
     <TextView
@@ -20,37 +27,99 @@
         android:layout_height="wrap_content"
         android:hint="ENTER EVENT TITLE HERE"/>
 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <Button
-        android:id="@+id/startDate_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CLICK HERE TO ADD START DATE:"
-        android:inputType="date"/>
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/startDate_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DATE"
+            android:inputType="date"
+            android:src="@drawable/ic_date_range_white_24dp"/>
+        <TextView
+            android:id="@+id/selectedStartDate_textView"
+            android:text="start date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:paddingTop="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_weight=".90"/>
 
-    <Button
-        android:id="@+id/startTime_button"
+
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CLICK HERE TO ADD START TIME:"
-        android:inputType="time"
-        android:background="#FFFFFF"/>
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/startTime_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_alarm_white_24dp"
+            android:inputType="time"/>
+        <TextView
+            android:id="@+id/startTime_textView"
+            android:text="start time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:textSize="20sp"
+            android:layout_marginLeft="3dp"
+            android:layout_weight=".90"/>
 
 
-    <Button
-        android:id="@+id/endDate_button"
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CLICK HERE TO ADD END DATE:"/>
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/endDate_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_date_range_white_24dp" />
+        <TextView
+            android:id="@+id/selectedEndDate_textView"
+            android:text="end date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:textSize="20sp"
+            android:layout_marginLeft="3dp"
+            android:layout_weight=".90"/>
 
-    <Button
-        android:id="@+id/endTime_button"
+
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CLICK HERE TO ADD END TIME:"
-        android:background="#FFFFFF"/>
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/endTime_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_alarm_white_24dp"/>
+        <TextView
+            android:id="@+id/endTime_textView"
+            android:text="start date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:textSize="20sp"
+            android:layout_marginLeft="3dp"
+            android:layout_weight=".90"/>
+
+
+    </LinearLayout>
+
+
+
+
+
+
 
     <EditText
         android:id="@+id/location_editText"
@@ -75,3 +144,4 @@
         android:text="ADD EVENT TO CALENDAR"
         android:textColor="#FFFFFF"/>
 </LinearLayout>
+</ScrollView>

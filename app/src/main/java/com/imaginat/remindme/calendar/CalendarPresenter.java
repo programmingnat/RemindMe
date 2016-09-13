@@ -86,5 +86,11 @@ public class CalendarPresenter implements CalendarContract.Presenter {
         //cp.update();
     }
 
-
+    @Override
+    public boolean validateDates(Calendar startDate, Calendar endDate) {
+        if(startDate.compareTo(endDate)<=0){
+            return true;
+        }
+        return false;
+    }
 }

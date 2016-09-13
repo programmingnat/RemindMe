@@ -25,6 +25,7 @@ public class CalendarContract {
     }
 
     interface Presenter extends BasePresenter {
+        boolean validateDates(Calendar startDate,Calendar endDate);
         void createEvent(String title, String description, Calendar startDate, Calendar endDate, String location, Context context);
         void updateEvent(String title, String description,Calendar startDate, Calendar endDate,String location,Context context,long eventID);
     }

@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.imaginat.remindme.R;
 
@@ -34,7 +37,9 @@ public class CalendarFragment extends Fragment
 
     //References to the Views
     EditText mTitle_editText,mDescription_editText,mLocation_editText;
-    Button mStartDate_button,mStartTime_button,mEndDate_button,mEndTime_button,mCreateUpdate_button;
+    TextView mSelectedStartDate_textView,mSelectedStartTime_textView,mSelectedEndDate_textView,mSelectedEndTime_textView;
+    ImageButton mStartDate_button,mStartTime_button,mEndDate_button,mEndTime_button;
+    Button mCreateUpdate_button;
     Calendar mStartCalendar,mEndCalendar;
 
     //Tag is used for debuggin
@@ -69,12 +74,17 @@ public class CalendarFragment extends Fragment
         //Get references to the Views
         mTitle_editText = (EditText)view.findViewById(R.id.eventTitle_editText);
         mDescription_editText=(EditText)view.findViewById(R.id.description_editText);
-        mStartDate_button=(Button)view.findViewById(R.id.startDate_button);
-        mStartTime_button=(Button)view.findViewById(R.id.startTime_button);
-        mEndDate_button=(Button)view.findViewById(R.id.endDate_button);
-        mEndTime_button=(Button)view.findViewById(R.id.endTime_button);
+        mStartDate_button=(ImageButton)view.findViewById(R.id.startDate_button);
+        mStartTime_button=(ImageButton)view.findViewById(R.id.startTime_button);
+        mEndDate_button=(ImageButton)view.findViewById(R.id.endDate_button);
+        mEndTime_button=(ImageButton)view.findViewById(R.id.endTime_button);
         mLocation_editText=(EditText)view.findViewById(R.id.location_editText);
         mCreateUpdate_button=(Button)view.findViewById(R.id.createEvent_Button);
+
+        mSelectedStartDate_textView =(TextView)view.findViewById(R.id.selectedStartDate_textView);
+        mSelectedStartTime_textView=(TextView)view.findViewById(R.id.startTime_textView);
+        mSelectedEndDate_textView =(TextView)view.findViewById(R.id.selectedEndDate_textView);
+        mSelectedEndTime_textView=(TextView)view.findViewById(R.id.endTime_textView);
 
         //Set the behavior so the prompt goes to the next field
         mTitle_editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -129,6 +139,11 @@ public class CalendarFragment extends Fragment
         mCreateUpdate_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(mPresenter.validateDates(mStartCalendar,mEndCalendar)==false){
+                    Toast.makeText(getActivity(),"Your start date must be before you end date, and in the future",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String title = mTitle_editText.getText().toString();
                 String description = mDescription_editText.getText().toString();
                 String location = mLocation_editText.getText().toString();
@@ -167,17 +182,17 @@ public class CalendarFragment extends Fragment
                 mStartCalendar.set(Calendar.MONTH,result.get(Calendar.MONTH));
                 mStartCalendar.set(Calendar.DAY_OF_MONTH, result.get(Calendar.DAY_OF_MONTH));
                 mStartCalendar.set(Calendar.YEAR, result.get(Calendar.YEAR));
-                mStartDate_button.setText(result.get(Calendar.MONTH)+"/"+result.get(Calendar.DAY_OF_MONTH)+"/"+result.get(Calendar.YEAR));
+                mSelectedStartDate_textView.setText(result.get(Calendar.MONTH)+"/"+result.get(Calendar.DAY_OF_MONTH)+"/"+result.get(Calendar.YEAR));
                 break;
             case REQUEST_START_TIME:
                 date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
                 result = Calendar.getInstance();
                 result.setTime(date);
                 sf = new SimpleDateFormat("hh:mm:ss a");
-                mStartTime_button.setText(sf.format(date));
+                mSelectedStartTime_textView.setText(sf.format(date));
                 mStartCalendar.set(Calendar.HOUR_OF_DAY, result.get(Calendar.HOUR_OF_DAY));
                 mStartCalendar.set(Calendar.MINUTE, result.get(Calendar.MINUTE));
-                mStartTime_button.setText(result.get(Calendar.HOUR_OF_DAY)+":"+result.get(Calendar.MINUTE));
+                mSelectedStartTime_textView.setText(result.get(Calendar.HOUR_OF_DAY)+":"+result.get(Calendar.MINUTE));
                 break;
             case REQUEST_END_DATE:
                 date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
@@ -186,17 +201,17 @@ public class CalendarFragment extends Fragment
                 mEndCalendar.set(Calendar.MONTH,result.get(Calendar.MONTH));
                 mEndCalendar.set(Calendar.DAY_OF_MONTH, result.get(Calendar.DAY_OF_MONTH));
                 mEndCalendar.set(Calendar.YEAR, result.get(Calendar.YEAR));
-                mEndDate_button.setText(result.get(Calendar.MONTH)+"/"+result.get(Calendar.DAY_OF_MONTH)+"/"+result.get(Calendar.YEAR));
+                mSelectedEndDate_textView.setText(result.get(Calendar.MONTH)+"/"+result.get(Calendar.DAY_OF_MONTH)+"/"+result.get(Calendar.YEAR));
                 break;
             case REQUEST_END_TIME:
                 date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
                 result = Calendar.getInstance();
                 result.setTime(date);
                 sf = new SimpleDateFormat("hh:mm:ss a");
-                mEndTime_button.setText(sf.format(date));
+                mSelectedEndTime_textView.setText(sf.format(date));
                 mEndCalendar.set(Calendar.HOUR_OF_DAY, result.get(Calendar.HOUR_OF_DAY));
                 mEndCalendar.set(Calendar.MINUTE, result.get(Calendar.MINUTE));
-                mEndTime_button.setText(result.get(Calendar.HOUR_OF_DAY)+":"+result.get(Calendar.MINUTE));
+                mSelectedEndTime_textView.setText(result.get(Calendar.HOUR_OF_DAY)+":"+result.get(Calendar.MINUTE));
                 break;
         }
 
