@@ -51,6 +51,7 @@ public class RemindMeApplication extends Application {
             int totalNoOfSharedPreferences = mSharedPreferences.getInt(GlobalConstants.GEO_ALARM_COUNT, -1);
             //ToDoListItemManager listItemManager = ToDoListItemManager.getInstance(this);
             int totalNoInDatabase = 2;//listItemManager.getTotalActiveGeoAlarms();
+
             Log.d(TAG,"totalInShared: "+totalNoOfSharedPreferences+" totalDatabase"+totalNoInDatabase);
             if (totalNoInDatabase != totalNoOfSharedPreferences) {
                 //reset shared preferences

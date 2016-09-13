@@ -106,7 +106,7 @@ public class ReminderListRecycleAdapter extends RecyclerView.Adapter<ReminderLis
                         mOnLongClick = false;
                     } else {
                         //a normal click (which means the user is selected a specific list to view)
-                        mPresenter.loadSelectedList(mList_id);
+                        mPresenter.loadSelectedList(mList_id,mTextView.getText().toString());
                     }
 
                     //set the look

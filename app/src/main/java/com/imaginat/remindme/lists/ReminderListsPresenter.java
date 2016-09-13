@@ -34,8 +34,8 @@ public class ReminderListsPresenter implements ReminderListsContract.Presenter {
      * Asks the view to display the contents of the ist
      */
     @Override
-    public void loadSelectedList(String id) {
-        mView.showSelectedList(id);
+    public void loadSelectedList(String id,String currentListName) {
+        mView.showSelectedList(id,currentListName);
     }
 
     /**

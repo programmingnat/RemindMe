@@ -237,9 +237,10 @@ public class ReminderListsFragment extends Fragment
      * Display the tasks
      */
     @Override
-    public void showSelectedList(String id) {
+    public void showSelectedList(String id,String listName) {
         Intent addEditTaskIntent = new Intent(getContext(), TasksActivity.class);
         addEditTaskIntent.putExtra(GlobalConstants.CURRENT_LIST_ID, id);
+        addEditTaskIntent.putExtra(GlobalConstants.CURRENT_LIST_NAME,listName);
         startActivityForResult(addEditTaskIntent,VIEW_TASKS);
     }
 

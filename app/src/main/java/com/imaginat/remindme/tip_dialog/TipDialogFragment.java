@@ -16,7 +16,7 @@ import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
 
 /**
- * Created by nat on 9/13/16.
+ * Tool Tip Dialog
  */
 public class TipDialogFragment extends DialogFragment {
 

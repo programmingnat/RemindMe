@@ -127,6 +127,10 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         notifyDataSetChanged();
 
     }
+
+    /**
+     * Keeps track of the position of the item selected. Allows the recyclerview to autoscroll to ensure the view is on screen and visiible
+     */
     public int getSelectedIndexNumber(){
         return mSelectedIndexNumber;
     }
@@ -138,13 +142,20 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
     }
 
 
+    /**
+     *
+     * Allows insertion to the end of the list
+     * the return boolean indicates whether or not the list should be redrawn and reloaded(which is the case when the first view is added)
+     * or if the animation will occur (which doesnt happen when the first view i added)
+     */
     public boolean addItemToEnd(String listID,String reminderID) {
 
         int position = mITaskItems.size() ;
         SimpleTaskItem element = new SimpleTaskItem(listID,reminderID);
         mITaskItems.add(position,element);
         mSelectedIndexNumber=position+1;
-        if(position==0){
+
+        if(position<=1){
             notifyDataSetChanged();
             return true;
         }else {
@@ -236,12 +247,16 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             });
 
 
+
+
             //====THE OVERLAY OPTION Listeners
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTasksPresenter.deleteReminder(mListID, mReminderId);
+                    mTasksPresenter.requestToDelete(mListID,mReminderId);
+
+
                 }
             });
 
@@ -294,6 +309,7 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
 //            });
 
         }
+
 
 
         /**

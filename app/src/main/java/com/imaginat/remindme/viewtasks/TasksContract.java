@@ -27,6 +27,7 @@ public class TasksContract {
         void showCalendar(String listID,String reminderID);
         void showGeoFenceAlarm(String listID,String reminderID,GeoFenceAlarmData geoFenceAlarmData);
         void setToolTip(boolean b);
+        void showDeletionConfirmMsg(String listID,String reminderID);
         void showTaskUpdate();
         void showNoTaskUpdated();
     }
@@ -44,6 +45,7 @@ public class TasksContract {
         void deleteReminder(String listID,String id);
         void openCalendar(String listID,String reminderID);
         void openGeoFenceOptions(String listID, String reminderID, GeoFenceAlarmData geoFenceAlarmData);
+        void requestToDelete(String listID,String reminderID);
         void disableAddingNewTask();
         void enableAddingNewTask();
         void loadTaskOptions(String listID,String taskID);

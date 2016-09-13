@@ -33,6 +33,8 @@ public class TasksActivity extends BaseActivity<TasksFragment> {
     @Override
     public Object createPresenter(TasksFragment fragment) {
         String currentListID=getIntent().getStringExtra(GlobalConstants.CURRENT_LIST_ID);
+        String currentListName = getIntent().getStringExtra(GlobalConstants.CURRENT_LIST_NAME);
+        onUpdateTitle(currentListName);
         TasksPresenter tasksPresenter = new TasksPresenter(currentListID,fragment);
         fragment.setPresenter(tasksPresenter);
         return tasksPresenter;

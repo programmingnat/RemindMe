@@ -18,7 +18,7 @@ public class ReminderListsContract {
 
         void hideListOptions();
 
-        void showSelectedList(String listID);
+        void showSelectedList(String listID,String listName);
 
         boolean isActive();
 
@@ -40,7 +40,7 @@ public class ReminderListsContract {
 
     interface Presenter extends BasePresenter {
 
-        void loadSelectedList(String listID);
+        void loadSelectedList(String listID,String listName);
 
         void unloadListOptions();
 

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by nat on 8/12/16.
  */
-public class TasksFragment extends Fragment implements TasksContract.View {
+public class TasksFragment extends Fragment implements TasksContract.View,ConfirmDeleteDialog.IConfirmDeleteDialogListener {
 
     TasksContract.Presenter mPresenter;
     TaskReminderRecyclerAdapter mAdapter;
@@ -107,6 +107,18 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         // tipDialog.show(getActivity().getSupportFragmentManager(),"TIP");
 
 
+    }
+
+    @Override
+    public void showDeletionConfirmMsg(String listID, String reminderID) {
+        ConfirmDeleteDialog confirmDeleteDialog = new ConfirmDeleteDialog();
+        confirmDeleteDialog.setData(listID,reminderID,this);
+        confirmDeleteDialog.show(getActivity().getSupportFragmentManager(),"DeletionConfirm");
+    }
+
+    @Override
+    public void onDialogDeleteIt(String listID,String reminderID) {
+        mPresenter.deleteReminder(listID,reminderID);
     }
 
     @Override

@@ -39,6 +39,10 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
 
+    @Override
+    public void requestToDelete(String listID, String reminderID) {
+        mView.showDeletionConfirmMsg(listID,reminderID);
+    }
 
     @Override
     public void disableAddingNewTask() {

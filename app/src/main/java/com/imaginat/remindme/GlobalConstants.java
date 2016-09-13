@@ -34,6 +34,7 @@ public class GlobalConstants {
     //LIST ID KEY (used when passing data)
     public static final String CURRENT_LIST_ID="currentListID";
     public static final String CURRENT_TASK_ID="currentItemID";
+    public static final String CURRENT_LIST_NAME="currentListName";
 
     //GEO ALARM
     public static final String GEO_ALARM_DATA_EXTRA=PACKAGE_NAME+"GeoFenceAlarm_data";
