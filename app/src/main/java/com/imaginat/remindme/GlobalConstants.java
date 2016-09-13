@@ -21,6 +21,7 @@ public class GlobalConstants {
 
     //TOOL TIPS
     public static final String SHOW_VIEW_TASKS_TOOLTIPS="Show_View_Tasks_Tooltip";
+    public static final String SHOW_VIEW_GEO_TOOLTIPS="Show_view_geo_tooltips";
 
     //ICONS FOR THE LIST
     public static final int GENERIC_REMINDER_ICON=0;

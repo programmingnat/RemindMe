@@ -98,6 +98,8 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             }
         }
 
+
+
     }
 
 

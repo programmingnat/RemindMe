@@ -47,29 +47,46 @@ public class RemindMeApplication extends Application {
 
         if (isServiceRunning() == false) {
 
+
+
+//            ListsLocalDataSource llds = ListsLocalDataSource.getInstance(this);
+//            llds.getAllActiveAlarms()
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Action1<List<GeoFenceAlarmData>>() {
+//                        @Override
+//                        public void call(List<GeoFenceAlarmData> geoFenceAlarmDataList) {
+//                            if (geoFenceAlarmDataList != null) {
+//
+//                            }
+//
+//                        }
+//
+//                    });
+
+
             //look in shared preference to see if anybody needs it, if it does start it up
             int totalNoOfSharedPreferences = mSharedPreferences.getInt(GlobalConstants.GEO_ALARM_COUNT, -1);
-            //ToDoListItemManager listItemManager = ToDoListItemManager.getInstance(this);
-            int totalNoInDatabase = 2;//listItemManager.getTotalActiveGeoAlarms();
+            int totalNoInDatabase = 1;
 
-            Log.d(TAG,"totalInShared: "+totalNoOfSharedPreferences+" totalDatabase"+totalNoInDatabase);
+
             if (totalNoInDatabase != totalNoOfSharedPreferences) {
                 //reset shared preferences
                 SharedPreferences.Editor ed = mSharedPreferences.edit();
                 ed.putInt(GlobalConstants.GEO_ALARM_COUNT, totalNoInDatabase);
                 ed.commit();
             }
-
-
+            Log.d(TAG,"totalInShared: "+totalNoOfSharedPreferences+" totalDatabase"+totalNoInDatabase);
             int totalNoOfActiveGeoAlarms = totalNoInDatabase;
             if (totalNoOfActiveGeoAlarms > 0) {
                 //start up the service
-                Intent startUpServiceIntent = new Intent(this, LocationUpdateService.class);
+                Intent startUpServiceIntent = new Intent(RemindMeApplication.this, LocationUpdateService.class);
                 startService(startUpServiceIntent);
                 mServiceConnection=new MyServiceConnection();
                 bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
             }
+
+
         } else {
             //service is already up and running, now bind if not already bound
             if (mLocationUpdateServiceBound == false) {
@@ -140,10 +157,12 @@ public class RemindMeApplication extends Application {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt(GlobalConstants.GEO_ALARM_COUNT, currentTotal);
 
-        mLocationUpdateService.stopSelf();
-        //mLocationUpdateService.unbindService(mServiceConnection);
-        unbindService(mServiceConnection);
-        stopService(new Intent(RemindMeApplication.this,LocationUpdateService.class));
+        if(currentTotal<=0) {
+            mLocationUpdateService.stopSelf();
+            //mLocationUpdateService.unbindService(mServiceConnection);
+            unbindService(mServiceConnection);
+            stopService(new Intent(RemindMeApplication.this, LocationUpdateService.class));
+        }
     }
     //==========================================================================
     private class MyServiceConnection implements ServiceConnection {

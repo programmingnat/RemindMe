@@ -20,6 +20,28 @@ import com.imaginat.remindme.R;
  */
 public class TipDialogFragment extends DialogFragment {
 
+    public static final int TASKS_TIPS=100;
+    public static final int GEOMAP_TIP=200;
+
+    private int layoutID=R.layout.view_all_tasks_tip_dialog;
+    private String sharedPrefKey=GlobalConstants.SHOW_VIEW_TASKS_TOOLTIPS;
+    private int mTipNo=TASKS_TIPS;
+
+    public void setTipToDisplay(int tipNo){
+        mTipNo=tipNo;
+        switch(tipNo){
+            case TASKS_TIPS:
+                layoutID=R.layout.view_all_tasks_tip_dialog;
+                sharedPrefKey=GlobalConstants.SHOW_VIEW_TASKS_TOOLTIPS;
+                break;
+            case GEOMAP_TIP:
+                layoutID=R.layout.geofence_tip_dialog;
+                sharedPrefKey=GlobalConstants.SHOW_VIEW_GEO_TOOLTIPS;
+                break;
+        }
+    }
+
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -28,7 +50,7 @@ public class TipDialogFragment extends DialogFragment {
         //get the layout infloater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.view_all_tasks_tip_dialog,null);
+        View view = inflater.inflate(layoutID,null);
 
         CheckBox gotItCheckBox = (CheckBox)view.findViewById(R.id.gotIt_checkbox);
         gotItCheckBox.setOnClickListener(new View.OnClickListener() {
@@ -43,7 +65,7 @@ public class TipDialogFragment extends DialogFragment {
                 }else{
                     showIt=1;
                 }
-                ed.putInt(GlobalConstants.SHOW_VIEW_TASKS_TOOLTIPS, showIt);
+                ed.putInt(sharedPrefKey, showIt);
                 ed.commit();
             }
         });
@@ -59,4 +81,6 @@ public class TipDialogFragment extends DialogFragment {
 
         return builder.create();
     }
+
+
 }

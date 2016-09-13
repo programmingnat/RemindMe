@@ -99,6 +99,11 @@ public class GeoFencingActivity extends BaseActivity<GeoFenceFragment> {
         //Set up the presenter
         createPresenter(fragment,fragmentControls);
 
+        //
+        onUpdateTitle("SET LOCATION ALARM");
+
+
+
     }
 
 }

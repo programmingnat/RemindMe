@@ -1,5 +1,7 @@
 package com.imaginat.remindme;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -188,6 +190,13 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
                 return true;
             case R.id.shareListNFC:
                 processOptionItemSelected(R.id.shareListNFC);
+                return true;
+            case R.id.unhide_toolTips:
+                SharedPreferences sharedPreferences= getSharedPreferences(GlobalConstants.PREFERENCES, Context.MODE_PRIVATE);
+                SharedPreferences.Editor ed = sharedPreferences.edit();
+                ed.putInt(GlobalConstants.SHOW_VIEW_GEO_TOOLTIPS, 1);
+                ed.putInt(GlobalConstants.SHOW_VIEW_TASKS_TOOLTIPS,1);
+                ed.commit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

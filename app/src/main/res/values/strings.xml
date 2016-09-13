@@ -18,6 +18,7 @@
     <string name="calendar_clickToAddEndDate">Click here to add ending date</string>
     <string name="calendar_clickToAddEndTime">Click here to add ending time</string>
     <string name="tooltip_confirm">Got it!</string>
+    <string name="tooltip_geofence">This is where you create a location reminder. Let\'s say you want to pick up eggs the next time you are near a supermarket. Create a location alarm, and when you are close to that location, a notification will appear</string>
     <string name="tooltip_task">Tip: To see more options for each task,click the blue bar on the right. It will give you options to add a location alarm, add an event in the calendar or delete</string>
     <string name="tooltip_dialog_title">Tool Tip</string>
     <string name="tooltip_dont_show_again">Don\'t show me this tip again</string>

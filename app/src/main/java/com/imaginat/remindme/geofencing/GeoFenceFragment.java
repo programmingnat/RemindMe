@@ -169,7 +169,7 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         new MarkerOptions().position(ll).title("Location Based Reminder");
 
-        Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(ll).title("Location Based Reminder"));
+        Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(ll).title("Location Based Reminder").snippet("ALarm"));
         marker.setTag(0);
 
 

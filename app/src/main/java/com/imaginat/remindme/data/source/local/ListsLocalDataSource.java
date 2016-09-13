@@ -336,8 +336,8 @@ public class ListsLocalDataSource {
             SQLiteDatabase db = mSQLHelper.getReadableDatabase();
             Cursor c = db.query(DBSchema.geoFenceAlarm_table.NAME, //table
                     DBSchema.geoFenceAlarm_table.ALL_COLUMNS, //columns
-                    null,//select
-                    null,//selection args
+                    DBSchema.geoFenceAlarm_table.cols.IS_ACTIVE+"=?",//select
+                    new String[]{"1"},//selection args
                     null,//group
                     null,//having
                     null,//order

@@ -35,6 +35,10 @@
           android:title="Delete list"
           app:showAsAction="always"
           android:visible="false"/>
+    <item android:id="@+id/unhide_toolTips"
+          android:icon="@android:drawable/ic_menu_help"
+          android:title="unhide tooltips"
+          app:showAsAction="never"/>
 
     <item android:id="@+id/shareListNFC"
           android:icon="@android:drawable/ic_menu_share"

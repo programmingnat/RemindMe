@@ -1,5 +1,7 @@
 package com.imaginat.remindme.geofencing;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -10,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
+import com.imaginat.remindme.tip_dialog.TipDialogFragment;
 
 /**
  * The View class for GeoFenceControls. All the methods here alter the UI or show dialog
@@ -54,11 +58,29 @@ public class GeoFenceFragment_Controls extends Fragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences=
+                getActivity().getSharedPreferences(GlobalConstants.PREFERENCES, Context.MODE_PRIVATE);
+        boolean showIt = sharedPreferences.getInt(GlobalConstants.SHOW_VIEW_GEO_TOOLTIPS, 1)==1?true:false;
+        if(showIt) {
+           showToolTip();
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
 
         mPresenter.setUpForCurrentGeoAddressData(null);
+    }
+
+    @Override
+    public void showToolTip() {
+        TipDialogFragment tipDialog = new TipDialogFragment();
+        tipDialog.setTipToDisplay(TipDialogFragment.GEOMAP_TIP);
+        tipDialog.show(getActivity().getSupportFragmentManager(), "TIP");
     }
 
     @Override
@@ -112,15 +134,15 @@ public class GeoFenceFragment_Controls extends Fragment
         Button createGeoFenceButton = (Button)getView().findViewById(R.id.createGeoFence_Button);
         Button toggleGeoFenceButton = (Button)getView().findViewById(R.id.toggleGeoFence_Button);
         if(update && isOn){
-            createGeoFenceButton.setText("UPDATE");
+            createGeoFenceButton.setText("UPDATE ALARM");
         }else{
-            createGeoFenceButton.setText("CREATE");
+            createGeoFenceButton.setText("CREATE ALARM");
 
         }
 
 
         if(isOn){
-            toggleGeoFenceButton.setText("TURN OFF FENCE");
+            toggleGeoFenceButton.setText("TURN ALARM OFF");
             toggleGeoFenceButton.setEnabled(true);
             toggleGeoFenceButton.setVisibility(View.VISIBLE);
         }else{
