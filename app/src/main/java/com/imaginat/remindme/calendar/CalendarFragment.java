@@ -39,7 +39,7 @@ public class CalendarFragment extends Fragment
     EditText mTitle_editText,mDescription_editText,mLocation_editText;
     TextView mSelectedStartDate_textView,mSelectedStartTime_textView,mSelectedEndDate_textView,mSelectedEndTime_textView;
     ImageButton mStartDate_button,mStartTime_button,mEndDate_button,mEndTime_button;
-    Button mCreateUpdate_button;
+    Button mCreateUpdate_button,mCancel_button;
     Calendar mStartCalendar,mEndCalendar;
 
     //Tag is used for debuggin
@@ -80,6 +80,7 @@ public class CalendarFragment extends Fragment
         mEndTime_button=(ImageButton)view.findViewById(R.id.endTime_button);
         mLocation_editText=(EditText)view.findViewById(R.id.location_editText);
         mCreateUpdate_button=(Button)view.findViewById(R.id.createEvent_Button);
+        mCancel_button=(Button)view.findViewById(R.id.cancelEvent_Button);
 
         mSelectedStartDate_textView =(TextView)view.findViewById(R.id.selectedStartDate_textView);
         mSelectedStartTime_textView=(TextView)view.findViewById(R.id.startTime_textView);
@@ -158,6 +159,13 @@ public class CalendarFragment extends Fragment
             }
         });
 
+        mCancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().setResult(Activity.RESULT_CANCELED);
+                getActivity().finish();
+            }
+        });
         return view;
     }
 

@@ -105,6 +105,10 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             holder.mRadioButton.setChecked(false);
         }
 
+        //get rid of overlay if it is showing
+        holder.mIsShowingOverlay = false;
+        LinearLayout ll = (LinearLayout) holder.itemView.findViewById(R.id.overlay_menu);
+        ll.setVisibility(View.INVISIBLE);
 
     }
 
@@ -249,7 +253,7 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
 
 
 
-            //====THE OVERLAY OPTION Listeners
+            //====THE OVERLAY OPTION Listeners========================
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
