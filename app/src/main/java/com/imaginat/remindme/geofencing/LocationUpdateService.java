@@ -3,15 +3,19 @@ package com.imaginat.remindme.geofencing;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -89,7 +93,8 @@ public class LocationUpdateService extends Service
 
 
 
-    /* The start command is called when the service is started, return START_STICKY to tell system this service should
+    /**
+     *  The start command is called when the service is started, return START_STICKY to tell system this service should
     * stick around
     */
     @Override
@@ -120,7 +125,7 @@ public class LocationUpdateService extends Service
         }
     }
 
-    //================BIND RELATED METHODS====================================
+    //================BIND RELATED METHODS (allows app to connect to service)====================================
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -433,7 +438,7 @@ public class LocationUpdateService extends Service
     }
 
     public void onResult(Status status) {
-        Log.d(TAG, "inside onResult");
+        //Log.d(TAG, "inside onResult");
         if (status.isSuccess()) {
             Log.d(TAG, "Geofence successfully added");
         } else {
@@ -444,7 +449,29 @@ public class LocationUpdateService extends Service
         }
     }
 
+    public static boolean isLocationServicesAvailable(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+        boolean isAvailable = false;
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            isAvailable = (locationMode != Settings.Secure.LOCATION_MODE_OFF);
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            isAvailable = !TextUtils.isEmpty(locationProviders);
+        }
+
+        boolean coarsePermissionCheck = (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+        boolean finePermissionCheck = (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+
+        return isAvailable && (coarsePermissionCheck || finePermissionCheck);
+    }
 
 
 

@@ -82,11 +82,7 @@
             <!--android:gravity="center_vertical"-->
             <!--android:src="@android:drawable/star_big_on"/>-->
 
-        <ImageButton
-            android:id="@+id/delete_imageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_delete"/>
+
 
         <ImageButton
             android:id="@+id/geofence_imageButton"
@@ -99,6 +95,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_my_calendar"/>
+        <ImageButton
+            android:id="@+id/delete_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_delete"/>
 
     </LinearLayout>
 

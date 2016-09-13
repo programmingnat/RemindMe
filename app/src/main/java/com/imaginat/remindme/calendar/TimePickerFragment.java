@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * Created by nat on 8/21/16.
+ * This is a dialog fragment that holds the TimePicker
  */
 public class TimePickerFragment extends DialogFragment{
 
@@ -47,10 +47,11 @@ public class TimePickerFragment extends DialogFragment{
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
 
-
+        //inflate the layout
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_time, null);
         mTimePicker = (TimePicker)v.findViewById(R.id.dialog_time_picker);
 
+        //Different API version of set time
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion >= 23){
             // Do something for lollipop and above versions
@@ -64,6 +65,7 @@ public class TimePickerFragment extends DialogFragment{
 
         mTimePicker.setIs24HourView(false);
 
+        //AlertDialog builds the dialog to display
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
                 .setTitle("TIME PICKER")

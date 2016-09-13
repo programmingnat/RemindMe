@@ -1,7 +1,7 @@
 package com.imaginat.remindme.data;
 
 /**
- * Created by nat on 8/12/16.
+ * Each task is a SimpleTaskItem  (right now)
  */
 public class SimpleTaskItem implements ITaskItem {
 

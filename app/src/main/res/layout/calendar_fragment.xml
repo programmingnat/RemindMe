@@ -121,7 +121,7 @@
                 android:layout_marginLeft="3dp"
                 android:layout_weight=".90"
                 android:paddingTop="10dp"
-                android:text="start date"
+                android:text="end time"
                 android:textSize="20sp"/>
 
 

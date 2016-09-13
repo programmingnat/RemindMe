@@ -57,7 +57,7 @@ public class CalendarFragment extends Fragment
 
     /**
      *
-     *
+     * most of the code in this method is to get reference to the views
      */
 
     @Nullable
@@ -98,6 +98,7 @@ public class CalendarFragment extends Fragment
         mLocation_editText.setSingleLine();
 
 
+        //Click to display the date dialog picker requestCode REQUEST_START_DATE, results who up in ResultCallback
         mStartDate_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,7 +109,7 @@ public class CalendarFragment extends Fragment
             }
         });
 
-
+        //click to display the time dialog picker requestCode REQUEST_START_TIME
         mStartTime_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,6 +119,8 @@ public class CalendarFragment extends Fragment
                 dialog.show(manager, DIALOG_TIME);
             }
         } );
+
+        //click to display the date dialog picker requestCode REQUEST_END_DATe
         mEndDate_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,6 +130,8 @@ public class CalendarFragment extends Fragment
                 dialog.show(manager, DIALOG_DATE);
             }
         });
+
+        //click to display the time dialog picker and send results with requestCode REQUEST_END_TIME
         mEndTime_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,23 +142,30 @@ public class CalendarFragment extends Fragment
             }
         });
 
+        //button to create the event in the local calendar
         mCreateUpdate_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                //validate that the dates make sense (start before end)
                 if(mPresenter.validateDates(mStartCalendar,mEndCalendar)==false){
                     Toast.makeText(getActivity(),"Your start date must be before you end date, and in the future",Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                //Get the title,description,locaiton
                 String title = mTitle_editText.getText().toString();
                 String description = mDescription_editText.getText().toString();
                 String location = mLocation_editText.getText().toString();
+
+                //determine if we should update or put in a new entry
                 if(mPrevCalendarData!=null){
                     mPresenter.updateEvent(title,description,mStartCalendar,mEndCalendar,location,getContext(),mPrevCalendarData.getEventID());
                 }else {
                     mPresenter.createEvent(title, description, mStartCalendar, mEndCalendar, location, getContext());
                 }
 
+                //close the page
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
             }
@@ -172,6 +184,7 @@ public class CalendarFragment extends Fragment
     /**
      *
      * After each dialog open, it sends the data back here to be processed
+     *
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -184,6 +197,7 @@ public class CalendarFragment extends Fragment
         SimpleDateFormat sf=null;
         switch(requestCode){
             case REQUEST_START_DATE:
+                //Set the Calendar Object and set the Text to be displayed
                 date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
                 result = Calendar.getInstance();
                 result.setTime(date);
@@ -193,6 +207,7 @@ public class CalendarFragment extends Fragment
                 mSelectedStartDate_textView.setText(result.get(Calendar.MONTH)+"/"+result.get(Calendar.DAY_OF_MONTH)+"/"+result.get(Calendar.YEAR));
                 break;
             case REQUEST_START_TIME:
+                //Set the Calendar Object and set the Text to be displayed
                 date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
                 result = Calendar.getInstance();
                 result.setTime(date);
@@ -203,6 +218,7 @@ public class CalendarFragment extends Fragment
                 mSelectedStartTime_textView.setText(result.get(Calendar.HOUR_OF_DAY)+":"+result.get(Calendar.MINUTE));
                 break;
             case REQUEST_END_DATE:
+                //Set the Calendar Object and set the Text to be displayed
                 date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
                 result = Calendar.getInstance();
                 result.setTime(date);
@@ -212,6 +228,7 @@ public class CalendarFragment extends Fragment
                 mSelectedEndDate_textView.setText(result.get(Calendar.MONTH)+"/"+result.get(Calendar.DAY_OF_MONTH)+"/"+result.get(Calendar.YEAR));
                 break;
             case REQUEST_END_TIME:
+                //Set the Calendar Object and set the Text to be displayed
                 date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
                 result = Calendar.getInstance();
                 result.setTime(date);

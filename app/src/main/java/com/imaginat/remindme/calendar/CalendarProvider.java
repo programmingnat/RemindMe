@@ -17,9 +17,10 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 /**
- * Created by nat on 8/21/16.
+ * The Calendar Provider lets the app access the local calendar, code based on previous hw assigment
  */
 public class CalendarProvider {
+
 
     public void fetchCalendars(Context context) throws SecurityException {
         Uri uri = CalendarContract.Calendars.CONTENT_URI;

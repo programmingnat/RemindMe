@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.imaginat.remindme.BaseActivity;
 import com.imaginat.remindme.R;
 import com.imaginat.remindme.RemindMeApplication;
+import com.imaginat.remindme.geofencing.LocationUpdateService;
 
 /**
  * The Activity encompases the MVP pattern. The activity class creates the presenter,views and ensure that each has the
@@ -80,7 +82,12 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment> {
         //start up location service if it didnt occur yet (and is necessary)
         RemindMeApplication remindMeApp = (RemindMeApplication) getApplicationContext();
         remindMeApp.startServiceAsNeeded();
-
+        LocationUpdateService lus = remindMeApp.getServiceReference();
+        if(lus.isLocationServicesAvailable(this)){
+            Toast.makeText(this,"Location service  avail.",Toast.LENGTH_LONG);
+        }else{
+            Toast.makeText(this,"Location service not avail.",Toast.LENGTH_LONG);
+        }
 
     }
 

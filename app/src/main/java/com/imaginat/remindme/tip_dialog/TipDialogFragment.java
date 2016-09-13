@@ -23,10 +23,16 @@ public class TipDialogFragment extends DialogFragment {
     public static final int TASKS_TIPS=100;
     public static final int GEOMAP_TIP=200;
 
+    //reference to the layoutID
     private int layoutID=R.layout.view_all_tasks_tip_dialog;
+
+    //reference to the preference in shared Preferences
     private String sharedPrefKey=GlobalConstants.SHOW_VIEW_TASKS_TOOLTIPS;
+
+    //the user choice
     private int mTipNo=TASKS_TIPS;
 
+    //This allows the tooltip to change xml files depending on the setting
     public void setTipToDisplay(int tipNo){
         mTipNo=tipNo;
         switch(tipNo){

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by nat on 5/17/16.
+ * Coordinates from street address
  */
 public class FetchCoordinatesIntentService extends IntentService {
     private static final String TAG = FetchCoordinatesIntentService.class.getSimpleName();

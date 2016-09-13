@@ -10,7 +10,7 @@ import android.support.v7.app.AlertDialog;
 import com.imaginat.remindme.R;
 
 /**
- *
+ * Dialog that appears before deletion of task
  */
 public class ConfirmDeleteDialog extends DialogFragment {
 

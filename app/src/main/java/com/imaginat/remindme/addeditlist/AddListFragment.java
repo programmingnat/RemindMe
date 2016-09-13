@@ -100,6 +100,7 @@ public class AddListFragment extends Fragment implements AddListContract.View{
         AddEditList addEditListActivity = (AddEditList)getActivity();
         addEditListActivity.swapIcons(GlobalConstants.HIDE_OPTIONS);
 
+        //This block of code is to grab the color used to reset the toolbar color
         int[] attrs = {android.R.attr.colorPrimary,android.R.attr.colorPrimaryDark,android.R.attr.colorAccent};
         TypedArray ta = addEditListActivity.obtainStyledAttributes(R.style.AppTheme,attrs);
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.my_toolbar);

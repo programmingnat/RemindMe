@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
 
 /**
- * Created by nat on 8/27/16.
+ * Began working on my own Content Provider
  */
 public class RemindersContentProvider extends ContentProvider {
 

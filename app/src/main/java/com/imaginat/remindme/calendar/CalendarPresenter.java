@@ -14,7 +14,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 /**
- * Created by nat on 8/21/16.
+ * Calendar Presenter class is the link between the View and the Data (ContentProvider)
  */
 public class CalendarPresenter implements CalendarContract.Presenter {
 
@@ -34,6 +34,9 @@ public class CalendarPresenter implements CalendarContract.Presenter {
 
     @Override
     public void start() {
+        /**
+         * Load the event from the database, the event is the ID the local calendar uses
+         */
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment) mView).getContext());
         llds.getSingleTask(mListID,mReminderID)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -57,6 +60,10 @@ public class CalendarPresenter implements CalendarContract.Presenter {
                 });
     }
 
+    /**
+     *
+     * Send data to view to display previous info
+     */
     private void pullEventFromCalendar(long eventID){
         CalendarProvider cp = new CalendarProvider();
         CalendarData cd = cp.fetchEventByID(((Fragment)mView).getContext(),eventID);
@@ -64,6 +71,10 @@ public class CalendarPresenter implements CalendarContract.Presenter {
             mView.showPreviousEventInfo(cd);
         }
     }
+
+    /**
+     * create a calendar event for the local calendar
+     */
     @Override
     public void createEvent(String title, String description, Calendar startTime, Calendar endTime, String location, Context context) {
         CalendarProvider cp = new CalendarProvider();
@@ -79,6 +90,10 @@ public class CalendarPresenter implements CalendarContract.Presenter {
 
     }
 
+    /**
+     *
+     * update an event that is already in the local calendar
+     */
     @Override
     public void updateEvent(String title, String description, Calendar startDate, Calendar endDate,  String location, Context context, long eventID) {
         CalendarProvider cp = new CalendarProvider();
@@ -86,6 +101,10 @@ public class CalendarPresenter implements CalendarContract.Presenter {
         //cp.update();
     }
 
+    /**
+     *
+     * ensure that the start date is before the end date
+     */
     @Override
     public boolean validateDates(Calendar startDate, Calendar endDate) {
         if(startDate.compareTo(endDate)<=0){

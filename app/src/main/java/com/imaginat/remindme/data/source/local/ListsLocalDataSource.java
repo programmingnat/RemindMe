@@ -20,7 +20,9 @@ import rx.Observable;
 
 /**
  *  This class gets the data from the local database and sends it usually in an ArrayList to caller
- *  The methods here return a Callable so that the data can be used with RXJava/Android
+ *  The methods here return a Callable so that the data can be used with RXJava/Android,
+ *  Every query to the database is wrapped inside a callable in the call method, this allows us
+ *  to send the callable to RxJava and get an Observable
  */
 public class ListsLocalDataSource {
 
@@ -31,6 +33,10 @@ public class ListsLocalDataSource {
     private static ListsLocalDataSource mInstance;
 
 
+    /**
+     *
+     * private constructor
+     */
     private ListsLocalDataSource(@NonNull Context context) {
         mSQLHelper = RemindMeSQLHelper.getInstance(context);
     }
@@ -44,6 +50,19 @@ public class ListsLocalDataSource {
     }
 
     //////////////LIST OF LISTS RELATED (calls to get information about the lists in the apps)//////////////////////////////////
+
+    //========================GET ALL LISTS===================================
+    /**
+     *
+     * method called by client to get all titles
+     */
+    public Observable<List<ReminderList>> getAllListTitles() {
+        return mSQLHelper.getAllLists(getAllListTitles_Callable());
+    }
+    /**
+     *
+     * method that returns a callable classs that will be wrapped in RXJava observable
+     */
     private Callable<List<ReminderList>> getAllListTitles_Callable() {
         return new Callable<List<ReminderList>>() {
             @Override
@@ -79,12 +98,14 @@ public class ListsLocalDataSource {
         };
     }
 
-    public Observable<List<ReminderList>> getAllListTitles() {
-        return mSQLHelper.getAllLists(getAllListTitles_Callable());
-    }
 
 
+    //==================GET SPECIFIC TITLE INFO=====================
 
+    /**
+     *
+     * method that creates the callable class that you pass to RXJava to get OBservable wrapper
+     */
     private Callable<List<ReminderList>> getTitleAndIconForList_Callable(final String listID) {
         return new Callable<List<ReminderList>>() {
             @Override
@@ -120,6 +141,10 @@ public class ListsLocalDataSource {
         };
     }
 
+    /**
+     *
+     * called by the client to get title info
+     */
     public Observable<List<ReminderList>> getListTitleInfo(String listID) {
         return mSQLHelper.getAllLists(getTitleAndIconForList_Callable(listID));
     }
@@ -139,6 +164,10 @@ public class ListsLocalDataSource {
         return createNewList(values);
     }
 
+    /**
+     *
+     * create a new list
+     */
     public String createNewList(ContentValues values){
         SQLiteDatabase db = mSQLHelper.getWritableDatabase();
 
@@ -148,6 +177,10 @@ public class ListsLocalDataSource {
         return Long.toString(id);
     }
 
+    /**
+     *
+     * update the list title and icon
+     */
     public int updateListTitle(String listID,String title,String icon){
         ContentValues values = new ContentValues();
         values.put(DBSchema.lists_table.cols.LIST_TITLE,title);
@@ -160,6 +193,10 @@ public class ListsLocalDataSource {
                 new String[]{listID});
     }
 
+    /**
+     *
+     * delete list
+     */
     public void deleteList(String listID){
         SQLiteDatabase db= mSQLHelper.getWritableDatabase();
         String[] argsArray = new String[]{listID};
@@ -175,14 +212,30 @@ public class ListsLocalDataSource {
 
     }
     ////////////////// TASK RELATED DATABASE CALLS (gets the individual reminders/task in a list)/////////////////////
+
+
+
+    //================GET ALL TASKS=============================================
+
+    /**
+     *
+        method called by the client
+     */
     public Observable<List<ITaskItem>>getAllTasks(String listID){
         return mSQLHelper.getAllTasks(getAllTasks_Callable(listID));
     }
 
+    /**
+     *
+     * method called to get the callable class
+     */
     private GetTasks_Callable getAllTasks_Callable(String listID) {
         return new GetTasks_Callable(listID);
     }
 
+    /**
+     * Callable class that holds the database calls and gets wrapped in Observable
+     */
     class GetTasks_Callable implements Callable<List<ITaskItem>> {
 
         private String mListID = null;
@@ -261,13 +314,26 @@ public class ListsLocalDataSource {
         }
     }
 
-
+    //===========================GET SINGLE TASK FROM DATABASE==================
+    /**
+     *
+     * method used by client
+     */
     public Observable<List<ITaskItem>>getSingleTask(String listID,String reminderID){
         return mSQLHelper.getSingleTask(getSingleTask_callable(listID,reminderID));
     }
+
+    /**
+     *
+     * the method calls that returns the callable class
+     */
     private GetSingleTask_Callable getSingleTask_callable(String listID,String reminderID) {
         return new GetSingleTask_Callable(listID,reminderID);
     }
+
+    /**
+     * The class that gets created (with the queries) and gets wrapped into observable
+     */
     class GetSingleTask_Callable implements Callable<List<ITaskItem>> {
 
         private String mListID = null;
@@ -319,14 +385,27 @@ public class ListsLocalDataSource {
             return listItems;
         }
     }
-    //========================ALARM=======================================
+    //========================GET ALARM DATA FROM DATBASE=======================================
+
+    /**
+     *
+     * method called by the client to get the alarms
+     */
     public Observable<List<GeoFenceAlarmData>>getAllActiveAlarms(){
         return mSQLHelper.getAllActiveGeoFenceAlarms(getAllActiveAlarms_Callable());
     }
+
+    /**
+     *
+     * method used to return a Callable classs
+    */
     private GetAlarms_Callable getAllActiveAlarms_Callable() {
         return new GetAlarms_Callable();
     }
 
+    /**
+     * the clas that ultimately gets passed to RXJava to return an Observable
+     */
 
     class GetAlarms_Callable implements Callable<List<GeoFenceAlarmData>>{
 
@@ -371,6 +450,11 @@ public class ListsLocalDataSource {
         }
     }
     //===================CREATE UPDATE DELETE REMINDERS==============================================
+
+    /**
+     *
+     * create a new task
+     */
     public long createNewTask(String listID,String text){
         ContentValues values = new ContentValues();
         values.put(DBSchema.reminders_table.cols.LIST_ID,listID);
@@ -382,6 +466,10 @@ public class ListsLocalDataSource {
                 values);
     }
 
+    /**
+     *
+     * Called when a task is checked
+     */
     public int updateTaskComplete(String listID,String reminderID,int checkValue){
         ContentValues values = new ContentValues();
         values.put(DBSchema.reminders_table.cols.IS_COMPLETED,checkValue);
@@ -392,6 +480,9 @@ public class ListsLocalDataSource {
                 new String[]{listID, reminderID});
     }
 
+    /**
+     * update the text of the reminder/task
+     */
     public int updateTaskText(String listID,String reminderID,String text){
         ContentValues values = new ContentValues();
         values.put(DBSchema.reminders_table.cols.REMINDER_TEXT,text);
@@ -403,6 +494,10 @@ public class ListsLocalDataSource {
                 new String[]{listID, reminderID});
     }
 
+    /**
+     *
+     * Save the eventID from the calendar into the database
+     */
     public int updateTaskCalendarEvent(String listID,String reminderID,long eventID){
         ContentValues values = new ContentValues();
         values.put(DBSchema.reminders_table.cols.CALENDAR_EVENT_ID,eventID);
@@ -414,6 +509,10 @@ public class ListsLocalDataSource {
                 new String[]{listID, reminderID});
     }
 
+    /**
+     *
+     * Delete a reminder
+     */
     public void deleteReminder(String listID,String reminderID){
         SQLiteDatabase db= mSQLHelper.getWritableDatabase();
         db.delete(DBSchema.reminders_table.NAME,
@@ -421,6 +520,10 @@ public class ListsLocalDataSource {
                 new String[]{listID, reminderID});
     }
 
+    /**
+     *
+     *Save data for geo fence alarm
+     */
     public void saveGeoFenceAlarm(String alarmID,String reminderID,ContentValues values){
         Log.d(TAG,"saveGeoFenceAlarm Called");
 

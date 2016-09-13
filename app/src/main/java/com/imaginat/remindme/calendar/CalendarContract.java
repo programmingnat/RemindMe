@@ -8,7 +8,7 @@ import com.imaginat.remindme.BaseView;
 import java.util.Calendar;
 
 /**
- * Created by nat on 8/21/16.
+ * Calendar Contract
  */
 public class CalendarContract {
 

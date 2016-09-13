@@ -18,12 +18,17 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 /**
- * Created by nat on 8/12/16.
+ * This is the logic class that links the VIEW to the MODEL or the UI to the Database
  */
 public class TasksPresenter implements TasksContract.Presenter {
 
-    private String mListID;
+    //for debugging purposes
     private String TAG = TasksPresenter.class.getSimpleName();
+
+    //list reference (the list that is being displayed)
+    private String mListID;
+
+    //reference to the view
     TasksContract.View mView=null;
 
 
@@ -31,6 +36,10 @@ public class TasksPresenter implements TasksContract.Presenter {
         mListID=listID;
         mView = view;
     }
+
+    /**
+     *  calls the databasae and creates a new, empty task/reminder
+     */
     @Override
     public void createNewReminder() {
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
@@ -39,21 +48,35 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
 
+    /**
+     *
+     *gets called during the delete task flow, asks the view to show confirmation
+     */
     @Override
     public void requestToDelete(String listID, String reminderID) {
         mView.showDeletionConfirmMsg(listID,reminderID);
     }
 
+    /**
+     * hide the button that adds task (testing purposes)
+     */
     @Override
     public void disableAddingNewTask() {
         mView.hideFAB();
     }
 
+    /**
+     * endables the button that lets a user add task (testing purpose)
+     */
     @Override
     public void enableAddingNewTask() {
         mView.showFAB();
     }
 
+    /**
+     *
+     * delete from database
+     */
     @Override
     public void deleteReminder(String listID, String id) {
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
@@ -61,6 +84,9 @@ public class TasksPresenter implements TasksContract.Presenter {
         loadTasks();
     }
 
+    /**
+     *update the task (text change)
+     */
     @Override
     public void updateReminder(String listID, String taskID,String data) {
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
@@ -68,6 +94,10 @@ public class TasksPresenter implements TasksContract.Presenter {
         loadTasks();
     }
 
+    /**
+     *
+     *  update the checkbox
+     */
     @Override
     public void updateCompletionStatus(String listID, String id, boolean isChecked) {
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
@@ -89,11 +119,18 @@ public class TasksPresenter implements TasksContract.Presenter {
         loadTasks();
     }
 
+    /**
+     *
+     * tell mView that someone has been looking
+     */
     @Override
     public void loadTaskOptions(String listID, String taskID) {
         mView.showOptionsOverlay();
     }
 
+    /**
+     * loads all the tasks of the chosen list
+     */
     private void loadTasks(){
         ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
         if(mListID==null || mListID.isEmpty()) {

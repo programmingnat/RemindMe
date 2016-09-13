@@ -7,7 +7,8 @@ import android.os.Parcelable;
 import com.imaginat.remindme.data.source.local.DBSchema;
 
 /**
- * Created by nat on 8/31/16.
+ * This holds the data for a geofence/location based alarm
+ * class is an object that hold address and a key to id the alarm
  */
 public class GeoFenceAlarmData implements Parcelable {
     private String mAlarmID;

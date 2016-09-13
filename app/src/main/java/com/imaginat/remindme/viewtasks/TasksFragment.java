@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
@@ -27,18 +26,24 @@ import com.imaginat.remindme.tip_dialog.TipDialogFragment;
 import java.util.ArrayList;
 
 /**
- * Created by nat on 8/12/16.
+ *This is the VIEW that displays all the tasks
  */
 public class TasksFragment extends Fragment implements TasksContract.View,ConfirmDeleteDialog.IConfirmDeleteDialogListener {
 
+    //reference to presenter
     TasksContract.Presenter mPresenter;
+    //reference to adapter
     TaskReminderRecyclerAdapter mAdapter;
+    //reference to recyclerview
     RecyclerView mRecyclerView;
+    //refereto nth
     TextView mNoTasksTextView;
+
     FloatingActionButton mFloatingActionButton;
 
     boolean mShowToolTip=true;
 
+    //For callback identification
     public static final int REQUEST_ADD_TASK = 100;
     public static final int OPEN_CALENDAR = 200;
     public static final int OPEN_GEOFENCE = 300;
@@ -67,7 +72,7 @@ public class TasksFragment extends Fragment implements TasksContract.View,Confir
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(TasksFragment.this.getActivity(), "CLICKED ", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(TasksFragment.this.getActivity(), "CLICKED ", Toast.LENGTH_SHORT).show();
                 mPresenter.createNewReminder();
 
 

@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * Created by nat on 8/21/16.
+ * Dialog fragment used to hold DatePicker
  */
 public class DatePickerFragment extends DialogFragment {
 

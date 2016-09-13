@@ -2,6 +2,7 @@ package com.imaginat.remindme.viewtasks;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,7 +86,6 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         ITaskItem toDoListItem = (ITaskItem) mITaskItems.get(position);
 
 
-
         //Set the Views based on the array item
         //set text,listID,reminderID,alarmData
         holder.mRadioButton.setChecked(toDoListItem.isCompleted());
@@ -95,7 +95,7 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         holder.mGeoFenceAlarmData = toDoListItem.getGeoFenceAlarmData();
 
         //this doesnt have to be exact, used in helping scroll
-        holder.mPositionInArray=position;
+        holder.mPositionInArray = position;
         //holder.mRadioButton.setVisibility(View.VISIBLE);
 
         //Mark the item as completed or not
@@ -135,7 +135,7 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
     /**
      * Keeps track of the position of the item selected. Allows the recyclerview to autoscroll to ensure the view is on screen and visiible
      */
-    public int getSelectedIndexNumber(){
+    public int getSelectedIndexNumber() {
         return mSelectedIndexNumber;
     }
 
@@ -147,22 +147,21 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
 
 
     /**
-     *
      * Allows insertion to the end of the list
      * the return boolean indicates whether or not the list should be redrawn and reloaded(which is the case when the first view is added)
      * or if the animation will occur (which doesnt happen when the first view i added)
      */
-    public boolean addItemToEnd(String listID,String reminderID) {
+    public boolean addItemToEnd(String listID, String reminderID) {
 
-        int position = mITaskItems.size() ;
-        SimpleTaskItem element = new SimpleTaskItem(listID,reminderID);
-        mITaskItems.add(position,element);
-        mSelectedIndexNumber=position+1;
+        int position = mITaskItems.size();
+        SimpleTaskItem element = new SimpleTaskItem(listID, reminderID);
+        mITaskItems.add(position, element);
+        mSelectedIndexNumber = position + 1;
 
-        if(position<=1){
+        if (position <= 1) {
             notifyDataSetChanged();
             return true;
-        }else {
+        } else {
             notifyItemInserted(position);
             return false;
         }
@@ -170,8 +169,8 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
 
     //====================================================================================
     public class TaskListItemHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener, View.OnKeyListener,
-            TextView.OnEditorActionListener, View.OnFocusChangeListener {
+            implements View.OnClickListener,
+            TextView.OnEditorActionListener, View.OnFocusChangeListener{
 
         //References to all the views that make up a line in the task list
         public CheckBox mRadioButton;
@@ -190,7 +189,7 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
 
         public boolean mIsShowingOverlay = false;
         public GeoFenceAlarmData mGeoFenceAlarmData;
-        public int mPositionInArray=0;
+        public int mPositionInArray = 0;
 
 
         public TaskListItemHolder(final View itemView) {
@@ -209,11 +208,12 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             mItemView.setOnClickListener(this);
 
             //Set the listeners for the edit text
-            mEditText.setOnKeyListener(this);
+
+            //mEditText.setOnKeyListener(this);
             mEditText.setOnFocusChangeListener(this);
             mEditText.setOnEditorActionListener(this);
             //allow multiple lines for edit text (doesnt work in xml)
-            mEditText.setSingleLine(false);
+            mEditText.setSingleLine(true);
 
 
             mOverlayMenu = (ViewGroup) itemView.findViewById(R.id.overlay_menu);
@@ -252,13 +252,12 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
 
 
 
-
             //====THE OVERLAY OPTION Listeners========================
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTasksPresenter.requestToDelete(mListID,mReminderId);
+                    mTasksPresenter.requestToDelete(mListID, mReminderId);
 
 
                 }
@@ -315,7 +314,6 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         }
 
 
-
         /**
          * When the user clicks the View line(holding edit text), send the focus to the end of the edit text
          */
@@ -323,17 +321,17 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         public void onClick(View v) {
             if (!mIsShowingOverlay) {
                 mEditText.requestFocus();
-                mEditText.setSelection(mEditText.getText().length());
-                mSelectedIndexNumber=mPositionInArray;
+                /*if(mEditText.getText().length()>0){
+
+                    mEditText.setSelection(mEditText.getText().length());
+                }*/
+                mSelectedIndexNumber = mPositionInArray;
             }
 
         }
 
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-            return false;
-        }
+
 
         /**
          * When the focus changes (user leaves an edit text field), save the data
@@ -344,8 +342,8 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             if (!hasFocus) {
                 //update the data when a user leaves (and presumably  done editing)
                 mTasksPresenter.updateReminder(mListID, mReminderId, ((EditText) v).getText().toString());
-            }else{
-                mSelectedIndexNumber=mPositionInArray;
+            } else {
+                mSelectedIndexNumber = mPositionInArray;
             }
         }
 
@@ -353,11 +351,12 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
+            Log.d(TAG, "onEditorAction");
             if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 //If Enter is hit, hide the pop out keyboard
                 InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                return true;
+                return false;
             }
             return false;
         }

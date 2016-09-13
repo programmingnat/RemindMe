@@ -1,7 +1,7 @@
 package com.imaginat.remindme.data;
 
 /**
- * Created by nat on 8/8/16.
+ * This class holds the Title info of a list
  */
 public class ReminderList {
 

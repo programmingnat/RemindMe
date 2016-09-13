@@ -2,6 +2,7 @@ package com.imaginat.remindme;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,9 @@ import android.view.View;
 
 /**
  * This is extended by all activities in the app
+ * Trying to implement the MVP based on Google's best practices MVP example
+ * Each section has an activity that links instance of Model, View, Presenter together
+    The Presenter can talk to the Model and to the View, but they(Model and View) cannot talk to each other
  */
 public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
         implements IChangeToolbar {
@@ -36,6 +40,7 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
 
 
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -46,6 +51,10 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
         //set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+
+
+
 
         //When the app is rotated, we dont want re-instantiate and readd another fragment
         //instead, we only wna
@@ -132,9 +141,9 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
     public void updateIcons(Menu menu){
         Log.d(TAG,"Inside updateIcons");
         if(mToolbarIconInstructions ==GlobalConstants.SHOW_OPTIONS) {
-            MenuItem menuItem = menu.findItem(R.id.search);
-            menuItem.setVisible(false);
-            menuItem=menu.findItem(R.id.deleteList);
+            //MenuItem menuItem = menu.findItem(R.id.search);
+            //menuItem.setVisible(false);
+            MenuItem menuItem=menu.findItem(R.id.deleteList);
             menuItem.setVisible(true);
             //menuItem=menu.findItem(R.id.shareListNFC);
             //menuItem.setVisible(true);
@@ -142,9 +151,9 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
             menuItem.setVisible(true);
 
         }else if(mToolbarIconInstructions ==GlobalConstants.HIDE_OPTIONS){
-            MenuItem menuItem = menu.findItem(R.id.search);
-            menuItem.setVisible(true);
-            menuItem=menu.findItem(R.id.deleteList);
+            //MenuItem menuItem = menu.findItem(R.id.search);
+            //menuItem.setVisible(true);
+            MenuItem menuItem=menu.findItem(R.id.deleteList);
             menuItem.setVisible(false);
             //menuItem=menu.findItem(R.id.shareListNFC);
             //menuItem.setVisible(false);
