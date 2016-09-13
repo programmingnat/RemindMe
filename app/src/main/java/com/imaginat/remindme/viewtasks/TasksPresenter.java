@@ -1,9 +1,12 @@
 package com.imaginat.remindme.viewtasks;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
@@ -75,6 +78,10 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void start() {
+        SharedPreferences sharedPreferences= ((Fragment)mView).
+                getActivity().getSharedPreferences(GlobalConstants.PREFERENCES, Context.MODE_PRIVATE);
+        boolean showIt = sharedPreferences.getInt(GlobalConstants.SHOW_VIEW_TASKS_TOOLTIPS, 1)==1?true:false;
+        mView.setToolTip(showIt);
         loadTasks();
     }
 

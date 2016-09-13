@@ -22,6 +22,7 @@ import com.imaginat.remindme.calendar.CalendarActivity;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
 import com.imaginat.remindme.geofencing.GeoFencingActivity;
+import com.imaginat.remindme.tip_dialog.TipDialogFragment;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     RecyclerView mRecyclerView;
     TextView mNoTasksTextView;
     FloatingActionButton mFloatingActionButton;
+
+    boolean mShowToolTip=true;
 
     public static final int REQUEST_ADD_TASK = 100;
     public static final int OPEN_CALENDAR = 200;
@@ -94,6 +97,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //TipDialogFragment tipDialog = new TipDialogFragment();
+        // tipDialog.show(getActivity().getSupportFragmentManager(),"TIP");
+
+
     }
 
     @Override
@@ -174,10 +187,21 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
+    public void setToolTip(boolean b) {
+        mShowToolTip=b;
+    }
+
+    @Override
     public void showAll(ArrayList<ITaskItem> tasks) {
         mAdapter.setData(tasks);
         mRecyclerView.setVisibility(View.VISIBLE);
         mNoTasksTextView.setVisibility(View.GONE);
+
+
+        if(mAdapter.getItemCount()>0 && mShowToolTip) {
+            TipDialogFragment tipDialog = new TipDialogFragment();
+            tipDialog.show(getActivity().getSupportFragmentManager(), "TIP");
+        }
     }
 
     @Override
@@ -221,7 +245,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     //========================================================================
-    //prevent error animating when updating list
+    //set predictiveItemAnimation to true when animating
     private class MyLinearLayoutManager extends LinearLayoutManager {
 
         @Override

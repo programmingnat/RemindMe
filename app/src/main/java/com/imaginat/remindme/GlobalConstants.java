@@ -19,6 +19,8 @@ public class GlobalConstants {
     public static final int SHOW_OPTIONS=100;
     public static final int HIDE_OPTIONS=200;
 
+    //TOOL TIPS
+    public static final String SHOW_VIEW_TASKS_TOOLTIPS="Show_View_Tasks_Tooltip";
 
     //ICONS FOR THE LIST
     public static final int GENERIC_REMINDER_ICON=0;

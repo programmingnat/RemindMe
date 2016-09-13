@@ -26,6 +26,7 @@ public class TasksContract {
         void hideFAB();
         void showCalendar(String listID,String reminderID);
         void showGeoFenceAlarm(String listID,String reminderID,GeoFenceAlarmData geoFenceAlarmData);
+        void setToolTip(boolean b);
         void showTaskUpdate();
         void showNoTaskUpdated();
     }
