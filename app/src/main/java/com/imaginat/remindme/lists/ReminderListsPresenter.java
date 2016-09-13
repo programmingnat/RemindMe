@@ -94,7 +94,11 @@ public class ReminderListsPresenter implements ReminderListsContract.Presenter {
                         if(!mView.isActive()){
                             return;
                         }
-                       mView.showAll(reminderListFiltered);
+                        if(reminderListFiltered.size()==0){
+                            mView.showNoLists();
+                        }else {
+                            mView.showAll(reminderListFiltered);
+                        }
 
                     }
 

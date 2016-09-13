@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.IChangeToolbar;
@@ -55,6 +56,10 @@ public class ReminderListsFragment extends Fragment
     //Reference to android.view created when xml is inflated
     private View mView;
 
+    //reference to recycler view and empty message
+    private RecyclerView mRecyclerView;
+    private TextView mEmptyListTextView;
+
     //reference to the interface that allows modification to toolbar
     private IChangeToolbar mIChangeToolbar;
 
@@ -77,6 +82,9 @@ public class ReminderListsFragment extends Fragment
         //Inflate the view & get reference to it
         View view = inflater.inflate(R.layout.list_of_lists_fragment, container, false);
         mView = view;
+
+        mRecyclerView = (RecyclerView)mView.findViewById(R.id.theRecyclerView);
+        mEmptyListTextView= (TextView)mView.findViewById(R.id.emptyList_textView);
 
         //Get reference to current Primary Color
         int[] attrs = {android.R.attr.colorPrimary, android.R.attr.colorPrimaryDark, android.R.attr.colorAccent};
@@ -203,6 +211,16 @@ public class ReminderListsFragment extends Fragment
     }
 
     /**
+     * show message when no lists have been added
+     */
+    @Override
+    public void showNoLists() {
+        mRecyclerView.setVisibility(View.GONE);
+        mEmptyListTextView.setVisibility(View.VISIBLE);
+    }
+
+
+    /**
      * hide the toolbar options
      */
     @Override
@@ -231,7 +249,8 @@ public class ReminderListsFragment extends Fragment
      */
     @Override
     public void showAll(ArrayList<ReminderList> lists) {
-
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mEmptyListTextView.setVisibility(View.GONE);
         mAdapter.setData(lists);
         mAdapter.notifyDataSetChanged();
     }

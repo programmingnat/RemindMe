@@ -26,6 +26,8 @@ public class ReminderListsContract {
 
         void showAddEditList(String id);
 
+        void showNoLists();
+
     }
 
     interface ViewsAdapter extends BaseView<Presenter> {

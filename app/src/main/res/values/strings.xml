@@ -7,4 +7,14 @@
     <string name="cancel_geo_button">No, cancel it</string>
     <string name="geo_state_active_msg">GeoFence has been activated</string>
     <string name="geo_state_deactive_msg">GeoFence has been deactivated</string>
+    <string name="no_lists_to_display">Looks like you haven\'t created a list yet!\r\n What are you waiting for? \r\nLists are proven to be helpful.\r\n Click the plus sign to get started</string>
+    <string name="no_reminders_to_display">Now that you created a list, all you need to do is add reminders to the list.\n\rClick the plus sign below to create a new reminder.</string>
+    <string name='newListInstructions'>Let\'s create a new list.\r\nThe first step is to select an icon to represent the list.\r\nThe second step is to name the list</string>
+    <string name="newListHint">Type your list\'s name here</string>
+    <string name="selectIconInst">Select an icon for your list:</string>
+    <string name="enterTitleInst">Enter a list title below:</string>
+    <string name="calendar_clickToAddStartDate">Click here to add starting date</string>
+    <string name="calendar_clickToAddStartTime">Click here to add starting time</string>
+    <string name="calendar_clickToAddEndDate">Click here to add ending date</string>
+    <string name="calendar_clickToAddEndTime">Click here to add ending time</string>
 </resources>

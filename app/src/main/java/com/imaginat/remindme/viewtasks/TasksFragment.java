@@ -2,6 +2,7 @@ package com.imaginat.remindme.viewtasks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +18,6 @@ import android.widget.Toast;
 
 import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
-import com.imaginat.remindme.addeditTask.AddEditTask;
 import com.imaginat.remindme.calendar.CalendarActivity;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
@@ -36,24 +36,23 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     TextView mNoTasksTextView;
     FloatingActionButton mFloatingActionButton;
 
-    public static final int REQUEST_ADD_TASK=100;
-    public static final int OPEN_CALENDAR=200;
-    public static final int OPEN_GEOFENCE=300;
+    public static final int REQUEST_ADD_TASK = 100;
+    public static final int OPEN_CALENDAR = 200;
+    public static final int OPEN_GEOFENCE = 300;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View  view= inflater.inflate(R.layout.tasks_fragment, container, false);
-        mNoTasksTextView = (TextView)view.findViewById(R.id.noTasks_TextView);
+        View view = inflater.inflate(R.layout.tasks_fragment, container, false);
+        mNoTasksTextView = (TextView) view.findViewById(R.id.noTasks_TextView);
 
        /* SimpleTaskItem simpleTaskItem1 = new SimpleTaskItem();
         simpleTaskItem1.setText("THIS IS A TEMP TEST");
         ArrayList<ITaskItem>taskItemArrayList = new ArrayList<>();
         taskItemArrayList.add(simpleTaskItem1);*/
-        mAdapter = new TaskReminderRecyclerAdapter(getContext(),new ArrayList<ITaskItem>());
+        mAdapter = new TaskReminderRecyclerAdapter(getContext(), new ArrayList<ITaskItem>());
         mAdapter.setPresenter(mPresenter);
-
 
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.theRecyclerView);
@@ -61,17 +60,37 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        mFloatingActionButton = (FloatingActionButton)view.findViewById(R.id.fab);
+        mFloatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(TasksFragment.this.getActivity(),"CLICKED ",Toast.LENGTH_SHORT).show();
+                Toast.makeText(TasksFragment.this.getActivity(), "CLICKED ", Toast.LENGTH_SHORT).show();
                 mPresenter.createNewReminder();
 
 
             }
         });
 
+
+        //so scroll above keyboard
+        if (Build.VERSION.SDK_INT >= 11) {
+            mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v,
+                                           int left, int top, int right, int bottom,
+                                           int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    if (bottom < oldBottom) {
+                        mRecyclerView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecyclerView.smoothScrollToPosition(mAdapter.getSelectedIndexNumber());
+                                        //mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
+                        }, 100);
+                    }
+                }
+            });
+        }
 
 
         return view;
@@ -88,33 +107,43 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showCalendar(String listID,String reminderID) {
+    public void showCalendar(String listID, String reminderID) {
         Intent calendarActivityIntent = new Intent(TasksFragment.this.getActivity(), CalendarActivity.class);
-        calendarActivityIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,listID);
-        calendarActivityIntent.putExtra(GlobalConstants.CURRENT_TASK_ID,reminderID);
-        startActivityForResult(calendarActivityIntent,TasksFragment.OPEN_CALENDAR);
+        calendarActivityIntent.putExtra(GlobalConstants.CURRENT_LIST_ID, listID);
+        calendarActivityIntent.putExtra(GlobalConstants.CURRENT_TASK_ID, reminderID);
+        startActivityForResult(calendarActivityIntent, TasksFragment.OPEN_CALENDAR);
     }
 
     @Override
     public void showGeoFenceAlarm(String listID, String reminderID, GeoFenceAlarmData geoFenceAlarmData) {
         Intent geoFenceAlarmIntent = new Intent(TasksFragment.this.getActivity(), GeoFencingActivity.class);
-        geoFenceAlarmIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,listID);
-        geoFenceAlarmIntent.putExtra(GlobalConstants.CURRENT_TASK_ID,reminderID);
-        geoFenceAlarmIntent.putExtra(GlobalConstants.GEO_ALARM_DATA_EXTRA,geoFenceAlarmData);
+        geoFenceAlarmIntent.putExtra(GlobalConstants.CURRENT_LIST_ID, listID);
+        geoFenceAlarmIntent.putExtra(GlobalConstants.CURRENT_TASK_ID, reminderID);
+        geoFenceAlarmIntent.putExtra(GlobalConstants.GEO_ALARM_DATA_EXTRA, geoFenceAlarmData);
         startActivityForResult(geoFenceAlarmIntent, TasksFragment.OPEN_GEOFENCE);
     }
 
     @Override
-    public void showAddNewTask(String listID) {
-        Intent addEditTaskIntent = new Intent(TasksFragment.this.getActivity(),AddEditTask.class);
-        addEditTaskIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,listID);
-        startActivityForResult(addEditTaskIntent, TasksFragment.REQUEST_ADD_TASK);
+    public void showAddNewTask(String listID, String reminderID) {
+
+
+        boolean redrawAll = mAdapter.addItemToEnd(listID, reminderID);
+        if (redrawAll) {
+            mPresenter.start();
+        } else {
+            mRecyclerView.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1);
+        }
+
+
+        //Intent addEditTaskIntent = new Intent(TasksFragment.this.getActivity(),AddEditTask.class);
+        //addEditTaskIntent.putExtra(GlobalConstants.CURRENT_LIST_ID,listID);
+        //startActivityForResult(addEditTaskIntent, TasksFragment.REQUEST_ADD_TASK);
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.result(requestCode,resultCode);
+        mPresenter.result(requestCode, resultCode);
     }
 
     @Override
@@ -124,16 +153,15 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void setPresenter(TasksContract.Presenter presenter) {
-        mPresenter=presenter;
+        mPresenter = presenter;
 
     }
-
 
 
     @Override
     public void onResume() {
         super.onResume();
-        if(mPresenter!=null){
+        if (mPresenter != null) {
             mPresenter.start();
         }
 
@@ -183,8 +211,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         showMessage("No task updated");
     }
 
-    private void showMessage(String message){
-        Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
+    private void showMessage(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -198,7 +226,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         @Override
         public boolean supportsPredictiveItemAnimations() {
-            return false;
+            return true;
         }
 
         public MyLinearLayoutManager(Context context) {
@@ -208,5 +236,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         public MyLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
             super(context, orientation, reverseLayout);
         }
+
     }
 }

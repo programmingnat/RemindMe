@@ -30,8 +30,12 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
     @Override
     public void createNewReminder() {
-        mView.showAddNewTask(mListID);
+        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((Fragment)mView).getContext());
+        String reminderID=Long.toString(llds.createNewTask(mListID,""));
+        mView.showAddNewTask(mListID,reminderID);
     }
+
+
 
     @Override
     public void disableAddingNewTask() {

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.imaginat.remindme.GlobalConstants;
 import com.imaginat.remindme.R;
 
 /**
@@ -93,6 +94,19 @@ public class AddListFragment extends Fragment implements AddListContract.View{
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        AddEditList addEditListActivity = (AddEditList)getActivity();
+        addEditListActivity.swapIcons(GlobalConstants.HIDE_OPTIONS);
+
+        int[] attrs = {android.R.attr.colorPrimary,android.R.attr.colorPrimaryDark,android.R.attr.colorAccent};
+        TypedArray ta = addEditListActivity.obtainStyledAttributes(R.style.AppTheme,attrs);
+        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.my_toolbar);
+        toolbar.setBackgroundColor(ta.getColor(0, Color.BLACK));
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         if(mPresenter!=null){
@@ -108,13 +122,9 @@ public class AddListFragment extends Fragment implements AddListContract.View{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        AddEditList addEditListActivity = (AddEditList)getActivity();
-        addEditListActivity.swapIcons(200);
 
-        int[] attrs = {android.R.attr.colorPrimary,android.R.attr.colorPrimaryDark,android.R.attr.colorAccent};
-        TypedArray ta = addEditListActivity.obtainStyledAttributes(R.style.AppTheme,attrs);
-        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.my_toolbar);
-        toolbar.setBackgroundColor(ta.getColor(0, Color.BLACK));
+
+
     }
 
 

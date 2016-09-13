@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.imaginat.remindme.R;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.ITaskItem;
+import com.imaginat.remindme.data.SimpleTaskItem;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ import java.util.ArrayList;
  * The majority of the code that deals with interaction with the tasks appear in this class
  */
 public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskReminderRecyclerAdapter.TaskListItemHolder>
-    implements TasksContract.ViewAdapter{
+        implements TasksContract.ViewAdapter {
 
     //TAG is used for debuggin
     private static final String TAG = TaskReminderRecyclerAdapter.class.getSimpleName();
@@ -37,6 +38,8 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
     //refrence to the underlying data
     private ArrayList<ITaskItem> mITaskItems;
 
+    //tracks the index number of selected (to be used for autoscrolling?)
+    private int mSelectedIndexNumber;
 
     /**
      * Constructor
@@ -82,19 +85,23 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         ITaskItem toDoListItem = (ITaskItem) mITaskItems.get(position);
 
 
+
         //Set the Views based on the array item
         //set text,listID,reminderID,alarmData
         holder.mRadioButton.setChecked(toDoListItem.isCompleted());
         holder.mEditText.setText(toDoListItem.getText());
-        holder.mListID=toDoListItem.getListID();
+        holder.mListID = toDoListItem.getListID();
         holder.mReminderId = toDoListItem.getReminderID();
-        holder.mGeoFenceAlarmData=toDoListItem.getGeoFenceAlarmData();
+        holder.mGeoFenceAlarmData = toDoListItem.getGeoFenceAlarmData();
+
+        //this doesnt have to be exact, used in helping scroll
+        holder.mPositionInArray=position;
         //holder.mRadioButton.setVisibility(View.VISIBLE);
 
         //Mark the item as completed or not
-        if(toDoListItem.isCompleted()){
+        if (toDoListItem.isCompleted()) {
             holder.mRadioButton.setChecked(true);
-        }else{
+        } else {
             holder.mRadioButton.setChecked(false);
         }
 
@@ -120,19 +127,36 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         notifyDataSetChanged();
 
     }
+    public int getSelectedIndexNumber(){
+        return mSelectedIndexNumber;
+    }
 
     @Override
     public void setPresenter(TasksContract.Presenter presenter) {
-        mTasksPresenter=presenter;
+        mTasksPresenter = presenter;
+
     }
 
 
+    public boolean addItemToEnd(String listID,String reminderID) {
 
+        int position = mITaskItems.size() ;
+        SimpleTaskItem element = new SimpleTaskItem(listID,reminderID);
+        mITaskItems.add(position,element);
+        mSelectedIndexNumber=position+1;
+        if(position==0){
+            notifyDataSetChanged();
+            return true;
+        }else {
+            notifyItemInserted(position);
+            return false;
+        }
+    }
 
     //====================================================================================
     public class TaskListItemHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnKeyListener,
-            TextView.OnEditorActionListener,View.OnFocusChangeListener{
+            TextView.OnEditorActionListener, View.OnFocusChangeListener {
 
         //References to all the views that make up a line in the task list
         public CheckBox mRadioButton;
@@ -149,25 +173,22 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         public ImageButton mGeoFenceButton;
         public Button mOpenOptionsButton;
 
-        public boolean mIsShowingOverlay =false;
+        public boolean mIsShowingOverlay = false;
         public GeoFenceAlarmData mGeoFenceAlarmData;
-
-
-
-
+        public int mPositionInArray=0;
 
 
         public TaskListItemHolder(final View itemView) {
             super(itemView);
 
             //Set all the View references
-            mItemView =itemView;//mItemView is the parent group to all the other views here
+            mItemView = itemView;//mItemView is the parent group to all the other views here
 
-            mEditText = (EditText)itemView.findViewById(R.id.listItemEdit);
+            mEditText = (EditText) itemView.findViewById(R.id.listItemEdit);
             mRadioButton = (CheckBox) itemView.findViewById(R.id.completedRadioButton);
             mTextView = (TextView) itemView.findViewById(R.id.listItemTextView);
-            mDeleteButton = (ImageButton)itemView.findViewById(R.id.delete_imageButton);
-            mGeoFenceButton = (ImageButton)itemView.findViewById(R.id.geofence_imageButton);
+            mDeleteButton = (ImageButton) itemView.findViewById(R.id.delete_imageButton);
+            mGeoFenceButton = (ImageButton) itemView.findViewById(R.id.geofence_imageButton);
 
             //Set the listener for when a line is clicked
             mItemView.setOnClickListener(this);
@@ -180,24 +201,24 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             mEditText.setSingleLine(false);
 
 
-            mOverlayMenu = (ViewGroup)itemView.findViewById(R.id.overlay_menu);
+            mOverlayMenu = (ViewGroup) itemView.findViewById(R.id.overlay_menu);
 
-            mCalendarButton = (ImageButton)itemView.findViewById(R.id.calendar_imageButton);
+            mCalendarButton = (ImageButton) itemView.findViewById(R.id.calendar_imageButton);
 
             //set the listener to show the overlay button
-            mOpenOptionsButton = (Button)itemView.findViewById(R.id.openOptions_button);
+            mOpenOptionsButton = (Button) itemView.findViewById(R.id.openOptions_button);
             mOpenOptionsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     //Toggle the overlay menu
-                    if(mIsShowingOverlay){
-                        mIsShowingOverlay=false;
-                        LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.overlay_menu);
+                    if (mIsShowingOverlay) {
+                        mIsShowingOverlay = false;
+                        LinearLayout ll = (LinearLayout) itemView.findViewById(R.id.overlay_menu);
                         ll.setVisibility(View.INVISIBLE);
-                    }else{
-                        mIsShowingOverlay=true;
-                        LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.overlay_menu);
+                    } else {
+                        mIsShowingOverlay = true;
+                        LinearLayout ll = (LinearLayout) itemView.findViewById(R.id.overlay_menu);
                         ll.setVisibility(View.VISIBLE);
                     }
 
@@ -208,8 +229,8 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             mOverlayMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mIsShowingOverlay=false;
-                    LinearLayout ll = (LinearLayout)itemView.findViewById(R.id.overlay_menu);
+                    mIsShowingOverlay = false;
+                    LinearLayout ll = (LinearLayout) itemView.findViewById(R.id.overlay_menu);
                     ll.setVisibility(View.INVISIBLE);
                 }
             });
@@ -220,14 +241,14 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTasksPresenter.deleteReminder(mListID,mReminderId);
+                    mTasksPresenter.deleteReminder(mListID, mReminderId);
                 }
             });
 
             mCalendarButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   mTasksPresenter.openCalendar(mListID,mReminderId);
+                    mTasksPresenter.openCalendar(mListID, mReminderId);
 
                 }
             });
@@ -235,22 +256,21 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
             mGeoFenceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTasksPresenter.openGeoFenceOptions(mListID,mReminderId,mGeoFenceAlarmData);
+                    mTasksPresenter.openGeoFenceOptions(mListID, mReminderId, mGeoFenceAlarmData);
                 }
             });
             mRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mTasksPresenter.updateCompletionStatus(mListID,mReminderId,((CheckBox)v).isChecked());
+                    mTasksPresenter.updateCompletionStatus(mListID, mReminderId, ((CheckBox) v).isChecked());
                 }
             });
 
 
-
             //This is to allow the button to "grow" with the edit text
-            itemView.post(new Runnable(){
+            itemView.post(new Runnable() {
                 @Override
-                public void run(){
+                public void run() {
                     int height = itemView.getHeight();
                     mOpenOptionsButton.setHeight(height);
                 }
@@ -276,16 +296,15 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         }
 
 
-
-
         /**
          * When the user clicks the View line(holding edit text), send the focus to the end of the edit text
          */
         @Override
         public void onClick(View v) {
-            if(!mIsShowingOverlay){
+            if (!mIsShowingOverlay) {
                 mEditText.requestFocus();
                 mEditText.setSelection(mEditText.getText().length());
+                mSelectedIndexNumber=mPositionInArray;
             }
 
         }
@@ -297,32 +316,31 @@ public class TaskReminderRecyclerAdapter extends RecyclerView.Adapter<TaskRemind
         }
 
         /**
-         *
          * When the focus changes (user leaves an edit text field), save the data
          */
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
 
-            if(!hasFocus){
+            if (!hasFocus) {
                 //update the data when a user leaves (and presumably  done editing)
-                mTasksPresenter.updateReminder(mListID,mReminderId,((EditText)v).getText().toString());
+                mTasksPresenter.updateReminder(mListID, mReminderId, ((EditText) v).getText().toString());
+            }else{
+                mSelectedIndexNumber=mPositionInArray;
             }
         }
-
 
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-            if(event!=null && (event.getKeyCode()==KeyEvent.KEYCODE_ENTER)){
+            if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 //If Enter is hit, hide the pop out keyboard
                 InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return true;
             }
             return false;
         }
-
 
 
     }

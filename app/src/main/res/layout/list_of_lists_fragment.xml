@@ -23,6 +23,16 @@
         <!--android:paddingTop="50dp">-->
     </android.support.v7.widget.RecyclerView>
 
+    <TextView
+        android:id="@+id/emptyList_textView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:text="@string/no_lists_to_display"
+        android:textAlignment="center"
+        android:textSize="23sp"
+        android:padding="10dp"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

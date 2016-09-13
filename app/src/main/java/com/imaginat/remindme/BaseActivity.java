@@ -1,10 +1,12 @@
 package com.imaginat.remindme;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * This is extended by all activities in the app
@@ -64,6 +67,35 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
 
         //Set up the presenter
         createPresenter(fragment);
+
+
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+
+        Drawable backArrow;
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            // Do something for lollipop and above versions
+            backArrow= ResourcesCompat.getDrawable(getResources(), R.drawable.abc_ic_ab_back_material, null);
+
+        } else{
+            // do something for phones running an SDK before lollipop
+            backArrow= getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
+
+        }
+
+
+       // backArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(backArrow);
 
     }
     @Override

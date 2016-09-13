@@ -16,7 +16,7 @@ public class TasksContract {
     interface View extends BaseView<Presenter>{
         boolean isActive();
         void showAll(ArrayList<ITaskItem>tasks);
-        void showAddNewTask(String listID);
+        void showAddNewTask(String listID,String reminderID);
         void showNoTasks();
         void showSuccessfullySaved();
         void showTaskMarkedComplete();

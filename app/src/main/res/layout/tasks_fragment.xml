@@ -28,7 +28,10 @@
         android:id="@+id/noTasks_TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" YOU HAVE NO TASKS FOR THIS LIST"
+        android:text="@string/no_reminders_to_display"
+        android:textSize="23sp"
+        android:textAlignment="center"
+        android:padding="10dp"
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
