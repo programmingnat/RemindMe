@@ -6,6 +6,9 @@ package com.imaginat.remindme;
 public class GlobalConstants {
     public static final int HIDE_COMPLETED_ITEMS=2340;
 
+    //LAUNCH SOURCE
+    public static final String LAUNCH_SOURCE="launchSource";
+
     //GENERAL
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
