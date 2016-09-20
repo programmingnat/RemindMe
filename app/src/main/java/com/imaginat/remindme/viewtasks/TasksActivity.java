@@ -13,6 +13,7 @@ import com.imaginat.remindme.R;
 public class TasksActivity extends BaseActivity<TasksFragment> {
 
 
+
     /**
      * returns the XML file layout used by this activity
      */

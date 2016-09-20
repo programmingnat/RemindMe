@@ -265,7 +265,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
                         RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
                         LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
                         locationUpdateService.populateGeofenceList(geoFenceAlarmDataList);
-                        locationUpdateService.addGeofences(createAlarmTag());
+                        locationUpdateService.addGeofences(GlobalConstants.PENDING_INTENT_REQUEST_CODE);
 
                     }
 

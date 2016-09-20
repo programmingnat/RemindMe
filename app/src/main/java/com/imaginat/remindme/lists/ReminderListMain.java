@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.imaginat.remindme.BaseActivity;
 import com.imaginat.remindme.R;
-import com.imaginat.remindme.RemindMeApplication;
 import com.imaginat.remindme.geofencing.LocationUpdateService;
 
 /**
@@ -80,16 +78,24 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment> {
 
         //Since this is the main startup screen of the app, call to the
         //start up location service if it didnt occur yet (and is necessary)
-        RemindMeApplication remindMeApp = (RemindMeApplication) getApplicationContext();
-        remindMeApp.startServiceAsNeeded();
-        LocationUpdateService lus = remindMeApp.getServiceReference();
-        if(lus.isLocationServicesAvailable(this)){
+        Intent startServiceIntent = new Intent(ReminderListMain.this, LocationUpdateService.class);
+        startService(startServiceIntent);
+
+        //RemindMeApplication remindMeApp = (RemindMeApplication) getApplicationContext();
+        //remindMeApp.startServiceAsNeeded();
+        //LocationUpdateService lus = remindMeApp.getServiceReference();
+        /*if(lus.isLocationServicesAvailable(this)){
             Toast.makeText(this,"Location service  avail.",Toast.LENGTH_LONG);
         }else{
             Toast.makeText(this,"Location service not avail.",Toast.LENGTH_LONG);
-        }
+        }*/
+        //if it started from a reboot call method to reset the geofences
+        //TODO:check to see caling intent origin (recevier)
+        //remindMeApp.reloadGeoFences(lus);
+
 
     }
+
 
     @Override
     protected void onDestroy() {

@@ -11,7 +11,14 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.imaginat.remindme.data.GeoFenceAlarmData;
+import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
 import com.imaginat.remindme.geofencing.LocationUpdateService;
+
+import java.util.List;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 public class RemindMeApplication extends Application {
@@ -84,6 +91,7 @@ public class RemindMeApplication extends Application {
                 mServiceConnection=new MyServiceConnection();
                 bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
+
             }
 
 
@@ -127,6 +135,7 @@ public class RemindMeApplication extends Application {
             mServiceConnection=new MyServiceConnection();
             bindService(bindingIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
             mLocationUpdateServiceBound = true;
+            mLocationUpdateService =mServiceConnection.locationUpdateService;
             return mLocationUpdateService;
         }
         return null;
@@ -164,14 +173,44 @@ public class RemindMeApplication extends Application {
             stopService(new Intent(RemindMeApplication.this, LocationUpdateService.class));
         }
     }
+
+    public void reloadGeoFences(final LocationUpdateService locationUpdateService){
+        //In different thread, make call to local database to get all active geoFences
+        ListsLocalDataSource llds = ListsLocalDataSource.getInstance(this);
+        llds.getAllActiveAlarms()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<GeoFenceAlarmData>>() {
+                    @Override
+                    public void call(List<GeoFenceAlarmData> geoFenceAlarmDataList) {
+
+
+                        if (geoFenceAlarmDataList == null) {
+                            Log.d(TAG, "Inside call() geoFenceAlarmDataList is null");
+                        } else {
+                            Log.d(TAG, "Inside call() found " + geoFenceAlarmDataList.size() + " results");
+                        }
+
+
+                        mLocationUpdateService.populateGeofenceList(geoFenceAlarmDataList);
+                        mLocationUpdateService.addGeofences(GlobalConstants.PENDING_INTENT_REQUEST_CODE);
+
+                    }
+
+                });
+
+
+
+    }
     //==========================================================================
     private class MyServiceConnection implements ServiceConnection {
+        public LocationUpdateService locationUpdateService;
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
             LocationUpdateService.MyLocationUpdateServiceBinder myBinder = (LocationUpdateService.MyLocationUpdateServiceBinder) service;
             mLocationUpdateService = myBinder.getService();
+            locationUpdateService=mLocationUpdateService;
             mLocationUpdateServiceBound = true;
         }
 

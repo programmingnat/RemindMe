@@ -25,6 +25,8 @@ public class GeoFencingActivity extends BaseActivity<GeoFenceFragment> {
     private static final String TAG_MAP_FRAGMENT = "map_fragment";
     private static final String TAG_CONTROLS_FRAGMENT = "control_fragment";
 
+
+
     @Override
     public int getLayoutID() {
         return R.layout.activity_geo_fencing;
