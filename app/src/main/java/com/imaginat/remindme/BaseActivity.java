@@ -19,6 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.imaginat.remindme.geofencing.LocationUpdateServiceManager;
+
 /**
  * This is extended by all activities in the app
  * Trying to implement the MVP based on Google's best practices MVP example
@@ -167,19 +169,19 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
+        LocationUpdateServiceManager remindMeApp = LocationUpdateServiceManager.getInstance(getApplicationContext());
         switch (item.getItemId()) {
             case R.id.testStartService:
                 Log.d(TAG, "startService selected");
 
-                remindMeApp.startServiceAsNeeded();
+                remindMeApp.startServiceAsNeeded(getApplicationContext());
                 //Intent startServiceIntent = new Intent(BaseActivity.this, LocationUpdateService.class);
                 //startService(startServiceIntent);
                 return true;
             case R.id.testStopService:
                 Log.d(TAG, "stopService selected");
 
-                remindMeApp.requestStopOfLocationUpdateService();
+                remindMeApp.requestStopOfLocationUpdateService(getApplicationContext());
                 //LocationUpdateService lus=remindMeApp.getServiceReference();
 
                 //lus.stopIt();
@@ -187,9 +189,9 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
                 //stopService(stopServiceIntent);
                 return true;
             case R.id.testIsServiceRunning:
-                //RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
 
-                remindMeApp.isServiceRunning();
+
+                remindMeApp.isServiceRunning(getApplicationContext());
                 return true;
             case R.id.deleteList:
                 processOptionItemSelected(R.id.deleteList);

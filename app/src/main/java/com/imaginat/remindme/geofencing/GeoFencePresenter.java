@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.imaginat.remindme.GlobalConstants;
-import com.imaginat.remindme.RemindMeApplication;
 import com.imaginat.remindme.data.GeoFenceAlarmData;
 import com.imaginat.remindme.data.source.local.DBSchema;
 import com.imaginat.remindme.data.source.local.ListsLocalDataSource;
@@ -75,8 +74,9 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             alarmData=mGeoFenceAlarmData;
         }
 
-        RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment)mView).getActivity().getApplicationContext();
-        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+        Context context = ((Fragment)mView).getActivity().getApplicationContext();
+        LocationUpdateServiceManager remindMeApplication = LocationUpdateServiceManager.getInstance (context);
+        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference(context);
         Location location = locationUpdateService.getCurrentLocation();
 
         if (alarmData != null) {
@@ -245,8 +245,9 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         //====B. ADD TO GEO FENCE====
 
         //Request the location service to start (if not already started)
-        RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
-        remindMeApplication.requestStartOfLocationUpdateService();
+        Context context=((Fragment) mView).getActivity().getApplicationContext();
+        LocationUpdateServiceManager remindMeApplication = LocationUpdateServiceManager.getInstance(context);
+        remindMeApplication.requestStartOfLocationUpdateService(context);
 
         //In different thread, make call to local database to get all active geoFences
         llds.getAllActiveAlarms()
@@ -262,8 +263,9 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
                             Log.d(TAG, "Inside call() found " + geoFenceAlarmDataList.size() + " results");
                         }
 
-                        RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
-                        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+                        Context context=((Fragment) mView).getActivity().getApplicationContext();
+                        LocationUpdateServiceManager remindMeApplication = LocationUpdateServiceManager.getInstance(context);
+                        LocationUpdateService locationUpdateService=remindMeApplication.getServiceReference(context);
                         locationUpdateService.populateGeofenceList(geoFenceAlarmDataList);
                         locationUpdateService.addGeofences(GlobalConstants.PENDING_INTENT_REQUEST_CODE);
 
@@ -299,9 +301,10 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         mViewWControls.showActiveStateChange(newActiveState);
 
         //Remove from GeoFence
-        RemindMeApplication remindMeApplication = (RemindMeApplication) ((Fragment) mView).getActivity().getApplicationContext();
-        remindMeApplication.requestStartOfLocationUpdateService();
-        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
+        Context context=((Fragment) mView).getActivity().getApplicationContext();
+        LocationUpdateServiceManager remindMeApplication = LocationUpdateServiceManager.getInstance(context);
+        remindMeApplication.requestStartOfLocationUpdateService(context);
+        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference(context);
         locationUpdateService.removeGeofencesByTag(mNewGeoFenceData.getAlarmTag());
 
         setUpForCurrentGeoAddressData(mNewGeoFenceData);
