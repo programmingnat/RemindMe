@@ -126,7 +126,12 @@ public class LocationUpdateServiceManager {
             //bind it here
             Intent bindingIntent = new Intent(context, LocationUpdateService.class);
             mServiceConnection=new MyServiceConnection();
-            context.bindService(bindingIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            boolean bound=context.bindService(bindingIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            if(bound){
+
+            }else{
+               // Log.d()
+            }
             mLocationUpdateServiceBound = true;
 
             return mLocationUpdateService;
@@ -201,10 +206,15 @@ public class LocationUpdateServiceManager {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
+            Log.d(TAG,"onServiceConnected start");
             LocationUpdateService.MyLocationUpdateServiceBinder myBinder = (LocationUpdateService.MyLocationUpdateServiceBinder) service;
             final LocationUpdateService locationUpdateService = myBinder.getService();
+            Log.d(TAG,"locationUpdateService reference made from getService()");
 
             if(locationUpdateService!=null){
+                Log.d(TAG,"locationUpdateService is not null");
+                mLocationUpdateService=locationUpdateService;
+
                 ListsLocalDataSource llds = ListsLocalDataSource.getInstance(((LocationUpdateService.MyLocationUpdateServiceBinder) service).getService().getApplicationContext());
                 llds.getAllActiveAlarms()
                         .observeOn(AndroidSchedulers.mainThread())
@@ -226,6 +236,8 @@ public class LocationUpdateServiceManager {
                             }
 
                         });
+            }else{
+                Log.d(TAG,"Location update service is NULL");
             }
         }
 

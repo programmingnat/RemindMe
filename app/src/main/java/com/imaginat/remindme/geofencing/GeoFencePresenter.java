@@ -74,8 +74,12 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             alarmData=mGeoFenceAlarmData;
         }
 
+        /**
+         * The location service is programmed as a service. So we need to get a reference and bind to it
+         */
         Context context = ((Fragment)mView).getActivity().getApplicationContext();
         LocationUpdateServiceManager remindMeApplication = LocationUpdateServiceManager.getInstance (context);
+
         LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference(context);
         Location location = locationUpdateService.getCurrentLocation();
 

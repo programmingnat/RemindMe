@@ -10,8 +10,6 @@ import android.util.Log;
 
 import com.imaginat.remindme.BaseActivity;
 import com.imaginat.remindme.R;
-import com.imaginat.remindme.geofencing.LocationUpdateService;
-import com.imaginat.remindme.geofencing.LocationUpdateServiceManager;
 
 /**
  * The Activity encompases the MVP pattern. The activity class creates the presenter,views and ensure that each has the
@@ -82,9 +80,10 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment> {
         //Intent startServiceIntent = new Intent(getApplicationContext(), LocationUpdateService.class);
         //startService(startServiceIntent);
 
-        LocationUpdateServiceManager remindMeApp = LocationUpdateServiceManager.getInstance(getApplicationContext());
-        remindMeApp.startServiceAsNeeded(getApplicationContext());
-        LocationUpdateService lus = remindMeApp.getServiceReference(getApplicationContext());
+        //TODO: uncomment
+        //LocationUpdateServiceManager remindMeApp = LocationUpdateServiceManager.getInstance(getApplicationContext());
+        //remindMeApp.startServiceAsNeeded(getApplicationContext());
+        //LocationUpdateService lus = remindMeApp.getServiceReference(getApplicationContext());
         /*if(lus.isLocationServicesAvailable(this)){
             Toast.makeText(this,"Location service  avail.",Toast.LENGTH_LONG);
         }else{
@@ -92,7 +91,7 @@ public class ReminderListMain extends BaseActivity<ReminderListsFragment> {
         }*/
         //if it started from a reboot call method to reset the geofences
         //TODO:check to see caling intent origin (recevier)
-        //remindMeApp.reloadGeoFences(lus);
+        //remindMeApp.reloadGeoFences(getApplicationContext(),lus);
 
 
     }

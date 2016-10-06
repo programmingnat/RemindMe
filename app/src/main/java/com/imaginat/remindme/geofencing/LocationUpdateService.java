@@ -178,14 +178,14 @@ public class LocationUpdateService extends Service
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(TAG, "connection to google play services suspended");
+        Log.d(TAG, "connection to google play services suspended ");
 
     }
 
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "connection to google play services suspended");
+        Log.d(TAG, "connection to google play services failed");
     }
 
 
