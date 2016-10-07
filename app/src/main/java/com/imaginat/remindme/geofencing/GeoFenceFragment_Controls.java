@@ -1,11 +1,16 @@
 package com.imaginat.remindme.geofencing;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +99,8 @@ public class GeoFenceFragment_Controls extends Fragment
         super.onSaveInstanceState(outState);
     }
 
+
+
     //==================METHODS THAT SHOW OR ALTER CURRENT GUI=========================
 
     /**
@@ -161,6 +168,47 @@ public class GeoFenceFragment_Controls extends Fragment
         String message = newState?getResources().getString(R.string.geo_state_active_msg):getResources().getString(R.string.geo_state_deactive_msg);
         Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
 
+    }
+
+    @Override
+    public void showLocationDialogIfNecessary(){
+
+        boolean gps_enabled=false,network_enabled=false;
+
+        LocationManager lm= (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        try{
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch(Exception ex){}
+        try{
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }catch(Exception ex){}
+
+        Context context = getContext();
+        if(!gps_enabled && !network_enabled){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog = new AlertDialog.Builder(context);
+            dialog.setMessage("GPS NETWORK NOT ENABLED");
+            dialog.setPositiveButton("Open location settings", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    getActivity().startActivity(myIntent);
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+
+                }
+            });
+            dialog.show();
+
+        }
     }
     //=====================METHODS IMPLEMENTED TO COMMUNICATE WITH DIALOG====================
 

@@ -60,6 +60,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
     @Override
     public void start() {
         setUpForCurrentGeoAddressData(mNewGeoFenceData);
+        mViewWControls.showLocationDialogIfNecessary();
     }
 
     //============Methods that prepare the map to be viewed========================================

@@ -22,6 +22,7 @@ public class GeoFenceContract {
         void setButtonTexts(boolean isNew,boolean isON);
         void showActiveStateChange(boolean newState);
         void showToolTip();
+        void showLocationDialogIfNecessary();
         void showSaveFenceConfirmation();
         void showUpdateFenceConfirmation();
     }
