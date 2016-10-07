@@ -117,20 +117,35 @@ public class LocationUpdateServiceManager {
 
 
     public LocationUpdateService getServiceReference(Context context) {
+        Log.d(TAG,"Inside getServiceReference");
         if (mLocationUpdateServiceBound) {
             return mLocationUpdateService;
         }
+
+
         //check if number of geoFenceAlarms warrants system to start
         int totalNoOfActiveGeoAlarms = mSharedPreferences.getInt(GlobalConstants.GEO_ALARM_COUNT, -1);
         if (totalNoOfActiveGeoAlarms > 0 && mLocationUpdateServiceBound == false) {
             //bind it here
-            Intent bindingIntent = new Intent(context, LocationUpdateService.class);
-            mServiceConnection=new MyServiceConnection();
-            boolean bound=context.bindService(bindingIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
-            if(bound){
 
+
+
+
+            //https://code.google.com/p/android/issues/detail?id=180396
+            //TODO: testing out the problem/solution
+
+            Intent startUpServiceIntent = new Intent(context, LocationUpdateService.class);
+            context.startService(startUpServiceIntent);
+
+            mServiceConnection=new MyServiceConnection();
+
+            Intent bindingIntent = new Intent(context, LocationUpdateService.class);
+            boolean bound=context.bindService(bindingIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
+            if(bound){
+                Log.d(TAG,"Service is properly bound");
             }else{
-               // Log.d()
+                Log.d(TAG,"Service not bound");
             }
             mLocationUpdateServiceBound = true;
 

@@ -92,7 +92,6 @@ public class LocationUpdateService extends Service
 
 
 
-
     /**
      *  The start command is called when the service is started, return START_STICKY to tell system this service should
     * stick around

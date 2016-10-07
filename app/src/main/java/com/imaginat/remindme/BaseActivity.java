@@ -19,8 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.imaginat.remindme.geofencing.LocationUpdateServiceManager;
-
 /**
  * This is extended by all activities in the app
  * Trying to implement the MVP based on Google's best practices MVP example
@@ -169,19 +167,21 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        LocationUpdateServiceManager remindMeApp = LocationUpdateServiceManager.getInstance(getApplicationContext());
+        //LocationUpdateServiceManager remindMeApp = LocationUpdateServiceManager.getInstance(getApplicationContext());
+        RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
+
         switch (item.getItemId()) {
             case R.id.testStartService:
                 Log.d(TAG, "startService selected");
 
-                remindMeApp.startServiceAsNeeded(getApplicationContext());
+                remindMeApp.startServiceAsNeeded();
                 //Intent startServiceIntent = new Intent(BaseActivity.this, LocationUpdateService.class);
                 //startService(startServiceIntent);
                 return true;
             case R.id.testStopService:
                 Log.d(TAG, "stopService selected");
 
-                remindMeApp.requestStopOfLocationUpdateService(getApplicationContext());
+                remindMeApp.requestStopOfLocationUpdateService();
                 //LocationUpdateService lus=remindMeApp.getServiceReference();
 
                 //lus.stopIt();
@@ -191,7 +191,7 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
             case R.id.testIsServiceRunning:
 
 
-                remindMeApp.isServiceRunning(getApplicationContext());
+                remindMeApp.isServiceRunning();
                 return true;
             case R.id.deleteList:
                 processOptionItemSelected(R.id.deleteList);

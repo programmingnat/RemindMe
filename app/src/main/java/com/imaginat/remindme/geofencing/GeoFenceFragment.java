@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.imaginat.remindme.R;
+import com.imaginat.remindme.RemindMeApplication;
 
 /**
  * Created by nat on 8/30/16.
@@ -98,8 +99,9 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
         mGoogleMap = map;
 
         //Get ref to location service for coordinates
-        LocationUpdateServiceManager remindMeApplication = LocationUpdateServiceManager.getInstance(getActivity().getApplicationContext());
-        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference(getActivity().getApplicationContext());
+        //LocationUpdateServiceManager remindMeApplication = LocationUpdateServiceManager.getInstance(getActivity().getApplicationContext());
+        RemindMeApplication remindMeApplication = (RemindMeApplication) getActivity().getApplicationContext();
+        LocationUpdateService locationUpdateService = remindMeApplication.getServiceReference();
         Location location = locationUpdateService.getCurrentLocation();
 
         if(location==null){
