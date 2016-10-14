@@ -38,7 +38,7 @@ public class RemindMeApplication extends Application {
 
         //shared preferences
         mSharedPreferences = getSharedPreferences(GlobalConstants.PREFERENCES, Context.MODE_PRIVATE);
-        startServiceAsNeeded();
+        //startServiceAsNeeded();
 
     }
 

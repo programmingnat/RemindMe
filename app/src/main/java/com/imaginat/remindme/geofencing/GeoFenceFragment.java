@@ -18,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -36,6 +37,8 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
     GoogleMap mGoogleMap;
     private View rootView;
     private SupportMapFragment fragment;
+    private Marker mCurrentMarker;
+    private Circle mCircle;
 
     @Nullable
     @Override
@@ -118,6 +121,7 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
 
         map.setMyLocationEnabled(true);
 
+
         if(mPresenter!=null){
             mPresenter.start();
         }
@@ -126,7 +130,8 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                //setAddressMarker(latLng);
+                setAddressMarker(latLng);
+                mPresenter.processMapClick(latLng.latitude,latLng.longitude);
             }
         });
 
@@ -167,11 +172,18 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
             return;
         }
 
+        if(mCurrentMarker!=null){
+            mCurrentMarker.remove();
+        }
+        if(mCircle!=null){
+            mCircle.remove();
+        }
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         new MarkerOptions().position(ll).title("Location Based Reminder");
 
         Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(ll).title("Location Based Reminder").snippet("ALarm"));
         marker.setTag(0);
+        mCurrentMarker=marker;
 
 
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -182,7 +194,8 @@ public class GeoFenceFragment extends Fragment implements GeoFenceContract.View,
                 .strokeColor((Color.argb(50,70,70,70)))
                 .fillColor(Color.argb(100,150,150,150))
                 .radius(100);
-        mGoogleMap.addCircle(circleOptions);
+        mCircle = mGoogleMap.addCircle(circleOptions);
+
 
     }
 

@@ -137,6 +137,36 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
             writeGeoFence();
         }
     }
+    //==================METHODS THAT TURN LAT LONG INTO STREET ADDRESS=====================
+
+    @Override
+    public void processMapClick(double latitude, double longitude) {
+
+        AddressResultReceiver addressResultReceiver = new AddressResultReceiver(new Handler());
+        Location location = new Location("forAddress");
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+
+        Context c = ((Fragment) mView).getContext();
+        Intent addressIntent = new Intent(c,FetchAddressIntentService.class);
+        addressIntent.putExtra(GlobalConstants.RECEIVER,addressResultReceiver);
+        addressIntent.putExtra(GlobalConstants.LOCATION_DATA_EXTRA,location);
+        c.startService(addressIntent);
+
+                /*
+                Intent intent = new Intent(c, FetchCoordinatesIntentService.class);
+        intent.putExtra(GlobalConstants.RECEIVER, mReceiver);
+        intent.putExtra(GlobalConstants.LOCATION_DATA_EXTRA, address);
+        intent.putExtra(GlobalConstants.ALARM_TAG, getAlarmTag());
+        intent.putExtra(GlobalConstants.CURRENT_TASK_ID, mTaskID);
+        intent.putExtra(GlobalConstants.CURRENT_LIST_ID, mListID);
+
+        //Call the service to tranlate address to coordinate
+        c.startService(intent);
+                 */
+    }
+
+
     //==================METHODS THAT TURN STREET ADDRESS TO COORDINATES=========================================
     /**
     * When the user enters an address (as the center of the geofence) that data is sent here and is fwd to the IntentService

@@ -62,7 +62,9 @@
         <service
             android:name=".geofencing.FetchCoordinatesIntentService"
             android:exported="true"/>
-
+        <service
+            android:name=".geofencing.FetchAddressIntentService"
+            android:exported="true"/>
 
 
         <meta-data

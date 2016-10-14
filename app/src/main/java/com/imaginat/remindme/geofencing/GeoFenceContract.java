@@ -37,6 +37,7 @@ public class GeoFenceContract {
         void deactivateGeoFence();
         GeoFenceAlarmData getLatestGeoFenceData();
         void writeGeoFence();
+        void processMapClick(double latitude,double longitude);
 
     }
 }
