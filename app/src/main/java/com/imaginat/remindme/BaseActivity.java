@@ -108,6 +108,10 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(backArrow);
 
+
+        RemindMeApplication remindMeApp = (RemindMeApplication)getApplicationContext();
+        remindMeApp.startServiceAsNeeded(true);
+
     }
     @Override
     public void onUpdateTitle(String title) {
