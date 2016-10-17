@@ -38,11 +38,11 @@ public class RemindMeApplication extends Application {
 
         //shared preferences
         mSharedPreferences = getSharedPreferences(GlobalConstants.PREFERENCES, Context.MODE_PRIVATE);
-        //startServiceAsNeeded();
+        startServiceAsNeeded(false);
 
     }
 
-    public void startServiceAsNeeded() {
+    public void startServiceAsNeeded(boolean makeConnection) {
 
         //Th
         //If service is not running start it
@@ -83,15 +83,18 @@ public class RemindMeApplication extends Application {
                 //start up the service
                 Intent startUpServiceIntent = new Intent(RemindMeApplication.this, LocationUpdateService.class);
                 startService(startUpServiceIntent);
-                mServiceConnection = new MyServiceConnection();
-                bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
+                if(makeConnection) {
+                    mServiceConnection = new MyServiceConnection();
+                    bindService(startUpServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+                }
 
             }
 
 
         } else {
             //service is already up and running, now bind if not already bound
-            if (mLocationUpdateServiceBound == false) {
+            if (mLocationUpdateServiceBound == false&& makeConnection) {
                 Intent boundIntent = new Intent(this, LocationUpdateService.class);
                 mServiceConnection = new MyServiceConnection();
                 bindService(boundIntent, mServiceConnection, Context.BIND_AUTO_CREATE);

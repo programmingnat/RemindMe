@@ -28,7 +28,7 @@ public class GeoFenceContract {
     }
 
 
-    interface Presenter extends BasePresenter, CoordinatesResultReceiver.ICoordinateReceiver{
+    interface Presenter extends BasePresenter, CoordinatesResultReceiver.ICoordinateReceiver, AddressResultReceiver.IAddressReceiver{
 
         void setUpForCurrentGeoAddressData(GeoFenceAlarmData alarmData);
         void processStreetAddress(String address,String city,String state, String zip);

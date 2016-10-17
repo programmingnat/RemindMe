@@ -174,7 +174,7 @@ public abstract class BaseActivity<T extends Fragment> extends AppCompatActivity
             case R.id.testStartService:
                 Log.d(TAG, "startService selected");
 
-                remindMeApp.startServiceAsNeeded();
+                remindMeApp.startServiceAsNeeded(true);
                 //Intent startServiceIntent = new Intent(BaseActivity.this, LocationUpdateService.class);
                 //startService(startServiceIntent);
                 return true;

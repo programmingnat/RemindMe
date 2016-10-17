@@ -41,6 +41,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
 
     //The Receiver used to get the coordinates from the service that transforms address to coordinates
     private CoordinatesResultReceiver mReceiver;
+    AddressResultReceiver mAddressResultReceiver;
 
 
     public GeoFencePresenter(GeoFenceContract.View view, GeoFenceContract.ViewWControls controls, String listID, String reminderID, GeoFenceAlarmData alarmData) {
@@ -142,30 +143,68 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
     @Override
     public void processMapClick(double latitude, double longitude) {
 
-        AddressResultReceiver addressResultReceiver = new AddressResultReceiver(new Handler());
+        if(mAddressResultReceiver==null) {
+            mAddressResultReceiver = new AddressResultReceiver(new Handler());
+            mAddressResultReceiver.setResultReceiver(this);
+        }
+
+        if (mNewGeoFenceData == null) {
+            mNewGeoFenceData = new GeoFenceAlarmData();
+        }
+
+        mNewGeoFenceData.setLatitude(latitude);
+        mNewGeoFenceData.setLongitude(longitude);
+
         Location location = new Location("forAddress");
         location.setLatitude(latitude);
         location.setLongitude(longitude);
 
         Context c = ((Fragment) mView).getContext();
         Intent addressIntent = new Intent(c,FetchAddressIntentService.class);
-        addressIntent.putExtra(GlobalConstants.RECEIVER,addressResultReceiver);
+        addressIntent.putExtra(GlobalConstants.RECEIVER,mAddressResultReceiver);
         addressIntent.putExtra(GlobalConstants.LOCATION_DATA_EXTRA,location);
         c.startService(addressIntent);
 
-                /*
-                Intent intent = new Intent(c, FetchCoordinatesIntentService.class);
-        intent.putExtra(GlobalConstants.RECEIVER, mReceiver);
-        intent.putExtra(GlobalConstants.LOCATION_DATA_EXTRA, address);
-        intent.putExtra(GlobalConstants.ALARM_TAG, getAlarmTag());
-        intent.putExtra(GlobalConstants.CURRENT_TASK_ID, mTaskID);
-        intent.putExtra(GlobalConstants.CURRENT_LIST_ID, mListID);
 
-        //Call the service to tranlate address to coordinate
-        c.startService(intent);
-                 */
     }
 
+    @Override
+    public void onReceiveAddressResult(int resultCode, Bundle resultData) {
+
+        String addressOutput = resultData.getString(GlobalConstants.RESULT_DATA_KEY);
+        Log.d(TAG,"onReceivedAddressResult "+addressOutput);
+        //record street address
+
+        //find the new line
+        String lines[] = addressOutput.split("\\r?\\n");
+        String street = lines[0];
+
+        String secondLineSplit[] = lines[1].split(",");
+        String city = secondLineSplit[0];
+        String stateAndZipTogether = secondLineSplit[1];
+
+        String[] stateZip = stateAndZipTogether.split(" ");
+        String state = stateZip[1];
+        String zip = stateZip[2];
+
+        Log.d(TAG,"Street:"+street);
+        Log.d(TAG,"City:"+city);
+        Log.d(TAG,"ZipCode"+zip);
+        Log.d(TAG,"State:"+state);
+
+        mNewGeoFenceData.setStreet(street);
+        mNewGeoFenceData.setCity(city);
+        mNewGeoFenceData.setZipcode(zip);
+        mNewGeoFenceData.setState(state);
+        mNewGeoFenceData.setReminderID(mTaskID);
+        mNewGeoFenceData.setAlarmTag(getAlarmTag());
+
+
+        writeGeoFence();
+        //112-118 Lawrence Avenue
+        //Eastchester, NY 10709
+
+    }
 
     //==================METHODS THAT TURN STREET ADDRESS TO COORDINATES=========================================
     /**
@@ -373,6 +412,7 @@ public class GeoFencePresenter implements GeoFenceContract.Presenter {
         }
         return hash;
     }
+
 
 
 }

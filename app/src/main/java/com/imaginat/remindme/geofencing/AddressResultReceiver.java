@@ -15,16 +15,27 @@ import com.imaginat.remindme.GlobalConstants;
 @SuppressLint("ParcelCreator")
 public class AddressResultReceiver extends ResultReceiver {
     private static final String TAG = ResultReceiver.class.getSimpleName();
+    private IAddressReceiver mIAddressReceiver;
+
+    public interface IAddressReceiver {
+        void onReceiveAddressResult(int resultCode, Bundle resultData);
+
+    }
 
     public AddressResultReceiver(Handler handler) {
         super(handler);
     }
 
+    public void setResultReceiver(IAddressReceiver addressReceiver){
+        mIAddressReceiver=addressReceiver;
+    }
     /**
      *  Receives data sent from FetchAddressIntentService and updates the UI in MainActivity.
      */
     @Override
     protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+
 
         // Display the address string or an error message sent from the intent service.
         String addressOutput = resultData.getString(GlobalConstants.RESULT_DATA_KEY);
@@ -37,5 +48,6 @@ public class AddressResultReceiver extends ResultReceiver {
         }
 
 
+        mIAddressReceiver.onReceiveAddressResult(resultCode,resultData);
     }
 }
